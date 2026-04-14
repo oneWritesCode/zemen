@@ -11,7 +11,7 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-b border-white/[0.08] bg-[#0a0a0b] lg:h-screen lg:w-[260px] lg:border-b-0 lg:border-r">
+    <aside className="sticky top-12 z-30 flex w-full shrink-0 flex-col border-b border-white/[0.08] bg-[#0a0a0b] lg:h-[calc(100vh-3rem)] lg:w-[260px] lg:border-b-0 lg:border-r">
       <div className="border-b border-white/[0.08] px-5 py-6 lg:px-6">
         <Link href="/" className="flex items-start gap-2">
           <Gauge className="mt-1 h-6 w-6 shrink-0 text-[#ffcc00]" aria-hidden />
@@ -27,6 +27,21 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
       </div>
       <nav className="flex flex-1 flex-col gap-1 overflow-x-auto px-3 py-4 lg:overflow-y-auto">
         <div className="mb-2 space-y-1">
+          <Link
+            href="/briefing"
+            className={[
+              "flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+              pathname === "/briefing"
+                ? "bg-[#ffcc00] text-black shadow-[0_0_24px_rgba(255,204,0,0.25)]"
+                : "text-zinc-300 hover:bg-white/[0.06] hover:text-white",
+            ].join(" ")}
+          >
+            <FlaskConical
+              className={`h-4 w-4 shrink-0 ${pathname === "/briefing" ? "text-black" : "text-zinc-400"}`}
+              aria-hidden
+            />
+            Weekly briefing
+          </Link>
           <Link
             href="/regime-detector"
             className={[

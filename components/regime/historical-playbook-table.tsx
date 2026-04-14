@@ -6,7 +6,7 @@ import type { RegimeMeta } from "@/lib/regime/types";
 
 function ReturnCell({ value }: { value: number | null }) {
   if (value === null) {
-    return <span className="text-zinc-500">—</span>;
+    return <span className="text-xs text-zinc-500">Data not available</span>;
   }
   const up = value >= 0;
   return (

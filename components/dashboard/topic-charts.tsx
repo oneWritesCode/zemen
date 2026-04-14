@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { TopicChartSpec } from "@/lib/fred/topics-config";
 import type { ChartRow } from "@/lib/fred/get-topic-dataset";
+import { IntelligencePanel } from "@/components/dashboard/intelligence-panel";
 import {
   CartesianGrid,
   Legend,
@@ -81,12 +82,14 @@ function ChartBlock({
   seriesStyles,
   compare2008,
   compare2020,
+  topicSlug,
 }: {
   spec: TopicChartSpec;
   rows: ChartRow[];
   seriesStyles: Record<string, SeriesStyle>;
   compare2008: boolean;
   compare2020: boolean;
+  topicSlug: string;
 }) {
   const right = new Set(spec.useRightAxis ?? []);
   const leftKeys = spec.seriesKeys.filter((k) => !right.has(k));
@@ -107,11 +110,11 @@ function ChartBlock({
     rangesOverlapMs(tMin, tMax, T_2020[0]!, T_2020[1]!);
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 pb-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] sm:p-5">
+    <div className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 pb-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] sm:p-5">
       <h3 className="mb-4 font-serif text-lg font-semibold tracking-tight text-white">
         {spec.title}
       </h3>
-      <div className="h-[280px] w-full min-w-0">
+      <div className="h-[280px] min-h-[280px] w-full min-w-0">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid {...GRID} />
@@ -212,6 +215,7 @@ function ChartBlock({
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <IntelligencePanel topicSlug={topicSlug} chartTitle={spec.title} rows={rows} />
     </div>
   );
 }
@@ -386,10 +390,12 @@ export function TopicCharts({
   charts,
   chartRows,
   seriesStyles,
+  topicSlug,
 }: {
   charts: TopicChartSpec[];
   chartRows: ChartRow[];
   seriesStyles: Record<string, SeriesStyle>;
+  topicSlug: string;
 }) {
   const sorted = useMemo(() => sortedRows(chartRows), [chartRows]);
   const maxI = Math.max(0, sorted.length - 1);
@@ -438,6 +444,7 @@ export function TopicCharts({
               seriesStyles={seriesStyles}
               compare2008={compare2008}
               compare2020={compare2020}
+              topicSlug={topicSlug}
             />
           ))}
         </div>
@@ -450,6 +457,7 @@ export function TopicCharts({
           seriesStyles={seriesStyles}
           compare2008={compare2008}
           compare2020={compare2020}
+          topicSlug={topicSlug}
         />
       ))}
     </div>

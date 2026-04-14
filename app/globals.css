@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0b;
+  --background: #0a0a0a;
   --foreground: #fafafa;
-  --zemen-gold: #ffcc00;
+  --zemen-gold: #ffd000;
   --zemen-surface: #12121a;
 }
 
@@ -20,6 +20,96 @@ body {
   color: var(--foreground);
 }
 
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 #111111;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 9999px;
+  border: 1px solid #111111;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
 .font-serif {
   font-family: var(--font-serif);
+}
+
+.section-reveal {
+  animation: reveal-up 700ms ease-out both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 25%;
+}
+
+.float-slow {
+  animation: float-slow 9s ease-in-out infinite;
+}
+
+.float-medium {
+  animation: float-medium 7s ease-in-out infinite;
+}
+
+.float-fast {
+  animation: float-fast 5s ease-in-out infinite;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-16px);
+    opacity: 0.45;
+  }
+}
+
+@keyframes float-medium {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.18;
+  }
+  50% {
+    transform: translateY(-12px);
+    opacity: 0.35;
+  }
+}
+
+@keyframes float-fast {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.16;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 0.32;
+  }
 }

@@ -1,4 +1,5 @@
 import { TopicIcon } from "@/components/icons/topic-icon";
+import { PersonaTopicBanner } from "@/components/dashboard/persona-topic-banner";
 import type { TopicDefinition } from "@/lib/fred/topics-config";
 
 /** Header when data failed: topic from config only. */
@@ -25,6 +26,7 @@ export function TopicDashboardHeaderStatic({
       <p className="mt-3 text-sm text-zinc-500">
         {subtitle ?? "Monthly-aligned series · Data unavailable"}
       </p>
+      <PersonaTopicBanner topicSlug={topic.slug} />
     </header>
   );
 }

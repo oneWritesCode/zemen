@@ -37,7 +37,11 @@ function FeatureTable({
             >
               <td className="px-4 py-2.5 text-zinc-400">{label}</td>
               <td className="px-4 py-2.5 font-mono tabular-nums text-white">
-                {vals[i]!.toFixed(2)}
+                {vals[i] == null ? (
+                  <span className="font-sans text-sm text-zinc-500">Data not available</span>
+                ) : (
+                  vals[i]!.toFixed(2)
+                )}
               </td>
             </tr>
           ))}

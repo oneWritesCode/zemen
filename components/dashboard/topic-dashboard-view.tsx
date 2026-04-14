@@ -1,4 +1,5 @@
 import { TopicIcon } from "@/components/icons/topic-icon";
+import { PersonaTopicBanner } from "@/components/dashboard/persona-topic-banner";
 import { KpiRow } from "@/components/dashboard/kpi-row";
 import { TopicCharts } from "@/components/dashboard/topic-charts";
 import type { TopicDataset } from "@/lib/fred/get-topic-dataset";
@@ -36,6 +37,7 @@ export function TopicDashboardView({ data }: { data: TopicDataset }) {
         <p className="mt-3 text-sm text-zinc-500">
           Monthly-aligned series · {range} · {meta.rowCount} observations
         </p>
+        <PersonaTopicBanner topicSlug={topic.slug} />
       </header>
 
       <KpiRow kpis={kpis} />
@@ -43,6 +45,7 @@ export function TopicDashboardView({ data }: { data: TopicDataset }) {
         charts={topic.charts}
         chartRows={chartRows}
         seriesStyles={seriesStyles}
+        topicSlug={topic.slug}
       />
     </div>
   );

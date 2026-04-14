@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { RegimeDetectorContent } from "@/components/regime/regime-detector-content";
+import { DASHBOARD_TOPICS } from "@/lib/fred/topics-config";
 import { getRegimeAnalysis } from "@/lib/regime/get-analysis";
 
 export const dynamic = "force-dynamic";
@@ -16,23 +15,11 @@ export default async function RegimeDetectorPage() {
   const data = await getRegimeAnalysis();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b] text-zinc-100">
-      <div className="border-b border-white/[0.08] bg-[#0a0a0b]/95">
-        <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-sm text-zinc-400 transition hover:text-white"
-          >
-            <ChevronLeft className="h-4 w-4" aria-hidden />
-            Dashboard
-          </Link>
-          <span className="text-zinc-700">|</span>
-          <Link href="/" className="text-sm text-zinc-400 hover:text-white">
-            Home
-          </Link>
-        </div>
-      </div>
-      <RegimeDetectorContent data={data} />
+    <div className="flex min-h-screen flex-col bg-[#0a0a0b] text-zinc-100 lg:flex-row">
+      <DashboardSidebar topics={DASHBOARD_TOPICS} />
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <RegimeDetectorContent data={data} />
+      </main>
     </div>
   );
 }
