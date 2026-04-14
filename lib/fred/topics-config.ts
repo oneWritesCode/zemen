@@ -80,14 +80,14 @@ export const DASHBOARD_TOPICS: TopicDefinition[] = [
       },
       {
         key: "gs2",
-        fredId: "GS2",
+        fredId: "DGS2",
         label: "2Y Treasury",
         color: "#fb923c",
         unit: "percent",
       },
       {
         key: "gs10",
-        fredId: "GS10",
+        fredId: "DGS10",
         label: "10Y Treasury",
         color: "#4ade80",
         unit: "percent",
@@ -236,6 +236,13 @@ export const DASHBOARD_TOPICS: TopicDefinition[] = [
     observationStart: "1995-01-01",
     series: [
       {
+        key: "rgdpGrowth",
+        fredId: "A191RL1Q225SBEA",
+        label: "Real GDP growth (annualized)",
+        color: "#fbbf24",
+        unit: "percent",
+      },
+      {
         key: "rgdp",
         fredId: "GDPC1",
         label: "Real GDP",
@@ -264,8 +271,13 @@ export const DASHBOARD_TOPICS: TopicDefinition[] = [
         seriesKeys: ["rgdpYoy"],
         span: "split",
       },
+      {
+        title: "Real GDP growth (annualized, QoQ)",
+        seriesKeys: ["rgdpGrowth"],
+        span: "full",
+      },
     ],
-    kpiKeys: ["rgdp", "rgdpYoy"],
+    kpiKeys: ["rgdpGrowth", "rgdpYoy", "rgdp"],
   },
   {
     slug: "housing",
@@ -276,7 +288,7 @@ export const DASHBOARD_TOPICS: TopicDefinition[] = [
     series: [
       {
         key: "cs",
-        fredId: "CSUSHPISA",
+        fredId: "CSUSHPINSA",
         label: "Case-Shiller national",
         color: "#60a5fa",
         unit: "index",
@@ -337,21 +349,22 @@ export const DASHBOARD_TOPICS: TopicDefinition[] = [
   {
     slug: "gold",
     label: "Gold",
-    description: "London PM gold fix (USD per troy ounce).",
+    description:
+      "Gold spot is not reliably available via FRED; this view uses 10Y real yields (a gold-sensitive proxy).",
     icon: "gold",
     observationStart: "1995-01-01",
     series: [
       {
         key: "gold",
-        fredId: "GOLDAMGBD228NLBM",
-        label: "Gold (USD/oz)",
+        fredId: "DFII10",
+        label: "10Y real yield (DFII10)",
         color: "#fbbf24",
-        unit: "usd",
+        unit: "percent",
       },
     ],
     charts: [
       {
-        title: "Gold price (month-end)",
+        title: "10Y real yield (month-end)",
         seriesKeys: ["gold"],
         span: "full",
       },

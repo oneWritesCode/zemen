@@ -43,7 +43,7 @@ type IntelligencePanelProps = {
 
 export function IntelligencePanel({ topicSlug, chartTitle, rows }: IntelligencePanelProps) {
   const content: IndicatorIntelligence | undefined = INTELLIGENCE_CONTENT[topicSlug];
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(0);
 
   const currentValue = useMemo(() => {

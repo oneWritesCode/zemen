@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 import type { TopicChartSpec } from "@/lib/fred/topics-config";
 import type { ChartRow } from "@/lib/fred/get-topic-dataset";
@@ -83,6 +84,8 @@ function ChartBlock({
   compare2008,
   compare2020,
   topicSlug,
+  onToggleHidden,
+  hidden,
 }: {
   spec: TopicChartSpec;
   rows: ChartRow[];
@@ -90,6 +93,8 @@ function ChartBlock({
   compare2008: boolean;
   compare2020: boolean;
   topicSlug: string;
+  onToggleHidden: () => void;
+  hidden: boolean;
 }) {
   const right = new Set(spec.useRightAxis ?? []);
   const leftKeys = spec.seriesKeys.filter((k) => !right.has(k));
@@ -110,8 +115,18 @@ function ChartBlock({
     rangesOverlapMs(tMin, tMax, T_2020[0]!, T_2020[1]!);
 
   return (
-    <div className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 pb-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] sm:p-5">
-      <h3 className="mb-4 font-serif text-lg font-semibold tracking-tight text-white">
+    <div className="relative min-w-0 rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 pb-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] sm:p-5">
+      <button
+        type="button"
+        onClick={onToggleHidden}
+        className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-400 transition hover:border-white/20 hover:text-zinc-100"
+        aria-label={hidden ? "Show chart" : "Hide chart"}
+        title={hidden ? "Show chart" : "Hide chart"}
+      >
+        {hidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+      </button>
+
+      <h3 className="mb-4 pr-10 font-serif text-lg font-semibold tracking-tight text-white">
         {spec.title}
       </h3>
       <div className="h-[280px] min-h-[280px] w-full min-w-0">
@@ -243,6 +258,8 @@ function ChartRangeToolbar({
   compare2020,
   onCompare2008,
   onCompare2020,
+  hiddenTitles,
+  onShowHidden,
 }: {
   sorted: ChartRow[];
   startIdx: number;
@@ -253,6 +270,8 @@ function ChartRangeToolbar({
   compare2020: boolean;
   onCompare2008: (v: boolean) => void;
   onCompare2020: (v: boolean) => void;
+  hiddenTitles: string[];
+  onShowHidden: (title: string) => void;
 }) {
   const n = sorted.length;
   const maxI = Math.max(0, n - 1);
@@ -306,6 +325,27 @@ function ChartRangeToolbar({
           </button>
         ))}
       </div>
+
+      {hiddenTitles.length > 0 ? (
+        <div className="mt-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+            Hidden charts
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {hiddenTitles.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => onShowHidden(t)}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-[#ffcc00]/40 hover:text-white"
+              >
+                <Eye className="h-3.5 w-3.5 text-zinc-400" />
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <div>
@@ -404,21 +444,20 @@ export function TopicCharts({
   const [endIdx, setEndIdx] = useState(maxI);
   const [compare2008, setCompare2008] = useState(false);
   const [compare2020, setCompare2020] = useState(false);
-
-  useEffect(() => {
-    setStartIdx(0);
-    setEndIdx(Math.max(0, sorted.length - 1));
-  }, [chartRows, sorted.length]);
+  const [hidden, setHidden] = useState<Set<string>>(() => new Set());
 
   const filteredRows = useMemo(() => {
     if (sorted.length === 0) return [];
-    const a = Math.min(startIdx, endIdx);
-    const b = Math.max(startIdx, endIdx);
+    const safeStart = Math.min(startIdx, maxI);
+    const safeEnd = Math.min(endIdx, maxI);
+    const a = Math.min(safeStart, safeEnd);
+    const b = Math.max(safeStart, safeEnd);
     return sorted.slice(a, b + 1);
-  }, [sorted, startIdx, endIdx]);
+  }, [sorted, startIdx, endIdx, maxI]);
 
   const splitCharts = charts.filter((c) => c.span === "split");
   const fullCharts = charts.filter((c) => c.span === "full");
+  const hiddenTitles = useMemo(() => [...hidden.values()].sort(), [hidden]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -432,34 +471,73 @@ export function TopicCharts({
         compare2020={compare2020}
         onCompare2008={setCompare2008}
         onCompare2020={setCompare2020}
+        hiddenTitles={hiddenTitles}
+        onShowHidden={(title) =>
+          setHidden((prev) => {
+            const next = new Set(prev);
+            next.delete(title);
+            return next;
+          })
+        }
       />
 
       {splitCharts.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {splitCharts.map((spec) => (
-            <ChartBlock
-              key={spec.title}
-              spec={spec}
-              rows={filteredRows}
-              seriesStyles={seriesStyles}
-              compare2008={compare2008}
-              compare2020={compare2020}
-              topicSlug={topicSlug}
-            />
-          ))}
+          {splitCharts
+            .filter((spec) => !hidden.has(spec.title))
+            .map((spec) => (
+              <div
+                key={spec.title}
+                className="min-w-0 animate-in fade-in zoom-in-95 duration-200"
+              >
+                <ChartBlock
+                  spec={spec}
+                  rows={filteredRows}
+                  seriesStyles={seriesStyles}
+                  compare2008={compare2008}
+                  compare2020={compare2020}
+                  topicSlug={topicSlug}
+                  hidden={false}
+                  onToggleHidden={() =>
+                    setHidden((prev) => {
+                      const next = new Set(prev);
+                      next.add(spec.title);
+                      return next;
+                    })
+                  }
+                />
+              </div>
+            ))}
         </div>
       ) : null}
-      {fullCharts.map((spec) => (
-        <ChartBlock
-          key={spec.title}
-          spec={spec}
-          rows={filteredRows}
-          seriesStyles={seriesStyles}
-          compare2008={compare2008}
-          compare2020={compare2020}
-          topicSlug={topicSlug}
-        />
-      ))}
+
+      <div className="flex flex-col gap-6">
+        {fullCharts
+          .filter((spec) => !hidden.has(spec.title))
+          .map((spec) => (
+            <div
+              key={spec.title}
+              className="min-w-0 animate-in fade-in zoom-in-95 duration-200"
+            >
+              <ChartBlock
+                spec={spec}
+                rows={filteredRows}
+                seriesStyles={seriesStyles}
+                compare2008={compare2008}
+                compare2020={compare2020}
+                topicSlug={topicSlug}
+                hidden={false}
+                onToggleHidden={() =>
+                  setHidden((prev) => {
+                    const next = new Set(prev);
+                    next.add(spec.title);
+                    return next;
+                  })
+                }
+              />
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

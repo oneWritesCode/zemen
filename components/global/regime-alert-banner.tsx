@@ -11,16 +11,26 @@ type RegimeStatus = {
   lastTransitionYear: number | null;
 };
 
-export function RegimeAlertBanner() {
+type RegimeAlertBannerProps = {
+  variant?: "sticky" | "inline";
+};
+
+export function RegimeAlertBanner({ variant = "sticky" }: RegimeAlertBannerProps) {
   const [status, setStatus] = useState<RegimeStatus | null>(null);
-  const [hidden, setHidden] = useState(false);
+  const [hidden, setHidden] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.sessionStorage.getItem("zemen-regime-banner-hidden") === "1";
+  });
+  const isSticky = variant === "sticky";
 
   useEffect(() => {
-    const dismissed = window.sessionStorage.getItem("zemen-regime-banner-hidden");
-    if (dismissed === "1") {
-      setHidden(true);
-      return;
+    if (isSticky) {
+      document.documentElement.style.setProperty(
+        "--regime-banner-offset",
+        hidden ? "0px" : "40px",
+      );
     }
+    if (hidden) return;
     const load = async () => {
       try {
         const res = await fetch("/api/regime/status", { cache: "no-store" });
@@ -32,7 +42,7 @@ export function RegimeAlertBanner() {
       }
     };
     void load();
-  }, []);
+  }, [hidden, isSticky]);
 
   if (hidden) return null;
 
@@ -40,41 +50,53 @@ export function RegimeAlertBanner() {
   const text = !status
     ? "Loading regime status..."
     : confidence > 70
-      ? `Regime stable: ${status.regime} — Last updated ${status.updatedAt}`
+      ? `Regime stable: ${status.regime} — ${status.updatedAt}`
       : confidence >= 50
-        ? "⚠️ Regime signal weakening — Some indicators are shifting. Watch closely."
-        : `🔴 Regime transition detected — Signals are mixed. A shift may be coming. Last transition like this: ${status.lastTransitionYear ?? "N/A"}`;
+        ? "Regime signal weakening — indicators shifting"
+        : `Regime transition detected — signals are mixed`;
 
-  const tone = !status
-    ? "bg-zinc-800 text-zinc-100"
-    : confidence > 70
-      ? "bg-emerald-600/90 text-emerald-50"
-      : confidence >= 50
-        ? "bg-yellow-500/90 text-black"
-        : "bg-orange-500/90 text-black";
+  const dismiss = () => {
+    setHidden(true);
+    window.sessionStorage.setItem("zemen-regime-banner-hidden", "1");
+  };
+
+  if (isSticky) {
+    return (
+      <div className="fixed top-0 z-[90] w-full border-b border-white/[0.06] bg-[#111113]/90 backdrop-blur-md">
+        <div className="mx-auto flex h-10 max-w-7xl items-center gap-2 px-3">
+          <Link href="/regime-detector" className="min-w-0 flex-1 truncate text-center text-xs text-zinc-400 hover:text-zinc-200 transition">
+            {text}
+          </Link>
+          <button
+            type="button"
+            onClick={dismiss}
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-zinc-500 hover:text-zinc-300 transition"
+            aria-label="Hide regime alert banner"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`fixed w-full top-0 z-[90] ${tone}`}>
-      <div className="mx-auto flex h-12 max-w-7xl items-center gap-2 px-3">
-        <Link
-          href="/regime-detector"
-          className="flex min-w-0 flex-1 items-center justify-center text-center text-sm font-semibold"
-        >
-          <span className="truncate">{text}</span>
-        </Link>
-        <button
-          type="button"
-          onClick={() => {
-            setHidden(true);
-            window.sessionStorage.setItem("zemen-regime-banner-hidden", "1");
-          }}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-black/20 bg-black/10 hover:bg-black/20"
-          aria-label="Hide regime alert banner"
-        >
-          <X className="h-4 w-4" />
-        </button>
+    <div className="mt-8 flex w-full justify-center px-4">
+      <div className="w-full max-w-2xl overflow-hidden rounded-xl border border-white/[0.06] bg-[#111113]">
+        <div className="flex h-10 items-center gap-2 px-4">
+          <Link href="/regime-detector" className="min-w-0 flex-1 truncate text-center text-xs text-zinc-400 hover:text-zinc-200 transition">
+            {text}
+          </Link>
+          <button
+            type="button"
+            onClick={dismiss}
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-zinc-500 hover:text-zinc-300 transition"
+            aria-label="Hide regime alert banner"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-

@@ -1261,7 +1261,7 @@ export type RangeBand = {
   max: number;
 };
 
-export type FactorCard = {
+export type TopicFactorCard = {
   name: string;
   impact: "UP" | "DOWN" | "UP/DOWN";
   explanation: string;
@@ -1276,7 +1276,7 @@ export type PlayerCard = {
   example: string;
 };
 
-export type TimelineEvent = {
+export type TopicTimelineEvent = {
   year: string;
   event: string;
   move: string;
@@ -1293,9 +1293,9 @@ export type TopicIntelligence = {
   low: string[];
   rising: string[];
   falling: string[];
-  factors: FactorCard[];
+  factors: TopicFactorCard[];
   players: PlayerCard[];
-  timeline: TimelineEvent[];
+  timeline: TopicTimelineEvent[];
   news: string[];
 };
 

@@ -1,213 +1,178 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Layers,
-  AlertTriangle,
-  Clock,
+  ArrowRight,
+  Activity,
+  TrendingUp,
+  ShieldAlert,
+  CloudRain,
+  Sun,
   BarChart3,
   Store,
   GraduationCap,
   Brain,
-  ArrowRight,
-  TrendingUp,
-  Activity,
-  ShieldAlert,
-  CloudRain,
-  Sun,
-  TrendingDown,
+  Layers,
+  AlertTriangle,
+  Clock,
+  Zap,
+  Globe,
   LineChart,
   PieChart,
-  DollarSign,
+  Landmark,
+  Gauge,
+  Eye,
 } from "lucide-react";
 
 import { getRegimeAnalysis } from "@/lib/regime/get-analysis";
 import { REGIME_BY_ID } from "@/lib/regime/types";
-import { FloatingMacroBackground } from "@/components/site/floating-macro-background";
-import { FloatingElementsBackground } from "@/components/site/floating-elements-background";
+import { RegimeAlertBanner } from "@/components/global/regime-alert-banner";
 import { PresentationShell } from "@/components/site/presentation-shell";
 
-const WATCH_BY_REGIME: Record<string, { label: string; reason: string; href: string }[]> = {
-  goldilocks: [
-    {
-      label: "Inflation trend",
-      reason: "If inflation re-accelerates, policy may stay tighter.",
-      href: "/dashboard/inflation",
-    },
-    {
-      label: "Unemployment",
-      reason: "A sharp rise would suggest growth is cooling too fast.",
-      href: "/dashboard/unemployment",
-    },
-    {
-      label: "Credit spreads",
-      reason: "Wider spreads often warn that risk appetite is fading.",
-      href: "/dashboard/credit-spreads",
-    },
-  ],
-  recovery: [
-    {
-      label: "GDP momentum",
-      reason: "A stronger expansion confirms recovery is broadening.",
-      href: "/dashboard/gdp-growth",
-    },
-    {
-      label: "Consumer sentiment",
-      reason: "Confidence helps sustain demand and hiring.",
-      href: "/dashboard/consumer-sentiment",
-    },
-    {
-      label: "Interest rates",
-      reason: "Faster tightening can slow the rebound.",
-      href: "/dashboard/interest-rates",
-    },
-  ],
-  overheating: [
-    {
-      label: "CPI and inflation expectations",
-      reason: "Persistent heat can force tighter policy.",
-      href: "/dashboard/inflation",
-    },
-    {
-      label: "Labor market tightness",
-      reason: "Too-tight labor can sustain wage pressure.",
-      href: "/dashboard/unemployment",
-    },
-    {
-      label: "Policy rate path",
-      reason: "More hikes can shift the regime toward slowdown.",
-      href: "/dashboard/interest-rates",
-    },
-  ],
-  stagflation: [
-    {
-      label: "Real GDP trend",
-      reason: "Further growth weakness deepens stagflation risk.",
-      href: "/dashboard/gdp-growth",
-    },
-    {
-      label: "Inflation persistence",
-      reason: "Sticky inflation limits policy flexibility.",
-      href: "/dashboard/inflation",
-    },
-    {
-      label: "Household confidence",
-      reason: "Falling confidence can weaken demand quickly.",
-      href: "/dashboard/consumer-sentiment",
-    },
-  ],
-  recession: [
-    {
-      label: "Unemployment acceleration",
-      reason: "Rising layoffs confirm recession intensity.",
-      href: "/dashboard/unemployment",
-    },
-    {
-      label: "Credit spreads",
-      reason: "Rapid widening signals financial stress.",
-      href: "/dashboard/credit-spreads",
-    },
-    {
-      label: "Policy easing pace",
-      reason: "Faster cuts can support eventual stabilization.",
-      href: "/dashboard/interest-rates",
-    },
-  ],
-};
+/* ── Regime cards ── */
+const regimeCards = [
+  {
+    name: "Goldilocks",
+    icon: Sun,
+    color: "text-emerald-400",
+    border: "border-emerald-500/20",
+    bg: "bg-emerald-500/[0.06]",
+    text: "Solid growth, tame inflation, healthy labour market.",
+  },
+  {
+    name: "Recovery",
+    icon: TrendingUp,
+    color: "text-blue-400",
+    border: "border-blue-500/20",
+    bg: "bg-blue-500/[0.06]",
+    text: "Rebound in growth and employment after a downturn.",
+  },
+  {
+    name: "Overheating",
+    icon: Activity,
+    color: "text-orange-400",
+    border: "border-orange-500/20",
+    bg: "bg-orange-500/[0.06]",
+    text: "Tight labour, strong demand, building price pressure.",
+  },
+  {
+    name: "Stagflation",
+    icon: ShieldAlert,
+    color: "text-red-400",
+    border: "border-red-500/20",
+    bg: "bg-red-500/[0.06]",
+    text: "Elevated inflation with weak growth or labour slack.",
+  },
+  {
+    name: "Recession",
+    icon: CloudRain,
+    color: "text-red-300",
+    border: "border-red-400/20",
+    bg: "bg-red-400/[0.06]",
+    text: "Rising joblessness, wide spreads, contracting activity.",
+  },
+];
 
 const painPoints = [
   {
-    icon: <Layers className="h-8 w-8 text-[#FFD000]" />,
+    icon: Layers,
     title: "It's everywhere",
     body: "Inflation here, unemployment there, GDP somewhere else. No single place tells the full story.",
   },
   {
-    icon: <AlertTriangle className="h-8 w-8 text-[#FFD000]" />,
+    icon: AlertTriangle,
     title: "It's confusing",
-    body: "Government websites show raw numbers with no context. What does 4.2% unemployment actually mean?",
+    body: "Raw numbers with no context. What does 4.2% unemployment actually mean for you?",
   },
   {
-    icon: <Clock className="h-8 w-8 text-[#FFD000]" />,
-    title: "By the time you understand it, it's too late",
+    icon: Clock,
+    title: "It's always too late",
     body: "Most people only learn what the economy was doing after it already affected them.",
   },
 ];
 
-const regimes = [
+const features = [
   {
-    name: "Goldilocks",
-    icon: <Sun className="mb-3 h-6 w-6" />,
-    color: "border-[#22c55e]/60 bg-[#22c55e]/10 text-[#86efac]",
-    text: "Everything is just right. Growth is healthy, inflation is low.",
+    icon: Gauge,
+    title: "Regime Detection",
+    body: "K-means clustering on live FRED data identifies the current economic phase automatically.",
   },
   {
-    name: "Recovery",
-    icon: <TrendingUp className="mb-3 h-6 w-6" />,
-    color: "border-[#3b82f6]/60 bg-[#3b82f6]/10 text-[#93c5fd]",
-    text: "Coming out of a downturn. Things are getting better slowly.",
+    icon: LineChart,
+    title: "10 Indicator Dashboards",
+    body: "Rates, inflation, unemployment, GDP, housing, credit, gold, equities, trade, and sentiment.",
   },
   {
-    name: "Overheating",
-    icon: <Activity className="mb-3 h-6 w-6" />,
-    color: "border-[#f97316]/60 bg-[#f97316]/10 text-[#fdba74]",
-    text: "Economy growing too fast. Inflation risk is rising.",
+    icon: Eye,
+    title: "Weekly Briefing",
+    body: "What happened, what it means, and what to watch — in plain English.",
   },
   {
-    name: "Stagflation",
-    icon: <ShieldAlert className="mb-3 h-6 w-6" />,
-    color: "border-[#ef4444]/60 bg-[#ef4444]/10 text-[#fca5a5]",
-    text: "The worst combo. High inflation + low growth.",
+    icon: Zap,
+    title: "AI Chat",
+    body: "Ask anything about the economy. Get clear, contextual answers powered by live data.",
   },
   {
-    name: "Recession",
-    icon: <CloudRain className="mb-3 h-6 w-6" />,
-    color: "border-[#7f1d1d]/60 bg-[#7f1d1d]/10 text-[#fecaca]",
-    text: "Economy shrinking. Jobs being lost.",
+    icon: Globe,
+    title: "Live FRED Data",
+    body: "Pulling from 800,000+ series at the Federal Reserve Economic Data API.",
+  },
+  {
+    icon: PieChart,
+    title: "Macro Health Score",
+    body: "A single 0–100 composite score from rates, inflation, jobs, GDP, and credit.",
   },
 ];
 
 const personas = [
   {
-    icon: <BarChart3 className="h-8 w-8 text-[#FFD000]" />,
+    icon: BarChart3,
     title: "Retail Investor",
-    text: "Wants to know if now is a good time to buy or hold",
+    text: "Wants to know if now is a good time to buy or hold.",
   },
   {
-    icon: <Store className="h-8 w-8 text-[#FFD000]" />,
+    icon: Store,
     title: "Small Business Owner",
-    text: "Deciding whether to hire, expand, or wait",
+    text: "Deciding whether to hire, expand, or wait.",
   },
   {
-    icon: <GraduationCap className="h-8 w-8 text-[#FFD000]" />,
+    icon: GraduationCap,
     title: "Student",
-    text: "Learning macroeconomics with real live data",
+    text: "Learning macroeconomics with real live data.",
   },
   {
-    icon: <Brain className="h-8 w-8 text-[#FFD000]" />,
+    icon: Brain,
     title: "Financial Analyst",
-    text: "Needs a fast macro snapshot without 10 browser tabs",
+    text: "Needs a fast macro snapshot without 10 browser tabs.",
   },
 ];
 
-const painPointsTokens = [
-  { content: <TrendingDown className="h-8 w-8 text-red-500/10" />, className: "top-[15%] left-[5%] float-slow" },
-  { content: <ShieldAlert className="h-12 w-12 text-orange-500/10" />, className: "top-[60%] right-[8%] float-medium" },
-  { content: "DATA OVERLOAD", className: "text-zinc-500/5 font-black text-4xl top-[30%] right-[15%] float-slow" },
-  { content: "NOISE", className: "text-zinc-500/5 font-bold text-6xl top-[70%] left-[10%] float-fast" },
-];
-
-const regimesTokens = [
-  { content: <LineChart className="h-16 w-16 text-[#FFD000]/10" />, className: "top-[20%] left-[8%] float-medium" },
-  { content: <PieChart className="h-20 w-20 text-[#3b82f6]/10" />, className: "bottom-[15%] right-[5%] float-slow" },
-  { content: "CYCLE", className: "text-[#22c55e]/5 font-black text-7xl top-[10%] right-[20%] float-slow" },
-  { content: "PHASE", className: "text-[#f97316]/5 font-bold text-5xl bottom-[25%] left-[12%] float-fast" },
-];
-
-const personasTokens = [
-  { content: <DollarSign className="h-10 w-10 text-[#FFD000]/10" />, className: "top-[25%] left-[10%] float-slow" },
-  { content: "ROI", className: "text-zinc-500/10 font-black text-6xl top-[15%] right-[10%] float-medium" },
-  { content: "GROWTH", className: "text-[#FFD000]/5 font-bold text-5xl bottom-[15%] left-[20%] float-fast" },
-  { content: <BarChart3 className="h-14 w-14 text-white/5" />, className: "bottom-[20%] right-[15%] float-slow" },
-];
+const WATCH_BY_REGIME: Record<string, { label: string; reason: string; href: string }[]> = {
+  goldilocks: [
+    { label: "Inflation trend", reason: "If inflation re-accelerates, policy may stay tighter.", href: "/dashboard/inflation" },
+    { label: "Unemployment", reason: "A sharp rise would suggest growth is cooling too fast.", href: "/dashboard/unemployment" },
+    { label: "Credit spreads", reason: "Wider spreads often warn that risk appetite is fading.", href: "/dashboard/credit-spreads" },
+  ],
+  recovery: [
+    { label: "GDP momentum", reason: "A stronger expansion confirms recovery is broadening.", href: "/dashboard/gdp-growth" },
+    { label: "Consumer sentiment", reason: "Confidence helps sustain demand and hiring.", href: "/dashboard/consumer-sentiment" },
+    { label: "Interest rates", reason: "Faster tightening can slow the rebound.", href: "/dashboard/interest-rates" },
+  ],
+  overheating: [
+    { label: "CPI and inflation expectations", reason: "Persistent heat can force tighter policy.", href: "/dashboard/inflation" },
+    { label: "Labor market tightness", reason: "Too-tight labor can sustain wage pressure.", href: "/dashboard/unemployment" },
+    { label: "Policy rate path", reason: "More hikes can shift the regime toward slowdown.", href: "/dashboard/interest-rates" },
+  ],
+  stagflation: [
+    { label: "Real GDP trend", reason: "Further growth weakness deepens stagflation risk.", href: "/dashboard/gdp-growth" },
+    { label: "Inflation persistence", reason: "Sticky inflation limits policy flexibility.", href: "/dashboard/inflation" },
+    { label: "Household confidence", reason: "Falling confidence can weaken demand quickly.", href: "/dashboard/consumer-sentiment" },
+  ],
+  recession: [
+    { label: "Unemployment acceleration", reason: "Rising layoffs confirm recession intensity.", href: "/dashboard/unemployment" },
+    { label: "Credit spreads", reason: "Rapid widening signals financial stress.", href: "/dashboard/credit-spreads" },
+    { label: "Policy easing pace", reason: "Faster cuts can support eventual stabilization.", href: "/dashboard/interest-rates" },
+  ],
+};
 
 export default async function HomePage() {
   const analysis = await getRegimeAnalysis();
@@ -215,233 +180,314 @@ export default async function HomePage() {
   const meta = REGIME_BY_ID[current.regime];
   const watch = WATCH_BY_REGIME[current.regime] ?? [];
 
-  const transitions = analysis.monthly.filter(
-    (m, idx, arr) =>
-      idx > 0 && arr[idx - 1]?.regime !== m.regime && m.regime === current.regime,
-  );
-  const lastThree = transitions.slice(-3).reverse();
-
   return (
     <PresentationShell>
-      {/* ── Hero ── */}
-      <section className="relative min-h-[90vh] overflow-hidden flex items-center">
+      {/* ═══════════ HERO ═══════════ */}
+      <section className="relative overflow-hidden">
+        {/* Hero background image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/hero-bg.png"
-            alt="Macro Economic Background"
+            alt=""
             fill
-            className="object-cover opacity-40 mix-blend-lighten"
+            className="object-cover opacity-30"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/20 via-[#0a0a0a]/60 to-[#0a0a0a]" />
-        </div>
-        <FloatingMacroBackground />
-        <div className="section-reveal relative z-10 mx-auto min-w-6xl max-w-12xl px-4 sm:px-2 sm:py-32">
-          <p className="text-sm uppercase font-bold tracking-[0.4em] text-[#FFD000]">Macro Intelligence</p>
-          <h1 className="mt-4 text-6xl font-black tracking-[-0.02em] text-zinc-100 sm:text-8xl">ZEMEN</h1>
-          <p className="mt-8 max-w-3xl text-3xl font-semibold leading-tight text-zinc-100 sm:text-4xl">
-            The economy explained. <span className="text-[#FFD000]">In one answer.</span>
-          </p>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300">
-            Zemen watches 10+ economic indicators 24/7 and tells you exactly what the economy is doing
-            right now — and what history says happens next.
-          </p>
-          <Link
-            href="/dashboard"
-            className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#FFD000] px-8 py-4 text-lg font-bold text-black transition hover:bg-[#ffdc4d] hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,208,0,0.3)] capitalize"
-          >
-            go to dashboard <ArrowRight className="h-5 w-5" />
-          </Link>
-        </div>
-      </section>
-
-      {/* ── Live Regime ── */}
-      <section className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <p className="text-center text-xs uppercase tracking-[0.2em] text-zinc-500">
-          ZEMEN Mission Control
-        </p>
-        <div className="mt-5 rounded-3xl border border-white/10 bg-[#111111] p-8 text-center sm:p-12">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-zinc-300">
-            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#FFD000]" />
-            LIVE
-          </div>
-          <h2
-            className="mt-6 text-5xl font-black sm:text-7xl"
-            style={{ color: meta.color }}
-          >
-            {meta.label}
-          </h2>
-          <p className="mt-3 text-xl text-zinc-300">
-            Confidence: {current.confidencePct.toFixed(1)}%
-          </p>
-          <p className="mx-auto mt-6 max-w-2xl text-2xl font-semibold leading-tight text-white">
-            Right now the economy is in {meta.label}. {meta.description}
-          </p>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#09090b]/40 via-[#09090b]/70 to-[#09090b]" />
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-white/10 bg-[#111111] p-6">
-            <h3 className="text-lg font-semibold text-[#FFD000]">
-              The last 3 times we were here...
-            </h3>
-            <div className="mt-4 space-y-3">
-              {lastThree.length === 0 ? (
-                <p className="text-sm text-zinc-400">
-                  No prior transitions into this regime were detected.
-                </p>
-              ) : (
-                lastThree.map((entry) => (
-                  <div
-                    key={entry.period}
-                    className="rounded-xl border border-white/10 bg-black/25 p-3"
-                  >
-                    <p className="font-semibold text-zinc-100">{entry.period}</p>
-                    <p className="text-sm text-zinc-400">
-                      Regime switched into {meta.label}. Check regime playbook for what happened next.
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
+        {/* Subtle top glow */}
+        <div className="hero-glow absolute inset-0 pointer-events-none z-[1]" />
+
+        <div className="relative z-10 mx-auto max-w-4xl px-4 pt-28 pb-12 sm:pt-36 sm:pb-16 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 text-xs text-zinc-400 mb-8 backdrop-blur-sm">
+            <Landmark className="h-3.5 w-3.5" />
+            Macro Intelligence Platform
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#111111] p-6">
-            <h3 className="text-lg font-semibold text-[#FFD000]">What to watch</h3>
-            <div className="mt-4 space-y-3">
-              {watch.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="block rounded-xl border border-white/10 bg-black/25 p-3 transition hover:border-[#FFD000]/50"
-                >
-                  <p className="font-semibold text-zinc-100">{item.label}</p>
-                  <p className="text-sm text-zinc-400">{item.reason}</p>
-                </Link>
-              ))}
-            </div>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-zinc-100 leading-[1.1]">
+            The economy explained.
+            <br />
+            <span className="text-zinc-400">In one answer.</span>
+          </h1>
+
+          <p className="mt-6 text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+            Zemen watches 10+ economic indicators and tells you exactly what the economy
+            is doing right now — and what history says happens next.
+          </p>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 rounded-lg bg-zinc-100 px-5 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-white"
+            >
+              Open Dashboard <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/how-it-works"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-white/[0.06] backdrop-blur-sm"
+            >
+              How it works
+            </Link>
           </div>
+
+          <RegimeAlertBanner variant="inline" />
         </div>
 
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/dashboard/interest-rates"
-            className="rounded-full bg-[#FFD000] px-5 py-2.5 font-semibold text-black"
-          >
-            Open Dashboard
-          </Link>
-          <Link
-            href="/briefing"
-            className="rounded-full border border-white/15 px-5 py-2.5 text-zinc-200 hover:border-[#FFD000]/50"
-          >
-            Weekly Briefing
-          </Link>
-          <Link
-            href="/regime-detector"
-            className="rounded-full border border-white/15 px-5 py-2.5 text-zinc-200 hover:border-[#FFD000]/50"
-          >
-            Regime Detector
-          </Link>
-        </div>
-      </section>
-
-      {/* ── Pain Points ── */}
-      <section className="relative overflow-hidden section-reveal mx-auto px-4 py-24 sm:px-6">
-        <FloatingElementsBackground elements={painPointsTokens} />
-        <div className="relative z-10 max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-zinc-100 sm:text-5xl">The problem with economic data</h2>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {painPoints.map((item) => (
-              <article
-                key={item.title}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-8 transition hover:bg-white/[0.08] hover:border-[#FFD000]/30 backdrop-blur-sm"
-              >
-                <div className="mb-6">{item.icon}</div>
-                <h3 className="text-2xl font-bold text-zinc-100 group-hover:text-[#FFD000] transition">{item.title}</h3>
-                <p className="mt-3 leading-relaxed text-zinc-300">{item.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Regime Explainer ── */}
-      <section className="relative overflow-hidden section-reveal mx-auto px-4 py-24 sm:px-6">
-        <FloatingElementsBackground elements={regimesTokens} />
-        <div className="relative z-10 max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-zinc-100 sm:text-5xl">Zemen changes that</h2>
-              <div className="mt-10 rounded-3xl border border-[#FFD000]/30 bg-[#FFD000]/10 p-8 text-xl leading-relaxed text-zinc-100 backdrop-blur-md">
-                Think of Zemen like a weather app — but for the economy. A weather app does not show you
-                temperature, humidity, and pressure separately and leave you guessing. It says:{" "}
-                <span className="text-[#FFD000] font-bold">rainy tomorrow, bring an umbrella</span>. Zemen
-                does the same for the economy. It says: we are in Stagflation — here is what that means for you.
-              </div>
-            </div>
-            <div className="relative aspect-square rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+        {/* Dashboard preview screenshot below hero */}
+        <div className="relative z-10 mx-auto max-w-5xl px-4 pb-24">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#111113]/60 p-2 shadow-2xl backdrop-blur-sm overflow-hidden">
+            <div className="relative aspect-[16/9] rounded-xl overflow-hidden">
               <Image
-                src="/regime-viz.png"
-                alt="Zemen Regime Detector Concept"
+                src="/dashboard-preview.png"
+                alt="Zemen Dashboard Preview"
                 fill
                 className="object-cover"
               />
             </div>
           </div>
-          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-5 relative z-10">
-            {regimes.map((regime) => (
-              <article
-                key={regime.name}
-                className={`rounded-3xl border p-6 flex flex-col transition hover:scale-105 backdrop-blur-sm ${regime.color}`}
+          {/* Glow under the screenshot */}
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 h-24 w-3/4 bg-[radial-gradient(ellipse_at_center,rgba(255,208,0,0.06),transparent_70%)] blur-2xl pointer-events-none" />
+        </div>
+      </section>
+
+      {/* ═══════════ LIVE REGIME STATUS ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="rounded-2xl border border-white/[0.06] bg-[#111113] p-8 sm:p-12 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-zinc-400">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 pulse-soft" />
+            LIVE
+          </div>
+
+          <h2
+            className="mt-6 text-4xl sm:text-6xl font-bold tracking-tight"
+            style={{ color: meta.color }}
+          >
+            {meta.label}
+          </h2>
+
+          <p className="mt-3 text-lg text-zinc-400">
+            Confidence: {current.confidencePct.toFixed(1)}%
+          </p>
+
+          <p className="mx-auto mt-5 max-w-xl text-base text-zinc-300 leading-relaxed">
+            {meta.description}
+          </p>
+
+          {/* What to watch */}
+          <div className="mt-10 grid gap-3 sm:grid-cols-3 text-left max-w-3xl mx-auto">
+            {watch.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition hover:border-white/[0.12] hover:bg-white/[0.04] group"
               >
-                {regime.icon}
-                <h3 className="text-xl font-bold">{regime.name}</h3>
-                <p className="mt-3 text-sm leading-relaxed opacity-90">{regime.text}</p>
-              </article>
+                <p className="text-sm font-medium text-zinc-200 group-hover:text-zinc-100">{item.label}</p>
+                <p className="mt-1 text-xs text-zinc-500 leading-relaxed">{item.reason}</p>
+              </Link>
             ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/dashboard"
+              className="rounded-lg bg-zinc-100 px-5 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-white"
+            >
+              Open Dashboard
+            </Link>
+            <Link
+              href="/briefing"
+              className="rounded-lg border border-white/[0.1] px-5 py-2 text-sm text-zinc-300 transition hover:bg-white/[0.04]"
+            >
+              Weekly Briefing
+            </Link>
+            <Link
+              href="/regime-detector"
+              className="rounded-lg border border-white/[0.1] px-5 py-2 text-sm text-zinc-300 transition hover:bg-white/[0.04]"
+            >
+              Regime Detector
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Personas ── */}
-      <section className="relative overflow-hidden section-reveal mx-auto px-4 py-24 sm:px-6">
-        <FloatingElementsBackground elements={personasTokens} />
-        <div className="relative z-10 max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-zinc-100 sm:text-5xl">Built for anyone with money at stake</h2>
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {personas.map((persona) => (
-              <article
-                key={persona.title}
-                className="rounded-2xl border border-white/10 bg-white/5 p-7 hover:border-[#FFD000]/50 transition backdrop-blur-sm"
-              >
-                <div className="mb-5">{persona.icon}</div>
-                <h3 className="text-2xl font-bold text-zinc-100">{persona.title}</h3>
-                <p className="mt-3 text-zinc-300 leading-relaxed text-sm">{persona.text}</p>
-              </article>
-            ))}
+      {/* ═══════════ THE PROBLEM ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="text-center mb-12">
+          <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">The Problem</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">
+            Economic data is broken
+          </h2>
+          <p className="mt-3 text-base text-zinc-500 max-w-xl mx-auto">
+            Scattered across dozens of sources, buried in jargon, and always a step behind.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {painPoints.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl border border-white/[0.06] bg-[#111113] p-6 card-hover"
+            >
+              <item.icon className="h-5 w-5 text-zinc-400 mb-4" />
+              <h3 className="text-base font-semibold text-zinc-100">{item.title}</h3>
+              <p className="mt-2 text-sm text-zinc-500 leading-relaxed">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════ THE SOLUTION — with regime-viz image ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="rounded-2xl border border-white/[0.06] bg-[#111113] overflow-hidden">
+          <div className="grid lg:grid-cols-2">
+            {/* Text */}
+            <div className="p-8 sm:p-12 flex flex-col justify-center">
+              <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">The Solution</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">
+                Zemen changes that
+              </h2>
+              <p className="mt-4 text-base text-zinc-400 leading-relaxed">
+                Think of Zemen like a weather app — but for the economy. A weather app does not show you
+                temperature, humidity, and pressure separately. It says:{" "}
+                <span className="text-zinc-200 font-medium">rainy tomorrow, bring an umbrella</span>.
+              </p>
+              <p className="mt-3 text-base text-zinc-400 leading-relaxed">
+                Zemen reads 10+ live indicators, runs machine learning, and tells you:{" "}
+                <span className="text-zinc-200 font-medium">we are in {meta.label}</span> — here is what
+                that means for you.
+              </p>
+              <div className="mt-6">
+                <Link
+                  href="/regime-detector"
+                  className="inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-zinc-100 transition"
+                >
+                  See the regime detector <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Image */}
+            <div className="relative min-h-[300px] lg:min-h-0">
+              <Image
+                src="/regime-viz.png"
+                alt="Zemen Regime Detector Visualization"
+                fill
+                className="object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#111113] via-transparent to-transparent lg:block hidden" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#111113] via-transparent to-transparent lg:hidden" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── About ── */}
-      <section className="section-reveal mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-12 relative overflow-hidden backdrop-blur-md">
-          <div className="absolute inset-0 bg-[#FFD000]/5" />
-          <div className="absolute top-0 right-0 p-8 opacity-20 float-slow">
-            <TrendingUp className="h-32 w-32 text-[#FFD000]" />
+      {/* ═══════════ THE 5 REGIMES ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="text-center mb-12">
+          <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">Economic Phases</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">
+            Five economic regimes
+          </h2>
+          <p className="mt-3 text-base text-zinc-500 max-w-xl mx-auto">
+            Every month in modern history fits into one of these five phases.
+          </p>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {regimeCards.map((regime) => (
+            <div
+              key={regime.name}
+              className={`rounded-2xl border ${regime.border} ${regime.bg} p-5 card-hover`}
+            >
+              <regime.icon className={`h-5 w-5 ${regime.color} mb-3`} />
+              <h3 className={`text-base font-semibold ${regime.color}`}>{regime.name}</h3>
+              <p className="mt-2 text-xs text-zinc-500 leading-relaxed">{regime.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════ FEATURES ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="text-center mb-12">
+          <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">Features</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">
+            Everything you need
+          </h2>
+          <p className="mt-3 text-base text-zinc-500 max-w-xl mx-auto">
+            From live data to AI-powered insights — one tool to understand the economy.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f) => (
+            <div
+              key={f.title}
+              className="rounded-2xl border border-white/[0.06] bg-[#111113] p-6 card-hover"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.06] mb-4">
+                <f.icon className="h-4 w-4 text-zinc-400" />
+              </div>
+              <h3 className="text-base font-semibold text-zinc-100">{f.title}</h3>
+              <p className="mt-2 text-sm text-zinc-500 leading-relaxed">{f.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════ WHO IT'S FOR ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="text-center mb-12">
+          <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">Built For</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">
+            Anyone with money at stake
+          </h2>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {personas.map((p) => (
+            <div
+              key={p.title}
+              className="rounded-2xl border border-white/[0.06] bg-[#111113] p-6 card-hover"
+            >
+              <p.icon className="h-5 w-5 text-zinc-400 mb-4" />
+              <h3 className="text-base font-semibold text-zinc-100">{p.title}</h3>
+              <p className="mt-2 text-sm text-zinc-500 leading-relaxed">{p.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════ CTA with hero-bg ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="relative rounded-2xl border border-white/[0.06] overflow-hidden">
+          {/* Background image */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/hero-bg.png"
+              alt=""
+              fill
+              className="object-cover opacity-20"
+            />
+            <div className="absolute inset-0 bg-[#09090b]/70" />
           </div>
-          <h2 className="relative z-10 text-3xl font-bold text-zinc-100">About the Project</h2>
-          <div className="relative z-10 mt-6 flex flex-col gap-4">
-            <p className="text-lg text-zinc-300">
-              Developed at the <span className="text-[#FFD000] font-semibold">Zerve AI Hackathon 2025</span>
+
+          <div className="relative z-10 p-10 sm:p-16 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">
+              Start watching the economy
+            </h2>
+            <p className="mt-4 text-base text-zinc-400 max-w-lg mx-auto">
+              Open the dashboard, explore live data, and understand what the economy is doing — in seconds.
             </p>
-            <p className="text-lg text-zinc-300 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[#FFD000]" />
-              Powered by FRED (Federal Reserve Economic Data) — 800,000+ data series
-            </p>
-            <p className="text-lg text-zinc-300 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[#FFD000]" />
-              Built for depth, designed for simplicity.
-            </p>
+            <div className="mt-8 flex justify-center gap-4">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 rounded-lg bg-zinc-100 px-6 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-white"
+              >
+                Go to Dashboard <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

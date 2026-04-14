@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import type { TopicDefinition, TopicChartSpec } from "@/lib/fred/topics-config";
+import type { TopicDefinition } from "@/lib/fred/topics-config";
 
 function ChartBlockSkeleton() {
   return (

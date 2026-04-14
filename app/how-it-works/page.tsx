@@ -44,7 +44,7 @@ export default function HowItWorksPage() {
         </p>
 
         <div className="mt-20 space-y-16">
-          {steps.map((step, stepIndex) => (
+          {steps.map((step) => (
             <section key={step.title} className="section-reveal group relative">
               <div className="absolute -left-12 top-0 hidden h-full w-px bg-gradient-to-b from-[#FFD000]/50 to-transparent lg:block" />
               <div className="flex flex-col lg:flex-row gap-12 items-start">

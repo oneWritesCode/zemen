@@ -9,7 +9,6 @@ const links = [
   { href: "/how-it-works", label: "How It Works" },
   { href: "/indicators", label: "Indicators" },
   { href: "/regimes", label: "Regimes" },
-  { href: "/readme", label: "README" },
 ];
 
 const APP_URL = "/dashboard";
@@ -18,49 +17,52 @@ export function PresentationNavbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed w-full top-0 z-50 border-b border-white/10 bg-[#0a0a0a]/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-xl font-black tracking-[0.16em] text-[#FFD000]">
+    <header className="fixed w-full top-0 z-50 border-b border-white/[0.06] bg-[#09090b]/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="text-base font-bold tracking-[0.12em] text-zinc-100">
           ZEMEN
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm text-zinc-200 md:flex">
+        <nav className="hidden items-center gap-8 text-[13px] text-zinc-400 md:flex">
           {links.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="transition hover:text-[#FFD000]"
+              className="transition hover:text-zinc-100"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <Link
-          href={APP_URL}
-          className="hidden rounded-full bg-[#FFD000] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#ffdc4d] md:inline-flex"
-        >
-          dashboard
-        </Link>
+        <div className="hidden md:flex items-center gap-3">
+          <Link
+            href={APP_URL}
+            className="rounded-lg bg-white/[0.08] border border-white/[0.08] px-4 py-1.5 text-[13px] font-medium text-zinc-100 transition hover:bg-white/[0.12] hover:border-white/[0.12]"
+          >
+            Dashboard
+          </Link>
+        </div>
 
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
-          className="rounded-md border border-white/15 p-2 text-zinc-200 md:hidden"
+          className="rounded-md p-2 text-zinc-400 hover:text-zinc-100 md:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={open}
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
+
       {open ? (
-        <div className="border-t border-white/10 bg-[#0a0a0a] p-4 md:hidden">
-          <nav className="flex flex-col gap-3 text-sm text-zinc-200">
+        <div className="border-t border-white/[0.06] bg-[#09090b] p-4 md:hidden">
+          <nav className="flex flex-col gap-1 text-sm text-zinc-400">
             {links.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-md px-3 py-2 transition hover:bg-white/5 hover:text-[#FFD000]"
+                className="rounded-lg px-3 py-2.5 transition hover:bg-white/[0.04] hover:text-zinc-100"
                 onClick={() => setOpen(false)}
               >
                 {item.label}
@@ -68,10 +70,10 @@ export function PresentationNavbar() {
             ))}
             <Link
               href={APP_URL}
-              className="mt-2 inline-flex justify-center rounded-full bg-[#FFD000] px-4 py-2 font-semibold text-black"
+              className="mt-3 inline-flex justify-center rounded-lg bg-white/[0.08] border border-white/[0.08] px-4 py-2.5 text-sm font-medium text-zinc-100"
               onClick={() => setOpen(false)}
             >
-              dashboard
+              Dashboard
             </Link>
           </nav>
         </div>

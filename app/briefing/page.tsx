@@ -3,8 +3,10 @@ import Link from "next/link";
 import { getTopicDataset } from "@/lib/fred/get-topic-dataset";
 import { DASHBOARD_TOPICS } from "@/lib/fred/topics-config";
 import { formatMetricValue } from "@/lib/format-metric";
+import { getFreshnessLabel } from "@/lib/freshness";
 import { getRegimeAnalysis } from "@/lib/regime/get-analysis";
 import { REGIME_BY_ID } from "@/lib/regime/types";
+import { fetchYahooDailyCloseSeries } from "@/lib/market/yahoo";
 
 export const dynamic = "force-dynamic";
 
@@ -13,17 +15,39 @@ type Row = {
   current: string;
   delta: number | null;
   direction: "up" | "down" | "flat";
-  economyImpact: "Improving" | "Worsening" | "Mixed";
+  economyImpact: "Improving" | "Worsening" | "Stable" | "Mixed" | "Unknown";
+  updatedText: string;
 };
 
-function getEconomyImpact(topicSlug: string, delta: number | null): Row["economyImpact"] {
-  if (delta == null) return "Mixed";
-  if (["unemployment", "inflation", "credit-spreads"].includes(topicSlug)) {
-    return delta <= 0 ? "Improving" : "Worsening";
+function getDirection(
+  indicatorName: string,
+  current: number | null,
+  previous: number | null,
+): Row["economyImpact"] {
+  const lowerIsBetter = [
+    "Interest Rates",
+    "Inflation",
+    "Unemployment",
+    "Housing Market",
+    "Credit & Spreads",
+  ];
+  const higherIsBetter = ["GDP Growth", "Stock Market", "Consumer Sentiment"];
+  const neutral = ["Gold", "Trade & Dollar"];
+
+  if (current == null || previous == null) return "Unknown";
+  const change = current - previous;
+
+  if (lowerIsBetter.includes(indicatorName)) {
+    if (change < -0.1) return "Improving";
+    if (change > 0.1) return "Worsening";
+    return "Stable";
   }
-  if (["gdp-growth", "consumer-sentiment"].includes(topicSlug)) {
-    return delta >= 0 ? "Improving" : "Worsening";
+  if (higherIsBetter.includes(indicatorName)) {
+    if (change > 0.1) return "Improving";
+    if (change < -0.1) return "Worsening";
+    return "Stable";
   }
+  if (neutral.includes(indicatorName)) return "Mixed";
   return "Mixed";
 }
 
@@ -39,22 +63,186 @@ export default async function BriefingPage() {
     Promise.all(DASHBOARD_TOPICS.map((t) => getTopicDataset(t))),
   ]);
 
-  const rows: Row[] = datasets.map((dataset) => {
-    const kpi = dataset.kpis[0];
-    const latest = dataset.chartRows[dataset.chartRows.length - 1];
-    const prev = dataset.chartRows[dataset.chartRows.length - 2];
-    const key = kpi?.key;
-    const latestNum = key && typeof latest?.[key] === "number" ? (latest[key] as number) : null;
-    const prevNum = key && typeof prev?.[key] === "number" ? (prev[key] as number) : null;
-    const delta = latestNum != null && prevNum != null ? latestNum - prevNum : null;
+  const bySlug = new Map(datasets.map((d) => [d.topic.slug, d]));
+
+  const pick = (slug: string, key: string) => {
+    const d = bySlug.get(slug);
+    const k = d?.kpis.find((x) => x.key === key) ?? null;
+    return { dataset: d ?? null, kpi: k };
+  };
+
+  const marketRow = async (label: string, ticker: string): Promise<Row> => {
+    const daily = await fetchYahooDailyCloseSeries({ ticker, start: "1995-01-01" }).catch(() => []);
+    const last = daily.at(-1) ?? null;
+    const prev = daily.at(-2) ?? null;
+    const current = last?.value ?? null;
+    const previous = prev?.value ?? null;
+    const delta = current != null && previous != null ? current - previous : null;
     return {
-      label: dataset.topic.label,
-      current: kpi ? formatMetricValue(kpi.value, kpi.unit) : "Data not available",
+      label,
+      current:
+        current == null
+          ? "Awaiting data"
+          : new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              maximumFractionDigits: 2,
+            }).format(current),
       delta,
       direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
-      economyImpact: getEconomyImpact(dataset.topic.slug, delta),
+      economyImpact: getDirection(label, current, previous),
+      updatedText: getFreshnessLabel(last?.date ?? null).text,
     };
-  });
+  };
+
+  const rows: Row[] = [
+    (() => {
+      const { dataset, kpi } = pick("interest-rates", "fed");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.fed === "number" ? (last.fed as number) : null;
+      const pr = typeof prev?.fed === "number" ? (prev.fed as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "Interest Rates",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "percent"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("Interest Rates", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+    (() => {
+      const { dataset, kpi } = pick("inflation", "cpiYoy");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.cpiYoy === "number" ? (last.cpiYoy as number) : null;
+      const pr = typeof prev?.cpiYoy === "number" ? (prev.cpiYoy as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "Inflation",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "percent"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("Inflation", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+    (() => {
+      const { dataset, kpi } = pick("unemployment", "u3");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.u3 === "number" ? (last.u3 as number) : null;
+      const pr = typeof prev?.u3 === "number" ? (prev.u3 as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "Unemployment",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "percent"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("Unemployment", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+    (() => {
+      const { dataset, kpi } = pick("gdp-growth", "rgdpGrowth");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.rgdpGrowth === "number" ? (last.rgdpGrowth as number) : null;
+      const pr = typeof prev?.rgdpGrowth === "number" ? (prev.rgdpGrowth as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "GDP Growth",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "percent"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("GDP Growth", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+    (() => {
+      const { dataset, kpi } = pick("housing", "mort30");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.mort30 === "number" ? (last.mort30 as number) : null;
+      const pr = typeof prev?.mort30 === "number" ? (prev.mort30 as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "Housing Market",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "percent"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("Housing Market", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+    (() => {
+      const { dataset, kpi } = pick("credit-spreads", "hy");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.hy === "number" ? (last.hy as number) : null;
+      const pr = typeof prev?.hy === "number" ? (prev.hy as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "Credit & Spreads",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "percent"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("Credit & Spreads", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+  ];
+
+  const marketRows = await Promise.all([
+    marketRow("Gold", "GC=F"),
+    marketRow("Stock Market", "^GSPC"),
+  ]);
+
+  rows.push(...marketRows);
+
+  rows.push(
+    (() => {
+      const { dataset, kpi } = pick("trade-dollar", "dxybroad");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.dxybroad === "number" ? (last.dxybroad as number) : null;
+      const pr = typeof prev?.dxybroad === "number" ? (prev.dxybroad as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "Trade & Dollar",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "index"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("Trade & Dollar", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+    (() => {
+      const { dataset, kpi } = pick("consumer-sentiment", "umich");
+      const r = dataset?.chartRows ?? [];
+      const last = r.at(-1);
+      const prev = r.at(-2);
+      const cur = typeof last?.umich === "number" ? (last.umich as number) : null;
+      const pr = typeof prev?.umich === "number" ? (prev.umich as number) : null;
+      const delta = cur != null && pr != null ? cur - pr : null;
+      return {
+        label: "Consumer Sentiment",
+        current: formatMetricValue(kpi?.value ?? null, kpi?.unit ?? "index"),
+        delta,
+        direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+        economyImpact: getDirection("Consumer Sentiment", cur, pr),
+        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+      };
+    })(),
+  );
 
   const meta = REGIME_BY_ID[analysis.current.regime];
   const status =
@@ -84,6 +272,7 @@ export default async function BriefingPage() {
                 <tr>
                   <th className="pb-3">Indicator</th>
                   <th className="pb-3">Current value</th>
+                  <th className="pb-3">Freshness</th>
                   <th className="pb-3">Change from last update</th>
                   <th className="pb-3">Direction for economy</th>
                 </tr>
@@ -93,9 +282,10 @@ export default async function BriefingPage() {
                   <tr key={row.label} className="border-t border-white/10">
                     <td className="py-3">{row.label}</td>
                     <td className="py-3">{row.current}</td>
+                    <td className="py-3 text-zinc-400">{row.updatedText}</td>
                     <td className="py-3">
                       {row.delta == null
-                        ? "Data not available"
+                        ? "Awaiting data"
                         : `${row.direction === "up" ? "↑" : row.direction === "down" ? "↓" : "→"} ${Math.abs(row.delta).toFixed(2)}`}
                     </td>
                     <td className="py-3">{row.economyImpact}</td>

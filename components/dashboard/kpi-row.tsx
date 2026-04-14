@@ -1,5 +1,6 @@
 import { formatKpiDelta, formatMetricValue } from "@/lib/format-metric";
 import type { KpiMetric } from "@/lib/fred/get-topic-dataset";
+import { getFreshnessLabel } from "@/lib/freshness";
 
 export function KpiRow({ kpis }: { kpis: KpiMetric[] }) {
   if (kpis.length === 0) return null;
@@ -14,6 +15,15 @@ export function KpiRow({ kpis }: { kpis: KpiMetric[] }) {
             : positive
               ? "text-emerald-400/90"
               : "text-red-400/90";
+        const freshness = getFreshnessLabel(k.updatedAt);
+        const freshnessClass =
+          freshness.tone === "green"
+            ? "text-emerald-400/80"
+            : freshness.tone === "yellow"
+              ? "text-yellow-300/80"
+              : freshness.tone === "red"
+                ? "text-red-300/80"
+                : "text-zinc-500";
         return (
           <div
             key={k.key}
@@ -27,6 +37,7 @@ export function KpiRow({ kpis }: { kpis: KpiMetric[] }) {
               {formatMetricValue(k.value, k.unit)}
             </p>
             <p className={`mt-1 text-sm ${deltaClass}`}>{text}</p>
+            <p className={`mt-1 text-xs ${freshnessClass}`}>{freshness.text}</p>
           </div>
         );
       })}

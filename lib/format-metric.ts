@@ -1,19 +1,17 @@
 import type { SeriesUnit } from "@/lib/fred/topics-config";
 
 export function formatMetricValue(value: number | null, unit: SeriesUnit): string {
-  if (value === null || Number.isNaN(value)) return "—";
+  if (value === null || Number.isNaN(value)) return "Awaiting data";
   switch (unit) {
     case "percent":
       return `${value.toFixed(2)}%`;
     case "index":
-      return value >= 1000
-        ? value.toLocaleString("en-US", { maximumFractionDigits: 0 })
-        : value.toLocaleString("en-US", { maximumFractionDigits: 2 });
+      return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
     case "usd":
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
-        maximumFractionDigits: 0,
+        maximumFractionDigits: 2,
       }).format(value);
     case "points":
       return value.toFixed(2);
@@ -30,7 +28,7 @@ export function formatKpiDelta(
   unit: SeriesUnit,
 ): { text: string; positive: boolean | null } {
   if (value === null || delta1y === null || Number.isNaN(delta1y)) {
-    return { text: "vs 1 yr ago: —", positive: null };
+    return { text: "vs 1 yr ago: Awaiting data", positive: null };
   }
   if (unit === "percent" || unit === "points") {
     const sign = delta1y >= 0 ? "+" : "";
@@ -53,5 +51,5 @@ export function formatKpiDelta(
       positive: delta1y >= 0,
     };
   }
-  return { text: "vs 1 yr ago: —", positive: null };
+  return { text: "vs 1 yr ago: Awaiting data", positive: null };
 }

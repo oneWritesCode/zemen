@@ -10,13 +10,13 @@ const TOKENS = [
 export function FloatingMacroBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,208,0,0.15),transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255, 208, 0, 0.81),transparent_55%)]" />
       {TOKENS.map((token) => (
         <span
           key={token.text}
           className={`absolute rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-zinc-400 ${token.className}`}
         >
-          {token.text}
+          {token.text}  
         </span>
       ))}
     </div>

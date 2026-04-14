@@ -4,24 +4,31 @@ import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
 import type { HistoricalPlaybook } from "@/lib/regime/playbook";
 import type { RegimeMeta } from "@/lib/regime/types";
 
-function ReturnCell({ value }: { value: number | null }) {
+function ReturnCell({ value, n }: { value: number | null; n: number }) {
   if (value === null) {
-    return <span className="text-xs text-zinc-500">Data not available</span>;
+    return (
+      <span className="text-xs text-zinc-500">
+        {n > 0 ? `Insufficient history (n=${n})` : "Insufficient data"}
+      </span>
+    );
   }
   const up = value >= 0;
   return (
-    <span
-      className={`inline-flex items-center justify-center gap-1.5 font-mono text-sm font-medium tabular-nums sm:text-base ${
-        up ? "text-emerald-400" : "text-red-400"
-      }`}
-    >
-      {up ? (
-        <TbArrowBigUp className="h-5 w-5 shrink-0" aria-hidden />
-      ) : (
-        <TbArrowBigDown className="h-5 w-5 shrink-0" aria-hidden />
-      )}
-      {up ? "+" : ""}
-      {value.toFixed(2)}%
+    <span className="inline-flex flex-col items-center justify-center">
+      <span
+        className={`inline-flex items-center justify-center gap-1.5 font-mono text-sm font-medium tabular-nums sm:text-base ${
+          up ? "text-emerald-400" : "text-red-400"
+        }`}
+      >
+        {up ? (
+          <TbArrowBigUp className="h-5 w-5 shrink-0" aria-hidden />
+        ) : (
+          <TbArrowBigDown className="h-5 w-5 shrink-0" aria-hidden />
+        )}
+        {up ? "+" : ""}
+        {value.toFixed(2)}%
+      </span>
+      <span className="mt-0.5 text-[10px] text-zinc-600">{`n=${n}`}</span>
     </span>
   );
 }
@@ -79,10 +86,10 @@ export function HistoricalPlaybookTable({
               >
                 <td className="px-4 py-3.5 text-zinc-300">{row.label}</td>
                 <td className="px-4 py-3.5">
-                  <ReturnCell value={row.return90} />
+                  <ReturnCell value={row.return90} n={row.return90N} />
                 </td>
                 <td className="px-4 py-3.5">
-                  <ReturnCell value={row.return180} />
+                  <ReturnCell value={row.return180} n={row.return180N} />
                 </td>
               </tr>
             ))}
@@ -97,8 +104,7 @@ export function HistoricalPlaybookTable({
         <span className="tabular-nums text-zinc-500">
           {playbook.episodes180}
         </span>{" "}
-        with 180 days (through latest FRED data). Sample counts per cell can be
-        lower if a series has gaps.
+        with 180 days. Sample counts per cell can be lower if a series has gaps.
       </p>
     </section>
   );

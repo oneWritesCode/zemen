@@ -1,6 +1,7 @@
 import { fetchFredObservations } from "@/lib/fred/client";
 import { lastDayOfMonth } from "@/lib/fred/monthly";
 import type { ParsedObservation } from "@/lib/fred/types";
+import { fetchYahooDailyCloseSeries } from "@/lib/market/yahoo";
 
 import type { RegimeId } from "./types";
 
@@ -15,6 +16,8 @@ export type PlaybookAssetRow = {
   /** Average total return % (or proxy) over horizon. */
   return90: number | null;
   return180: number | null;
+  return90N: number;
+  return180N: number;
 };
 
 export type HistoricalPlaybook = {
@@ -27,13 +30,15 @@ export type HistoricalPlaybook = {
 };
 
 const EMPTY_ROWS: PlaybookAssetRow[] = [
-  { key: "sp500", label: "S&P 500", return90: null, return180: null },
-  { key: "gold", label: "Gold", return90: null, return180: null },
+  { key: "sp500", label: "S&P 500", return90: null, return180: null, return90N: 0, return180N: 0 },
+  { key: "gold", label: "Gold", return90: null, return180: null, return90N: 0, return180N: 0 },
   {
     key: "bonds",
     label: "10Y Treasury (est.)",
     return90: null,
     return180: null,
+    return90N: 0,
+    return180N: 0,
   },
 ];
 
@@ -80,6 +85,12 @@ function mean(a: number[]): number | null {
   return a.reduce((s, x) => s + x, 0) / a.length;
 }
 
+function finalizeCell(values: number[]): { value: number | null; n: number } {
+  const n = values.length;
+  if (n < 3) return { value: null, n };
+  return { value: mean(values), n };
+}
+
 function minIso(dates: (string | undefined)[]): string {
   return dates.filter(Boolean).sort().at(0) ?? "";
 }
@@ -114,18 +125,13 @@ async function computeHistoricalPlaybookInner(
   const anchors = periods.map((p) => lastDayOfMonth(p));
 
   const [sp500, gold, y10] = await Promise.all([
-    fetchFredObservations({
-      seriesId: "SP500",
-      observationStart: "1994-01-01",
-    }),
-    fetchFredObservations({
-      seriesId: "GOLDAMGBD228NLBM",
-      observationStart: "1994-01-01",
-    }),
+    fetchYahooDailyCloseSeries({ ticker: "^GSPC", start: "1995-01-01" }).catch(() => []),
+    // Gold futures. Has gaps pre-2000; valueOnOrBefore acts like ffill within windows.
+    fetchYahooDailyCloseSeries({ ticker: "GC=F", start: "1995-01-01" }).catch(() => []),
     fetchFredObservations({
       seriesId: "DGS10",
-      observationStart: "1994-01-01",
-    }),
+      observationStart: "1995-01-01",
+    }).catch(() => []),
   ]);
 
   const maxD = minIso([sp500.at(-1)?.date, gold.at(-1)?.date, y10.at(-1)?.date]);
@@ -189,30 +195,43 @@ async function computeHistoricalPlaybookInner(
     }
   }
 
+  const sp90Cell = finalizeCell(sp90);
+  const sp180Cell = finalizeCell(sp180);
+  const au90Cell = finalizeCell(au90);
+  const au180Cell = finalizeCell(au180);
+  const bd90Cell = finalizeCell(bd90);
+  const bd180Cell = finalizeCell(bd180);
+
   return {
     rows: [
       {
         key: "sp500",
         label: "S&P 500",
-        return90: mean(sp90),
-        return180: mean(sp180),
+        return90: sp90Cell.value,
+        return180: sp180Cell.value,
+        return90N: sp90Cell.n,
+        return180N: sp180Cell.n,
       },
       {
         key: "gold",
         label: "Gold",
-        return90: mean(au90),
-        return180: mean(au180),
+        return90: au90Cell.value,
+        return180: au180Cell.value,
+        return90N: au90Cell.n,
+        return180N: au180Cell.n,
       },
       {
         key: "bonds",
         label: "10Y Treasury (est.)",
-        return90: mean(bd90),
-        return180: mean(bd180),
+        return90: bd90Cell.value,
+        return180: bd180Cell.value,
+        return90N: bd90Cell.n,
+        return180N: bd180Cell.n,
       },
     ],
     episodes90: n90,
     episodes180: n180,
     methodNote:
-      "Anchored at month-end on the first month of each regime spell. S&P 500 and gold use last available daily levels within each window. 10Y column approximates bond price return from changes in the 10Y yield (DGS10) using an 8.5-year modified-duration rule.",
+      "Anchored at month-end on the first month of each regime spell (since 1995). S&P 500 and gold use last available daily Yahoo closes within each forward window (gap-tolerant). 10Y column approximates bond price return from changes in the 10Y yield (DGS10) using an 8.5-year modified-duration rule.",
   };
 }

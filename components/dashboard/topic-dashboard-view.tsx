@@ -42,6 +42,7 @@ export function TopicDashboardView({ data }: { data: TopicDataset }) {
 
       <KpiRow kpis={kpis} />
       <TopicCharts
+        key={`${topic.slug}-${meta.rowCount}`}
         charts={topic.charts}
         chartRows={chartRows}
         seriesStyles={seriesStyles}

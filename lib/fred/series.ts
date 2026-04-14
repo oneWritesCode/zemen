@@ -13,6 +13,6 @@ export const FRED_SERIES_IDS: Record<
 
 /** Monthly Treasury constant maturity rates used to compute a 10y–2y spread. */
 export const FRED_YIELD_CURVE = {
-  treasury10y: "GS10",
-  treasury2y: "GS2",
+  treasury10y: "DGS10",
+  treasury2y: "DGS2",
 } as const;

@@ -22,6 +22,8 @@ export type KpiMetric = {
   delta1y: number | null;
   unit: FredSeriesSpec["unit"];
   color: string;
+  /** Latest raw observation date (YYYY-MM-DD) for this KPI's underlying series. */
+  updatedAt: string | null;
 };
 
 export type TopicDataset = {
@@ -141,6 +143,7 @@ function buildKpis(
   rowsByPeriod: Map<string, Record<string, number | null>>,
   seriesMeta: TopicDataset["seriesMeta"],
   computedMeta: TopicDataset["computedMeta"],
+  lastUpdatedByKey: Map<string, string | null>,
 ): KpiMetric[] {
   if (!lastRow) return [];
   const lastP = lastRow.period;
@@ -167,7 +170,15 @@ function buildKpis(
     let delta1y: number | null = null;
     if (cur != null && prev != null) delta1y = cur - prev;
 
-    return { key, label, value: cur, delta1y, unit, color };
+    return {
+      key,
+      label,
+      value: cur,
+      delta1y,
+      unit,
+      color,
+      updatedAt: lastUpdatedByKey.get(key) ?? null,
+    };
   });
 }
 
@@ -180,9 +191,15 @@ export async function getTopicDataset(topic: TopicDefinition): Promise<TopicData
         fetchFredObservations({
           seriesId: s.fredId,
           observationStart: topic.observationStart,
-        }),
+        }).catch(() => []),
       ),
     );
+
+    const lastUpdatedByKey = new Map<string, string | null>();
+    for (let i = 0; i < topic.series.length; i++) {
+      const key = topic.series[i]!.key;
+      lastUpdatedByKey.set(key, fetched[i]?.at(-1)?.date ?? null);
+    }
 
     const maps = topic.series.map((s, i) => ({
       key: s.key,
@@ -201,6 +218,18 @@ export async function getTopicDataset(topic: TopicDefinition): Promise<TopicData
     }
 
     buildComputed(rowsByPeriod, topic.computed);
+
+    // Computed series inherit "freshness" from their source(s).
+    for (const c of topic.computed ?? []) {
+      if (c.op === "yoy") {
+        lastUpdatedByKey.set(c.key, lastUpdatedByKey.get(c.source) ?? null);
+      } else {
+        const a = lastUpdatedByKey.get(c.left) ?? null;
+        const b = lastUpdatedByKey.get(c.right) ?? null;
+        // Use the older of the two (min) as the freshness bound.
+        lastUpdatedByKey.set(c.key, a && b ? (a < b ? a : b) : a ?? b ?? null);
+      }
+    }
 
     const chartRowsFull: ChartRow[] = periods.map((p) => {
       const vals = rowsByPeriod.get(p)!;
@@ -223,6 +252,7 @@ export async function getTopicDataset(topic: TopicDefinition): Promise<TopicData
       rowsByPeriod,
       seriesMeta,
       computedMeta,
+      lastUpdatedByKey,
     );
 
     return {
