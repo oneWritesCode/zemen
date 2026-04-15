@@ -120,8 +120,8 @@ function ChartBlock({
         type="button"
         onClick={onToggleHidden}
         className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-400 transition hover:border-white/20 hover:text-zinc-100"
-        aria-label={hidden ? "Show chart" : "Hide chart"}
-        title={hidden ? "Show chart" : "Hide chart"}
+        aria-label={hidden ? "Expand chart" : "Collapse chart"}
+        title={hidden ? "Expand chart" : "Collapse chart"}
       >
         {hidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
       </button>
@@ -129,108 +129,115 @@ function ChartBlock({
       <h3 className="mb-4 pr-10 font-serif text-lg font-semibold tracking-tight text-white">
         {spec.title}
       </h3>
-      <div className="h-[280px] min-h-[280px] w-full min-w-0">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-            <CartesianGrid {...GRID} />
-            <XAxis
-              dataKey="t"
-              type="number"
-              domain={["dataMin", "dataMax"]}
-              scale="time"
-              tick={AXIS}
-              tickLine={false}
-              axisLine={{ stroke: "#3f3f46" }}
-              tickFormatter={tickTime}
-              minTickGap={28}
-            />
-            <YAxis
-              yAxisId="left"
-              tick={AXIS}
-              tickLine={false}
-              axisLine={{ stroke: "#3f3f46" }}
-              width={48}
-              domain={["auto", "auto"]}
-            />
-            {rightKeys.length > 0 ? (
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                tick={AXIS}
-                tickLine={false}
-                axisLine={{ stroke: "#3f3f46" }}
-                width={52}
-                domain={["auto", "auto"]}
-              />
-            ) : null}
-            {show2008 ? (
-              <ReferenceArea
-                yAxisId="left"
-                x1={T_2008[0]}
-                x2={T_2008[1]}
-                fill="#ffcc00"
-                fillOpacity={0.12}
-                strokeOpacity={0}
-              />
-            ) : null}
-            {show2020 ? (
-              <ReferenceArea
-                yAxisId="left"
-                x1={T_2020[0]}
-                x2={T_2020[1]}
-                fill="#60a5fa"
-                fillOpacity={0.15}
-                strokeOpacity={0}
-              />
-            ) : null}
-            <Tooltip
-              contentStyle={TOOLTIP_STYLE}
-              labelFormatter={(_label, payload) => {
-                const row = payload?.[0]?.payload as RowTime | undefined;
-                return row?.label ?? "";
-              }}
-            />
-            <Legend
-              wrapperStyle={{ fontSize: 12, paddingTop: 12, color: "#a1a1aa" }}
-            />
-            {leftKeys.map((key) => {
-              const st = seriesStyles[key];
-              if (!st) return null;
-              return (
-                <Line
-                  key={key}
+      <div
+        className={[
+          "grid overflow-hidden transition-all duration-300 ease-out",
+          hidden ? "grid-rows-[0fr] opacity-60" : "grid-rows-[1fr] opacity-100",
+        ].join(" ")}
+      >
+        <div className="min-h-0">
+          <div className="h-[280px] min-h-[280px] w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <CartesianGrid {...GRID} />
+                <XAxis
+                  dataKey="t"
+                  type="number"
+                  domain={["dataMin", "dataMax"]}
+                  scale="time"
+                  tick={AXIS}
+                  tickLine={false}
+                  axisLine={{ stroke: "#3f3f46" }}
+                  tickFormatter={tickTime}
+                  minTickGap={28}
+                />
+                <YAxis
                   yAxisId="left"
-                  type="monotone"
-                  dataKey={key}
-                  name={st.label}
-                  stroke={st.color}
-                  strokeWidth={2}
-                  dot={false}
-                  connectNulls
+                  tick={AXIS}
+                  tickLine={false}
+                  axisLine={{ stroke: "#3f3f46" }}
+                  width={48}
+                  domain={["auto", "auto"]}
                 />
-              );
-            })}
-            {rightKeys.map((key) => {
-              const st = seriesStyles[key];
-              if (!st) return null;
-              return (
-                <Line
-                  key={key}
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey={key}
-                  name={st.label}
-                  stroke={st.color}
-                  strokeWidth={2}
-                  dot={false}
-                  connectNulls
+                {rightKeys.length > 0 ? (
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    tick={AXIS}
+                    tickLine={false}
+                    axisLine={{ stroke: "#3f3f46" }}
+                    width={52}
+                    domain={["auto", "auto"]}
+                  />
+                ) : null}
+                {show2008 ? (
+                  <ReferenceArea
+                    yAxisId="left"
+                    x1={T_2008[0]}
+                    x2={T_2008[1]}
+                    fill="#ffcc00"
+                    fillOpacity={0.12}
+                    strokeOpacity={0}
+                  />
+                ) : null}
+                {show2020 ? (
+                  <ReferenceArea
+                    yAxisId="left"
+                    x1={T_2020[0]}
+                    x2={T_2020[1]}
+                    fill="#60a5fa"
+                    fillOpacity={0.15}
+                    strokeOpacity={0}
+                  />
+                ) : null}
+                <Tooltip
+                  contentStyle={TOOLTIP_STYLE}
+                  labelFormatter={(_label, payload) => {
+                    const row = payload?.[0]?.payload as RowTime | undefined;
+                    return row?.label ?? "";
+                  }}
                 />
-              );
-            })}
-          </LineChart>
-        </ResponsiveContainer>
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12, color: "#a1a1aa" }} />
+                {leftKeys.map((key) => {
+                  const st = seriesStyles[key];
+                  if (!st) return null;
+                  return (
+                    <Line
+                      key={key}
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey={key}
+                      name={st.label}
+                      stroke={st.color}
+                      strokeWidth={2}
+                      dot={false}
+                      connectNulls
+                    />
+                  );
+                })}
+                {rightKeys.map((key) => {
+                  const st = seriesStyles[key];
+                  if (!st) return null;
+                  return (
+                    <Line
+                      key={key}
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey={key}
+                      name={st.label}
+                      stroke={st.color}
+                      strokeWidth={2}
+                      dot={false}
+                      connectNulls
+                    />
+                  );
+                })}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <IntelligencePanel topicSlug={topicSlug} chartTitle={spec.title} rows={rows} />
+        </div>
       </div>
-      <IntelligencePanel topicSlug={topicSlug} chartTitle={spec.title} rows={rows} />
     </div>
   );
 }
@@ -329,7 +336,7 @@ function ChartRangeToolbar({
       {hiddenTitles.length > 0 ? (
         <div className="mt-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-            Hidden charts
+            Collapsed charts
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {hiddenTitles.map((t) => (
@@ -340,7 +347,7 @@ function ChartRangeToolbar({
                 className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-[#ffcc00]/40 hover:text-white"
               >
                 <Eye className="h-3.5 w-3.5 text-zinc-400" />
-                {t}
+                Expand {t}
               </button>
             ))}
           </div>
@@ -483,12 +490,10 @@ export function TopicCharts({
 
       {splitCharts.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {splitCharts
-            .filter((spec) => !hidden.has(spec.title))
-            .map((spec) => (
+          {splitCharts.map((spec) => (
               <div
                 key={spec.title}
-                className="min-w-0 animate-in fade-in zoom-in-95 duration-200"
+                className="min-w-0"
               >
                 <ChartBlock
                   spec={spec}
@@ -497,11 +502,12 @@ export function TopicCharts({
                   compare2008={compare2008}
                   compare2020={compare2020}
                   topicSlug={topicSlug}
-                  hidden={false}
+                  hidden={hidden.has(spec.title)}
                   onToggleHidden={() =>
                     setHidden((prev) => {
                       const next = new Set(prev);
-                      next.add(spec.title);
+                      if (next.has(spec.title)) next.delete(spec.title);
+                      else next.add(spec.title);
                       return next;
                     })
                   }
@@ -512,12 +518,10 @@ export function TopicCharts({
       ) : null}
 
       <div className="flex flex-col gap-6">
-        {fullCharts
-          .filter((spec) => !hidden.has(spec.title))
-          .map((spec) => (
+        {fullCharts.map((spec) => (
             <div
               key={spec.title}
-              className="min-w-0 animate-in fade-in zoom-in-95 duration-200"
+              className="min-w-0"
             >
               <ChartBlock
                 spec={spec}
@@ -526,11 +530,12 @@ export function TopicCharts({
                 compare2008={compare2008}
                 compare2020={compare2020}
                 topicSlug={topicSlug}
-                hidden={false}
+                hidden={hidden.has(spec.title)}
                 onToggleHidden={() =>
                   setHidden((prev) => {
                     const next = new Set(prev);
-                    next.add(spec.title);
+                    if (next.has(spec.title)) next.delete(spec.title);
+                    else next.add(spec.title);
                     return next;
                   })
                 }

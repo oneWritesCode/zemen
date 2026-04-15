@@ -97,6 +97,7 @@ export function AskZemenChat() {
   const [mode, setMode] = useState<ResponseMode>("DETAILED");
   const [historyOpen, setHistoryOpen] = useState(false);
   const [expandedCharts, setExpandedCharts] = useState<ChartData[] | null>(null);
+  const [dock, setDock] = useState<"launcher" | "minicard">("launcher");
   const listRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -112,6 +113,8 @@ export function AskZemenChat() {
     if (savedMode && (savedMode === "SIMPLE" || savedMode === "DETAILED" || savedMode === "RAW")) {
       setMode(savedMode);
     }
+    const savedDock = window.sessionStorage.getItem("zemen-chat-dock");
+    if (savedDock === "minicard" || savedDock === "launcher") setDock(savedDock);
   }, []);
 
   useEffect(() => {
@@ -121,6 +124,10 @@ export function AskZemenChat() {
   useEffect(() => {
     window.sessionStorage.setItem("zemen-chat-mode", mode);
   }, [mode]);
+
+  useEffect(() => {
+    window.sessionStorage.setItem("zemen-chat-dock", dock);
+  }, [dock]);
 
   useEffect(() => {
     if (!open) return;
@@ -257,14 +264,62 @@ export function AskZemenChat() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="fixed right-5 bottom-5 z-[85] inline-flex items-center gap-2 rounded-full bg-[#FFD000] px-4 py-3 font-semibold text-black shadow-lg transition hover:bg-[#ffdf52]"
-      >
-        <MessageCircle className="h-4 w-4" />
-        Ask Zemen
-      </button>
+      {dock === "launcher" ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="fixed right-5 bottom-5 z-[85] inline-flex items-center gap-2 rounded-full bg-[#FFD000] px-4 py-3 font-semibold text-black shadow-lg transition hover:bg-[#ffdf52]"
+        >
+          <MessageCircle className="h-4 w-4" />
+          Ask Zemen
+        </button>
+      ) : null}
+
+      {dock === "minicard" && !open ? (
+        <div className="fixed right-5 bottom-5 z-[85] w-[280px] overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b0d]/95 shadow-2xl backdrop-blur-md">
+          <div className="flex items-start justify-between gap-3 p-3">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-[#FFD000]">Ask Zemen</p>
+              <p className="mt-0.5 text-[11px] text-zinc-500">
+                Mode: {MODE_OPTIONS.find((m) => m.id === mode)?.label}
+              </p>
+              <p className="mt-2 line-clamp-2 text-xs text-zinc-300">
+                {messages.length > 0 ? messages[messages.length - 1]?.content : "Ask a macro question."}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDock("launcher")}
+              className="p-1.5 text-zinc-400 hover:text-zinc-100"
+              aria-label="Dismiss mini chat card"
+              title="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between gap-2 border-t border-white/[0.06] px-3 py-2">
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(true);
+                setFullscreen(false);
+              }}
+              className="inline-flex items-center gap-2 rounded-full bg-[#FFD000] px-3 py-1.5 text-xs font-semibold text-black hover:bg-[#ffdf52] transition"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Show chat
+            </button>
+            <button
+              type="button"
+              onClick={() => refreshChat()}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:border-white/20 transition"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className={panelBase}>
         {/* Background for fullscreen mode */}
@@ -338,6 +393,7 @@ export function AskZemenChat() {
               onClick={() => {
                 setOpen(false);
                 setFullscreen(false);
+                setDock("minicard");
               }}
               className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md"
               aria-label="Close chat"
