@@ -332,75 +332,81 @@ export function AskZemenChat() {
         ) : null}
 
         {/* Header */}
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-3 px-4 py-4 border-b border-white/[0.06]">
-          <div className="min-w-0 text-left">
-            <p className="font-medium text-[#FFD000] flex items-center gap-2">
-              <Search className="w-4 h-4" />
+        <div className="relative z-10 shrink-0 border-b border-white/[0.06]">
+          {/* Top row: title + action icons */}
+          <div className="flex items-center justify-between gap-3 px-4 pt-4 pb-2">
+            <p className="font-medium text-[#FFD000] flex items-center gap-2 text-sm">
+              <Search className="w-4 h-4 shrink-0" />
               Ask Zemen
             </p>
-            <p className="text-xs text-zinc-500">Mode: {MODE_OPTIONS.find((m) => m.id === mode)?.label}</p>
-          </div>
 
-          <div className="flex items-center gap-1 rounded-full bg-white/[0.04] p-1 border border-white/[0.06]">
-            {MODE_OPTIONS.map((opt) => (
+            <div className="flex items-center gap-0.5">
               <button
-                key={opt.id}
                 type="button"
-                onClick={() => setMode(opt.id)}
-                className={[
-                  "px-2.5 py-1 text-[11px] font-semibold rounded-full transition",
-                  mode === opt.id
-                    ? "bg-[#FFD000] text-black"
-                    : "text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.06]",
-                ].join(" ")}
-                aria-pressed={mode === opt.id}
+                onClick={() => setHistoryOpen((v) => !v)}
+                className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md"
+                aria-label="Chat history"
+                title="History"
               >
-                {opt.label}
+                <History className="h-4 w-4" />
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={refreshChat}
+                className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md"
+                aria-label="Refresh chat"
+                title="Refresh chat"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setFullscreen((v) => !v)}
+                className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md hidden sm:block"
+                aria-label={fullscreen ? "Exit fullscreen chat" : "Fullscreen chat"}
+                title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
+              >
+                {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setFullscreen(false);
+                  setDock("minicard");
+                }}
+                className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md"
+                aria-label="Close chat"
+                title="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setHistoryOpen((v) => !v)}
-              className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md"
-              aria-label="Chat history"
-              title="History"
-            >
-              <History className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={refreshChat}
-              className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md"
-              aria-label="Refresh chat"
-              title="Refresh chat"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setFullscreen((v) => !v)}
-              className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md hidden sm:block"
-              aria-label={fullscreen ? "Exit fullscreen chat" : "Fullscreen chat"}
-              title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
-            >
-              {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                setFullscreen(false);
-                setDock("minicard");
-              }}
-              className="p-2 text-zinc-400 transition hover:text-zinc-100 hover:bg-white/5 rounded-md"
-              aria-label="Close chat"
-              title="Close"
-            >
-              <X className="h-4 w-4" />
-            </button>
+          {/* Bottom row: mode toggle pills */}
+          <div className="flex items-center gap-3 px-4 pb-3">
+            <div className="flex items-center gap-1 rounded-full bg-white/[0.04] p-1 border border-white/[0.06]">
+              {MODE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setMode(opt.id)}
+                  className={[
+                    "px-2.5 py-1 text-[11px] font-semibold rounded-full transition",
+                    mode === opt.id
+                      ? "bg-[#FFD000] text-black"
+                      : "text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.06]",
+                  ].join(" ")}
+                  aria-pressed={mode === opt.id}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <span className="text-[11px] text-zinc-500 font-medium">
+              Mode: {MODE_OPTIONS.find((m) => m.id === mode)?.label}
+            </span>
           </div>
         </div>
 
