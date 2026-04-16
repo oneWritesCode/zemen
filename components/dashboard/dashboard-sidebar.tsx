@@ -56,6 +56,34 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
         {/* Quick links */}
         <div className="mb-1 space-y-0.5">
           <Link
+            href="/sectors"
+            className={[
+              "nav-link-hover group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all",
+              pathname === "/sectors"
+                ? "sidebar-active text-[#ffd000]"
+                : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200",
+            ].join(" ")}
+          >
+            <div
+              className={`flex h-7 w-7 items-center justify-center rounded-lg ${
+                pathname === "/sectors"
+                  ? "bg-[#ffd000]/20"
+                  : "bg-white/[0.04] group-hover:bg-white/[0.06]"
+              }`}
+            >
+              <span className="text-[14px] leading-none" aria-hidden>
+                📊
+              </span>
+            </div>
+            <span className="flex-1 truncate">Sectors & Opportunities</span>
+            <ChevronRight
+              className={`h-3 w-3 transition-all ${
+                pathname === "/sectors" ? "text-[#ffd000]/70" : "text-transparent group-hover:text-zinc-600"
+              }`}
+              aria-hidden
+            />
+          </Link>
+          <Link
             href="/briefing"
             className={[
               "nav-link-hover group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all",

@@ -348,7 +348,7 @@ export default async function HomePage() {
                 Zemen changes that
               </h2>
               <p className="mt-4 text-base text-zinc-400 leading-relaxed">
-                Think of Zemen like a weather app — but for the economy. A weather app does not show you
+          Think of Zemen like a weather app — but for the economy. A weather app does not show you
                 temperature, humidity, and pressure separately. It says:{" "}
                 <span className="text-zinc-200 font-medium">rainy tomorrow, bring an umbrella</span>.
               </p>
