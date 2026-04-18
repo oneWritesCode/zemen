@@ -1,10 +1,15 @@
 import { PresentationShell } from "@/components/site/presentation-shell";
-import { 
-  BarChart4, 
-  Coins, 
+import {
+  BarChart4,
+  Coins,
   Banknote,
+  Clock,
   Info,
-  Clock
+  TrendingUp,
+  Waves,
+  Flame,
+  AlertTriangle,
+  CloudRain,
 } from "lucide-react";
 
 type Regime = {
@@ -102,93 +107,152 @@ const regimes: Regime[] = [
   },
 ];
 
+const REGIME_ICONS: Record<string, React.ElementType> = {
+  Goldilocks: TrendingUp,
+  Recovery: Waves,
+  Overheating: Flame,
+  Stagflation: AlertTriangle,
+  Recession: CloudRain,
+};
+
 export default function RegimesPage() {
   return (
     <PresentationShell>
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <h1 className="section-reveal text-5xl font-bold sm:text-6xl text-zinc-100">The Regimes</h1>
-        <p className="section-reveal mt-5 max-w-3xl text-lg text-zinc-300">
-          Zemen groups the economy into five clear states so you can understand what is happening and what
-          often comes next.
-        </p>
+      <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
+        {/* Hero */}
+        <div className="section-reveal mb-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400 mb-6">
+            <Info className="h-3 w-3" />
+            Economic Regimes
+          </div>
+          <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl">
+            The Five Regimes
+          </h1>
+          <p className="mt-5 max-w-2xl text-lg text-zinc-400 leading-relaxed">
+            Zemen groups the economy into five clear states so you can understand
+            what is happening and what often follows next.
+          </p>
+        </div>
 
-        <div className="mt-14 space-y-10">
-          {regimes.map((regime) => (
-            <section
-              key={regime.name}
-              className="section-reveal rounded-3xl border p-8 sm:p-12 transition-all hover:bg-white/[0.02]"
-              style={{
-                borderColor: `${regime.color}80`,
-                backgroundColor: `${regime.color}10`,
-              }}
-            >
-              <h2 className="text-4xl font-black uppercase tracking-tight" style={{ color: regime.color }}>
-                {regime.name}
-              </h2>
-              <div className="mt-8 flex items-start gap-3 p-5 rounded-2xl bg-black/40 border border-white/5">
-                <Info className="h-6 w-6 text-[#FFD000] shrink-0 mt-0.5" />
-                <p className="text-zinc-100 text-lg leading-relaxed">
-                  <span className="font-bold text-[#FFD000]">In plain English:</span> {regime.plainEnglish}
-                </p>
-              </div>
+        <div className="space-y-6">
+          {regimes.map((regime, i) => {
+            const Icon = REGIME_ICONS[regime.name] ?? Info;
+            return (
+              <section
+                key={regime.name}
+                className="section-reveal rounded-2xl border bg-[#0e0e10] overflow-hidden transition-all hover:bg-[#111114]"
+                style={{
+                  borderColor: `${regime.color}30`,
+                }}
+              >
+                {/* Colored top stripe */}
+                <div
+                  className="h-[3px] w-full"
+                  style={{ background: `linear-gradient(90deg, ${regime.color}, ${regime.color}40, transparent)` }}
+                />
 
-              <div className="mt-10 grid md:grid-cols-2 gap-10">
-                <div>
-                  <p className="font-bold text-[#FFD000] uppercase text-xs tracking-[0.2em] mb-4">Core Indicators</p>
-                  <ul className="space-y-4">
-                    {regime.happening.map((point) => (
-                      <li key={point} className="flex items-start gap-3 text-zinc-300">
-                        <div className="h-1.5 w-1.5 rounded-full bg-[#FFD000] shrink-0 mt-2" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-8 text-zinc-400 text-sm">
-                    <span className="font-bold text-[#FFD000]">Historical examples:</span>{" "}
-                    {regime.examples.join(", ")}
-                  </p>
+                <div className="p-7 sm:p-10">
+                  {/* Header */}
+                  <div className="flex items-start gap-4 mb-6">
+                    <div
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+                      style={{ background: `${regime.color}15`, border: `1px solid ${regime.color}25` }}
+                    >
+                      <Icon className="h-6 w-6" style={{ color: regime.color }} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <h2
+                          className="text-3xl font-black uppercase tracking-tight"
+                          style={{ color: regime.color }}
+                        >
+                          {regime.name}
+                        </h2>
+                        <span className="text-xs text-zinc-600 font-medium">#{i + 1}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {regime.examples.map((ex) => (
+                          <span
+                            key={ex}
+                            className="rounded-md border border-white/[0.06] bg-white/[0.03] px-2 py-0.5 text-[10px] font-medium text-zinc-500"
+                          >
+                            {ex}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Plain English */}
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-8">
+                    <Info className="h-4 w-4 text-zinc-400 shrink-0 mt-0.5" />
+                    <p className="text-zinc-300 text-sm leading-relaxed">{regime.plainEnglish}</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {/* What's happening */}
+                    <div>
+                      <p className="font-semibold text-zinc-300 text-xs uppercase tracking-[0.18em] mb-4">
+                        Key Indicators
+                      </p>
+                      <ul className="space-y-3">
+                        {regime.happening.map((point) => (
+                          <li key={point} className="flex items-start gap-3 text-sm text-zinc-400 leading-relaxed">
+                            <div
+                              className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0"
+                              style={{ background: regime.color }}
+                            />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Asset performance table */}
+                    <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-black/20">
+                      <div className="border-b border-white/[0.06] bg-white/[0.02] px-5 py-2.5">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">
+                          Asset Behavior
+                        </p>
+                      </div>
+                      <div className="divide-y divide-white/[0.04]">
+                        <div className="flex items-start gap-3 px-5 py-3.5">
+                          <BarChart4 className="h-4 w-4 text-zinc-500 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-xs font-semibold text-zinc-300 mb-0.5">Stocks</p>
+                            <p className="text-xs text-zinc-500 leading-relaxed">{regime.stocks}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 px-5 py-3.5">
+                          <Coins className="h-4 w-4 text-zinc-500 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-xs font-semibold text-zinc-300 mb-0.5">Gold</p>
+                            <p className="text-xs text-zinc-500 leading-relaxed">{regime.gold}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 px-5 py-3.5">
+                          <Banknote className="h-4 w-4 text-zinc-500 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-xs font-semibold text-zinc-300 mb-0.5">Bonds</p>
+                            <p className="text-xs text-zinc-500 leading-relaxed">{regime.bonds}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Duration */}
+                  <div className="mt-7 pt-5 border-t border-white/[0.05] flex items-center gap-2.5 text-sm text-zinc-500">
+                    <Clock className="h-3.5 w-3.5 text-zinc-600 shrink-0" />
+                    <p>
+                      <span className="text-zinc-400 font-medium">Duration: </span>
+                      {regime.duration}
+                    </p>
+                  </div>
                 </div>
-
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-white/5 text-zinc-400 uppercase text-[10px] tracking-widest font-bold">
-                      <tr>
-                        <th className="px-6 py-4">Asset</th>
-                        <th className="px-6 py-4">Typical behavior</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      <tr>
-                        <td className="px-6 py-5 flex items-center gap-3 font-semibold text-zinc-100">
-                          <BarChart4 className="h-4 w-4 text-[#FFD000]" /> Stocks
-                        </td>
-                        <td className="px-6 py-5 text-zinc-300 leading-relaxed">{regime.stocks}</td>
-                      </tr>
-                      <tr>
-                        <td className="px-6 py-5 flex items-center gap-3 font-semibold text-zinc-100">
-                          <Coins className="h-4 w-4 text-[#FFD000]" /> Gold
-                        </td>
-                        <td className="px-6 py-5 text-zinc-300 leading-relaxed">{regime.gold}</td>
-                      </tr>
-                      <tr>
-                        <td className="px-6 py-5 flex items-center gap-3 font-semibold text-zinc-100">
-                          <Banknote className="h-4 w-4 text-[#FFD000]" /> Bonds
-                        </td>
-                        <td className="px-6 py-5 text-zinc-300 leading-relaxed">{regime.bonds}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="mt-10 pt-6 border-t border-white/5 flex items-center gap-3 text-zinc-400">
-                <Clock className="h-4 w-4 text-[#FFD000]" />
-                <p>
-                  <span className="font-bold text-[#FFD000]">Typical Duration:</span> {regime.duration}
-                </p>
-              </div>
-            </section>
-          ))}
+              </section>
+            );
+          })}
         </div>
       </div>
     </PresentationShell>

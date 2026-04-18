@@ -15,6 +15,14 @@ export function SectorSparkline({
     .map((v, i) => ({ x: dates[i] ?? String(i), y: v }))
     .filter((d) => Number.isFinite(d.y));
 
+  if (data.length < 2) {
+    return (
+      <div className="flex h-[80px] w-full items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.02] text-[11px] text-zinc-500">
+        Trend data unavailable
+      </div>
+    );
+  }
+
   return (
     <div className="h-[80px] w-full">
       <ResponsiveContainer width="100%" height="100%">

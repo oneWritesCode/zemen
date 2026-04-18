@@ -34,6 +34,8 @@ function computeReturnPct(start: number, end: number): number | null {
 export type SectorOverviewData = {
   sectorId: SectorId;
   ticker: string;
+  success: boolean;
+  error?: string;
   ytdReturnPct: number | null;
   sparkline: number[];
   sparklineDates: string[]; // YYYY-MM-DD (month-end)
@@ -54,6 +56,18 @@ export async function getSectorOverviewData(
 
     const daily =
       (await fetchYahooDailyCloseSeries({ ticker: sector.ticker, start: startIso }).catch(() => [])) ?? [];
+    if (daily.length === 0) {
+      return {
+        sectorId,
+        ticker: sector.ticker,
+        success: false,
+        error: "No market history returned",
+        ytdReturnPct: null,
+        sparkline: [],
+        sparklineDates: [],
+        updatedAtIso: null,
+      };
+    }
     const updatedAtIso = daily.at(-1)?.date ?? null;
 
     // YTD: first observation on/after Jan 1.
@@ -73,6 +87,7 @@ export async function getSectorOverviewData(
     return {
       sectorId,
       ticker: sector.ticker,
+      success: true,
       ytdReturnPct,
       sparkline,
       sparklineDates,
@@ -91,6 +106,8 @@ export type MonthlyPoint = { dateIso: string; value: number };
 export type SectorDetailData = {
   sectorId: SectorId;
   sectorTicker: string;
+  success: boolean;
+  error?: string;
   sectorMonthly: MonthlyPoint[]; // last 5y monthly end closes
   spMonthly: MonthlyPoint[]; // last 5y monthly end closes
   metrics: {
@@ -175,6 +192,26 @@ export async function getSectorDetailData(
       fetchYahooDailyCloseSeries({ ticker: "^GSPC", start: startIso }).catch(() => []),
     ]);
 
+    if (sectorDaily.length === 0) {
+      return {
+        sectorId,
+        sectorTicker: sector.ticker,
+        success: false,
+        error: "No sector price history available",
+        sectorMonthly: [],
+        spMonthly: [],
+        metrics: {
+          ytdReturnPct: null,
+          ytdReturnVsSpPct: null,
+          ytdSpReturnPct: null,
+          return1yPct: null,
+          return3yPct: null,
+          volatilityAnnualizedPct: null,
+        },
+        updatedAtIso: null,
+      };
+    }
+
     const updatedAtIso = sectorDaily.at(-1)?.date ?? spDaily.at(-1)?.date ?? null;
 
     const sectorMonthlyMap = monthlyLastByPeriod(sectorDaily);
@@ -203,6 +240,7 @@ export async function getSectorDetailData(
     return {
       sectorId,
       sectorTicker: sector.ticker,
+      success: true,
       sectorMonthly,
       spMonthly,
       metrics: {

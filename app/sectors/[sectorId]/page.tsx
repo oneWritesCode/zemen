@@ -111,6 +111,12 @@ export default async function SectorDetailPage({
           </div>
         </div>
 
+        {!detail.success ? (
+          <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-950/30 p-3 text-sm text-amber-100">
+            Live price feed is temporarily unavailable for {sector.ticker}. Showing educational structure with safe fallbacks.
+          </div>
+        ) : null}
+
         <div className="mt-8">
           <SectorPerformanceChart
             sectorMonthly={detail.sectorMonthly}

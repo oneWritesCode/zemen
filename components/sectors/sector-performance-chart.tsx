@@ -44,6 +44,17 @@ export function SectorPerformanceChart({
     }));
   }, [filteredSector, filteredSp]);
 
+  if (combined.length < 2) {
+    return (
+      <div className="rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 sm:p-5">
+        <div className="text-sm font-semibold text-zinc-200">{sectorName} price performance</div>
+        <div className="mt-4 flex h-[320px] items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.02] text-sm text-zinc-500">
+          Chart data temporarily unavailable. Please try again later.
+        </div>
+      </div>
+    );
+  }
+
   const findBand = (from: string, to: string) => {
     const xs = combined.map((d) => d.dateIso);
     const inRange = xs.filter((x) => x >= from && x <= to);
@@ -71,8 +82,8 @@ export function SectorPerformanceChart({
               className={[
                 "rounded-full border px-3 py-1 text-xs font-semibold transition",
                 r === range
-                  ? "border-[#FFD000]/50 bg-[#FFD000]/15 text-[#FFD000]"
-                  : "border-white/10 bg-white/[0.03] text-zinc-400 hover:bg-white/[0.06] hover:text-zinc-200",
+                  ? "border-white/20 bg-white/10 text-white"
+                  : "border-white/[0.08] bg-white/[0.03] text-zinc-500 hover:bg-white/[0.07] hover:text-zinc-200",
               ].join(" ")}
             >
               {r}
@@ -82,7 +93,7 @@ export function SectorPerformanceChart({
           <button
             type="button"
             onClick={() => setCompare((v) => !v)}
-            className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold text-zinc-300 hover:border-[#FFD000]/40 hover:text-white transition"
+            className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs font-semibold text-zinc-400 hover:border-white/20 hover:text-white transition"
           >
             {compare ? "Hide S&P" : "Show S&P"}
           </button>
@@ -106,12 +117,12 @@ export function SectorPerformanceChart({
               axisLine={false}
             />
             {covidBand ? (
-              <ReferenceArea x1={covidBand.x1} x2={covidBand.x2} fill="#FFD000" fillOpacity={0.08} strokeOpacity={0} />
+              <ReferenceArea x1={covidBand.x1} x2={covidBand.x2} fill="rgba(255,255,255,0.04)" strokeOpacity={0} />
             ) : null}
             {crashBand ? (
-              <ReferenceArea x1={crashBand.x1} x2={crashBand.x2} fill="#60a5fa" fillOpacity={0.08} strokeOpacity={0} />
+              <ReferenceArea x1={crashBand.x1} x2={crashBand.x2} fill="rgba(96,165,250,0.06)" strokeOpacity={0} />
             ) : null}
-            <Line type="monotone" dataKey="sector" stroke="#FFD000" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="sector" stroke="#e4e4e7" strokeWidth={2} dot={false} />
             {compare ? (
               <Line
                 type="monotone"

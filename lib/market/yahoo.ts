@@ -13,6 +13,10 @@ type YahooChartResponse = {
       indicators?: {
         quote?: Array<{
           close?: Array<number | null>;
+          open?: Array<number | null>;
+        }>;
+        adjclose?: Array<{
+          adjclose?: Array<number | null>;
         }>;
       };
     }>;
@@ -34,25 +38,52 @@ export async function fetchYahooDailyCloseSeries(params: {
   start: string; // YYYY-MM-DD
 }): Promise<ParsedObservation[]> {
   const p1 = epochSeconds(params.start);
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(params.ticker)}?period1=${p1}&interval=1d&events=history`;
+  const encodedTicker = encodeURIComponent(params.ticker);
+  const urls = [
+    `https://query1.finance.yahoo.com/v8/finance/chart/${encodedTicker}?period1=${p1}&interval=1d&events=history`,
+    `https://query2.finance.yahoo.com/v8/finance/chart/${encodedTicker}?period1=${p1}&interval=1d&events=history`,
+  ];
 
-  const res = await fetch(url, {
-    // Cache is fine; playbook isn't a trading app.
-    next: { revalidate: 60 * 60 },
-  });
-  if (!res.ok) throw new Error(`Yahoo request failed (${res.status}) for ${params.ticker}`);
-  const json = (await res.json()) as YahooChartResponse;
+  let json: YahooChartResponse | null = null;
+  let lastErr = "unknown Yahoo error";
+
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        // Cache is fine; sectors aren't trading execution.
+        next: { revalidate: 60 * 60 },
+        headers: {
+          "user-agent": "Mozilla/5.0 (compatible; ZemenBot/1.0)",
+          accept: "application/json,text/plain,*/*",
+        },
+        signal: AbortSignal.timeout(12_000),
+      });
+      if (!res.ok) {
+        lastErr = `Yahoo request failed (${res.status}) for ${params.ticker}`;
+        continue;
+      }
+      json = (await res.json()) as YahooChartResponse;
+      break;
+    } catch (e) {
+      lastErr = e instanceof Error ? e.message : "network error";
+    }
+  }
+
+  if (!json) throw new Error(lastErr);
+
   const result = json.chart?.result?.[0];
   const err = json.chart?.error?.description;
   if (!result || err) throw new Error(err || `Yahoo returned no data for ${params.ticker}`);
 
   const ts = result.timestamp ?? [];
   const closes = result.indicators?.quote?.[0]?.close ?? [];
+  const adj = result.indicators?.adjclose?.[0]?.adjclose ?? [];
+  const opens = result.indicators?.quote?.[0]?.open ?? [];
   const out: ParsedObservation[] = [];
 
   for (let i = 0; i < ts.length && i < closes.length; i++) {
     const t = ts[i];
-    const c = closes[i];
+    const c = adj[i] ?? closes[i] ?? opens[i] ?? null;
     if (typeof t !== "number") continue;
     if (typeof c !== "number" || !Number.isFinite(c)) continue;
     out.push({ date: toIso(new Date(t * 1000)), value: c });
