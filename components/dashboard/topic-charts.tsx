@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import type { TopicChartSpec } from "@/lib/fred/topics-config";
 import type { ChartRow } from "@/lib/fred/get-topic-dataset";
 import { IntelligencePanel } from "@/components/dashboard/intelligence-panel";
+import { motion } from "framer-motion";
 import {
   CartesianGrid,
   Legend,
@@ -136,7 +137,12 @@ function ChartBlock({
         ].join(" ")}
       >
         <div className="min-h-0">
-          <div className="h-[280px] min-h-[280px] w-full min-w-0">
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="h-[280px] min-h-[280px] w-full min-w-0"
+          >
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid {...GRID} />
@@ -234,7 +240,7 @@ function ChartBlock({
                 })}
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </motion.div>
           <IntelligencePanel topicSlug={topicSlug} chartTitle={spec.title} rows={rows} />
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { Sun, CloudRain, AlertTriangle, TrendingUp, Flame } from "lucide-react";
+
 export type RegimeId =
   | "goldilocks"
   | "stagflation"
@@ -13,6 +15,7 @@ export type RegimeMeta = {
   color: string;
   bgClass: string;
   borderClass: string;
+  icon: React.ElementType;
 };
 
 export const REGIMES: RegimeMeta[] = [
@@ -24,6 +27,7 @@ export const REGIMES: RegimeMeta[] = [
     color: "#34d399",
     bgClass: "bg-emerald-500/15",
     borderClass: "border-emerald-400/40",
+    icon: Sun,
   },
   {
     id: "stagflation",
@@ -33,6 +37,7 @@ export const REGIMES: RegimeMeta[] = [
     color: "#fb923c",
     bgClass: "bg-orange-500/15",
     borderClass: "border-orange-400/40",
+    icon: CloudRain,
   },
   {
     id: "recession",
@@ -42,6 +47,7 @@ export const REGIMES: RegimeMeta[] = [
     color: "#f87171",
     bgClass: "bg-red-500/15",
     borderClass: "border-red-400/40",
+    icon: AlertTriangle,
   },
   {
     id: "recovery",
@@ -51,6 +57,7 @@ export const REGIMES: RegimeMeta[] = [
     color: "#60a5fa",
     bgClass: "bg-blue-500/15",
     borderClass: "border-blue-400/40",
+    icon: TrendingUp,
   },
   {
     id: "overheating",
@@ -60,6 +67,7 @@ export const REGIMES: RegimeMeta[] = [
     color: "#f472b6",
     bgClass: "bg-pink-500/15",
     borderClass: "border-pink-400/40",
+    icon: Flame,
   },
 ];
 

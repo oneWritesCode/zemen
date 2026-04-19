@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { AskZemenChat } from "@/components/global/ask-zemen-chat";
 import { PersonaProvider } from "@/components/global/persona-provider";
+import { ToastProvider } from "@/lib/hooks/use-toast";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Zemen — Macro regime detector",
+    default: "Zemen — Macro Economic Regime Detector",
     template: "%s · Zemen",
   },
   description:
@@ -20,10 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="min-h-full bg-[#09090b] text-zinc-100 antialiased">
-        <PersonaProvider>
-          {children}
-          <AskZemenChat />
-        </PersonaProvider>
+        <ToastProvider>
+          <PersonaProvider>
+            {children}
+            <AskZemenChat />
+          </PersonaProvider>
+        </ToastProvider>
       </body>
     </html>
   );

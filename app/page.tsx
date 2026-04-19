@@ -27,6 +27,8 @@ import { getRegimeAnalysis } from "@/lib/regime/get-analysis";
 import { REGIME_BY_ID } from "@/lib/regime/types";
 import { RegimeAlertBanner } from "@/components/global/regime-alert-banner";
 import { PresentationShell } from "@/components/site/presentation-shell";
+import { EconomicScorecard } from "@/components/landing/economic-scorecard";
+import { MacroSignalsFeed } from "@/components/landing/macro-signals-feed";
 
 /* ── Regime cards ── */
 const regimeCards = [
@@ -233,29 +235,13 @@ export default async function HomePage() {
 
           <RegimeAlertBanner variant="inline" />
         </div>
-
-        {/* Dashboard preview screenshot below hero */}
-        <div className="relative z-10 mx-auto max-w-5xl px-4 pb-24">
-          <div className="rounded-2xl border border-white/[0.08] bg-[#111113]/60 p-2 shadow-2xl backdrop-blur-sm overflow-hidden">
-            <div className="relative aspect-[16/9] rounded-xl overflow-hidden">
-              <Image
-                src="/dashboard-preview.png"
-                alt="Zemen Dashboard Preview"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-          {/* Glow under the screenshot */}
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 h-24 w-3/4 bg-[radial-gradient(ellipse_at_center,rgba(255,208,0,0.06),transparent_70%)] blur-2xl pointer-events-none" />
-        </div>
       </section>
 
       {/* ═══════════ LIVE REGIME STATUS ═══════════ */}
       <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
         <div className="rounded-2xl border border-white/[0.06] bg-[#111113] p-8 sm:p-12 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-zinc-400">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 pulse-soft" />
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
             LIVE
           </div>
 
@@ -302,7 +288,7 @@ export default async function HomePage() {
               Weekly Briefing
             </Link>
             <Link
-              href="/regime-detector"
+              href="/regime"
               className="rounded-lg border border-white/[0.1] px-5 py-2 text-sm text-zinc-300 transition hover:bg-white/[0.04]"
             >
               Regime Detector
@@ -380,6 +366,12 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ═══════════ GAMIFICATION: SCORECARD & SIGNALS ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6">
+        <EconomicScorecard />
+        <MacroSignalsFeed />
       </section>
 
       {/* ═══════════ THE 5 REGIMES ═══════════ */}

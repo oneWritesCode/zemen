@@ -68,7 +68,7 @@ export function IntelligencePanel({ topicSlug, chartTitle, rows }: IntelligenceP
   return (
     <section className="mt-5 rounded-2xl border border-white/[0.07] bg-[#0e0e10] overflow-hidden">
       {/* Top accent line */}
-      <div className="h-[2px] w-full bg-gradient-to-r from-white/20 via-white/10 to-transparent" />
+      <div className="h-[1px] w-full bg-white/15" />
 
       <div className="p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -77,7 +77,7 @@ export function IntelligencePanel({ topicSlug, chartTitle, rows }: IntelligenceP
               <BrainCircuit className="h-3.5 w-3.5 text-zinc-300" />
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-semibold">Intelligence Panel</p>
+              <p className="text-[11px] uppercase tracking-[2px] text-white/50 font-semibold">Intelligence Panel</p>
               <h4 className="mt-0.5 text-sm text-zinc-200 font-medium">
                 {content.title} — {chartTitle}
               </h4>
@@ -125,7 +125,7 @@ export function IntelligencePanel({ topicSlug, chartTitle, rows }: IntelligenceP
                   className="relative h-2.5 rounded-full"
                   style={{
                     background:
-                      "linear-gradient(to right, #ef4444 0% 20%, #f59e0b 20% 40%, #22c55e 40% 60%, #f59e0b 60% 80%, #ef4444 80% 100%)",
+                      "linear-gradient(to right, #ef4444 0% 20%, #ffffff 20% 40%, #22c55e 40% 60%, #ffffff 60% 80%, #ef4444 80% 100%)",
                   }}
                 >
                   <span

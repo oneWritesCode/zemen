@@ -43,7 +43,7 @@ export type CompanyCardConfig = {
 
 export type SectorConfig = {
   id: SectorId;
-  emoji: string;
+  iconId: SectorId;
   name: string;
   ticker: string;
   plainEnglish: string;
@@ -61,7 +61,7 @@ export type SectorConfig = {
 export const SECTORS: SectorConfig[] = [
   {
     id: "technology",
-    emoji: "💻",
+    iconId: "technology",
     name: "Technology",
     ticker: "XLK",
     plainEnglish: "Companies that build software, hardware, and the internet",
@@ -161,7 +161,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "healthcare",
-    emoji: "🏥",
+    iconId: "healthcare",
     name: "Healthcare",
     ticker: "XLV",
     plainEnglish: "Hospitals, drug companies, and medical device makers",
@@ -257,7 +257,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "financials",
-    emoji: "🏦",
+    iconId: "financials",
     name: "Financials",
     ticker: "XLF",
     plainEnglish: "Banks, insurance companies, and investment firms",
@@ -353,7 +353,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "energy",
-    emoji: "⚡",
+    iconId: "energy",
     name: "Energy",
     ticker: "XLE",
     plainEnglish: "Oil, gas, and renewable energy companies",
@@ -451,7 +451,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "consumer-staples",
-    emoji: "🛒",
+    iconId: "consumer-staples",
     name: "Consumer Staples",
     ticker: "XLP",
     plainEnglish: "Companies making everyday essentials — food, cleaning products, toiletries",
@@ -548,7 +548,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "consumer-discretionary",
-    emoji: "🛍️",
+    iconId: "consumer-discretionary",
     name: "Consumer Discretionary",
     ticker: "XLY",
     plainEnglish:
@@ -647,7 +647,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "industrials",
-    emoji: "🏭",
+    iconId: "industrials",
     name: "Industrials",
     ticker: "XLI",
     plainEnglish: "Companies that build things — planes, machinery, construction",
@@ -741,7 +741,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "real-estate",
-    emoji: "🏠",
+    iconId: "real-estate",
     name: "Real Estate",
     ticker: "XLRE",
     plainEnglish: "Companies that own and rent out buildings and properties",
@@ -836,7 +836,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "utilities",
-    emoji: "💡",
+    iconId: "utilities",
     name: "Utilities",
     ticker: "XLU",
     plainEnglish: "Electric, gas, and water companies that keep the lights on",
@@ -930,7 +930,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "materials",
-    emoji: "🪨",
+    iconId: "materials",
     name: "Materials",
     ticker: "XLB",
     plainEnglish: "Companies mining metals, making chemicals, and producing raw materials",
@@ -1028,7 +1028,7 @@ export const SECTORS: SectorConfig[] = [
   },
   {
     id: "emerging-tech",
-    emoji: "🚀",
+    iconId: "emerging-tech",
     name: "Emerging Tech",
     ticker: "ARKK",
     plainEnglish: "Cutting edge companies in AI, robotics, genomics, and space",

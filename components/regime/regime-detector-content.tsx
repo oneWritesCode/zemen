@@ -2,9 +2,10 @@ import Link from "next/link";
 import { FlaskConical, BookOpen, Calendar } from "lucide-react";
 import { MdOutlineTimeline } from "react-icons/md";
 
-import { HistoricalPlaybookTable } from "@/components/regime/historical-playbook-table";
 import type { RegimeAnalysisResult } from "@/lib/regime/get-analysis";
 import { REGIME_BY_ID } from "@/lib/regime/types";
+
+import { RegimePredictionWidget } from "@/components/regime/regime-prediction-widget";
 
 function FeatureTable({
   row,
@@ -78,7 +79,7 @@ export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) 
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl">
       {/* Page header */}
       <div className="mb-10 flex flex-wrap items-start gap-4">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08]">
@@ -98,8 +99,8 @@ export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) 
 
       {/* Historical playbook shortcut */}
       <div className="mb-8">
-        <a
-          href="#historical-playbook"
+        <Link
+          href="/regime/playbook"
           className="inline-flex max-w-md flex-col gap-0.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-5 py-4 transition hover:border-white/[0.14] hover:bg-white/[0.06]"
         >
           <div className="flex items-center gap-2 mb-1">
@@ -110,7 +111,7 @@ export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) 
             Average S&amp;P 500, gold &amp; 10Y bond proxy returns in the 90 &amp;
             180 days after past months like this regime
           </span>
-        </a>
+        </Link>
       </div>
 
       {/* Current regime card */}
@@ -162,12 +163,7 @@ export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) 
         </div>
       </section>
 
-      {data.historicalPlaybook ? (
-        <HistoricalPlaybookTable
-          playbook={data.historicalPlaybook}
-          regimeMeta={meta}
-        />
-      ) : (
+      {data.historicalPlaybook ? null : (
         <section
           id="historical-playbook"
           className="scroll-mt-24 mt-8 rounded-2xl border border-dashed border-white/[0.10] bg-white/[0.01] p-8 text-center text-sm text-zinc-500"
@@ -230,6 +226,8 @@ export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) 
           </div>
         </div>
       </section>
+
+      <RegimePredictionWidget currentRegimeId={data.current.regime} />
 
       <p className="mt-10 text-center text-xs text-zinc-700">
         Model: {data.meta.nObs} monthly observations · Not investment advice.

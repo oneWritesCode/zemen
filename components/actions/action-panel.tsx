@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { motion } from "framer-motion";
 import { ExternalLink, usePlatformPopularity } from "@/components/actions/external-link";
+import { CompanyLogo } from "@/components/CompanyLogo";
 import {
   getActionPanelConfig,
   type ActionGuide,
@@ -41,7 +43,7 @@ function useRegimeStatus() {
 
 function urgencyDot(urgency: ActionGuide["urgency"]) {
   if (urgency === "high") return "bg-red-500";
-  if (urgency === "medium") return "bg-[#FFD000]";
+  if (urgency === "medium") return "bg-white";
   return "bg-zinc-500";
 }
 
@@ -51,36 +53,41 @@ function regionBadge(region: ActionPlatform["region"]) {
   return "bg-[#22c55e20] text-[#22c55e]";
 }
 
-function cardTone(color: string) {
-  return { background: color };
-}
-
 function GuideBox({ guide }: { guide: ActionGuide }) {
   return (
-    <div className="rounded-r-lg border border-[#1a1a1a] border-l-[3px] border-l-[#FFD000] bg-[#111] px-5 py-4">
+    <div className="rounded-r-lg border border-[#1e1e1e] border-l-[3px] border-l-white/60 bg-[#111111] px-5 py-4">
       <div className="flex items-center gap-2">
         <span className={`h-2 w-2 rounded-full ${urgencyDot(guide.urgency)}`} />
-        <span className="text-xs uppercase tracking-wider text-zinc-500">{guide.title}</span>
+        <span className="text-[11px] uppercase tracking-[2px] text-white/50 font-semibold">{guide.title}</span>
       </div>
       <p className="mt-2 text-sm leading-relaxed text-zinc-200">{guide.body}</p>
     </div>
   );
 }
 
-function PlatformCard({ p }: { p: ActionPlatform }) {
+function PlatformCard({ p, index = 0 }: { p: ActionPlatform, index?: number }) {
   const initialPopularity = usePlatformPopularity(p.name);
   const [popularity, setPopularity] = useState(initialPopularity);
   return (
-    <article className="rounded-xl border border-[#1a1a1a] bg-[#111] p-5 transition-all hover:-translate-y-0.5 hover:border-[#FFD000]">
+    <motion.article 
+      initial={{ opacity: 0, y: 20 }} 
+      whileInView={{ opacity: 1, y: 0 }} 
+      viewport={{ once: true, margin: '-50px' }} 
+      transition={{ 
+        duration: 0.4, 
+        delay: index * 0.08, 
+        ease: 'easeOut' 
+      }}
+      className="rounded-xl border border-[#1e1e1e] bg-[#111111] p-5 transition-all hover:border-white/40 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] will-change-transform"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div
-            className="flex h-11 w-11 items-center justify-center rounded-[10px] text-lg font-bold text-white"
-            style={cardTone(p.color)}
-            aria-hidden
-          >
-            {p.icon}
-          </div>
+          <CompanyLogo
+            ticker={p.ticker ?? ""}
+            name={p.name}
+            size={44}
+            fallbackColor={p.color}
+          />
           <div>
             <p className="font-semibold text-zinc-100">{p.name}</p>
             <span className={`inline-flex rounded px-1.5 py-0.5 text-[10px] ${regionBadge(p.region)}`}>
@@ -89,7 +96,7 @@ function PlatformCard({ p }: { p: ActionPlatform }) {
           </div>
         </div>
         {popularity > 3 ? (
-          <span className="rounded bg-[#FFD000]/20 px-2 py-0.5 text-[10px] font-semibold text-[#FFD000]">
+          <span className="rounded bg-white/20 px-2 py-0.5 text-[10px] font-semibold text-white">
             Popular choice
           </span>
         ) : null}
@@ -98,17 +105,17 @@ function PlatformCard({ p }: { p: ActionPlatform }) {
       <p className="mt-2 text-xs text-zinc-500">
         Best for: <span className="text-zinc-300">{p.bestFor}</span>
       </p>
-      <p className="mt-2 text-xs text-[#FFD000]">{p.feature}</p>
+      <p className="mt-2 text-xs text-white">{p.feature}</p>
 
       <ExternalLink
         platformName={p.name}
         url={p.url}
         onTrackedClick={() => setPopularity((v) => v + 1)}
-        className="mt-4 w-full rounded-md border border-[#333] bg-transparent px-3 py-2 text-left text-xs font-semibold text-white transition hover:border-[#FFD000] hover:bg-[#FFD000] hover:text-black"
+        className="mt-4 w-full rounded-md border border-white/20 bg-transparent px-3 py-2 text-left text-xs font-semibold text-white transition hover:border-white hover:bg-white hover:text-black"
       >
         Open {p.name} →
       </ExternalLink>
-    </article>
+    </motion.article>
   );
 }
 
@@ -183,7 +190,7 @@ function SkillCards() {
                   key={lnk.u}
                   platformName={lnk.l}
                   url={lnk.u}
-                  className="rounded border border-white/10 px-2 py-1 text-[11px] text-zinc-300 hover:border-[#FFD000]/40"
+                  className="rounded border border-white/10 px-2 py-1 text-[11px] text-zinc-300 hover:border-white/40"
                 >
                   {lnk.l}
                 </ExternalLink>
@@ -223,7 +230,7 @@ function GoldCalculator() {
             max={25}
             value={alloc}
             onChange={(e) => setAlloc(Number(e.target.value))}
-            className="mt-2 w-full accent-[#FFD000]"
+            className="mt-2 w-full accent-[#FFFFFF]"
           />
           <div className="mt-1 text-zinc-300">{alloc}%</div>
         </label>
@@ -263,7 +270,7 @@ function HomeLoanCalculator({ rate }: { rate: number }) {
         </label>
         <label className="text-xs text-zinc-400">
           Down Payment %
-          <input type="range" min={10} max={40} value={downPct} onChange={(e) => setDownPct(Number(e.target.value))} className="mt-2 w-full accent-[#FFD000]" />
+          <input type="range" min={10} max={40} value={downPct} onChange={(e) => setDownPct(Number(e.target.value))} className="mt-2 w-full accent-[#FFFFFF]" />
           <div className="mt-1 text-zinc-300">{downPct}%</div>
         </label>
         <label className="text-xs text-zinc-400">
@@ -343,8 +350,8 @@ export function ActionPanel({ topicSlug, chartRows, kpis }: ActionPanelProps) {
   const currentGuide = config.guides[0];
 
   return (
-    <section className="mt-10 rounded-2xl border border-[#222222] border-t-2 border-t-[#FFD000] bg-[#0d0d0d] p-8">
-      <p className="mb-4 text-[11px] font-semibold uppercase tracking-[2px] text-[#FFD000]">
+    <section className="mt-10 rounded-2xl border border-[#222222] border-t-2 border-t-[#FFFFFF] bg-[#0d0d0d] p-8">
+      <p className="mb-4 text-[11px] font-semibold uppercase tracking-[2px] text-[#FFFFFF]">
         What can you do about this?
       </p>
 
@@ -352,10 +359,10 @@ export function ActionPanel({ topicSlug, chartRows, kpis }: ActionPanelProps) {
       {currentGuide ? <div className="mt-4"><GuideBox guide={currentGuide} /></div> : null}
 
       <div className="mt-6">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[2px] text-[#FFD000]">Action links</p>
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[2px] text-[#FFFFFF]">Action links</p>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {shownPlatforms.map((p) => (
-            <PlatformCard key={p.name} p={p} />
+          {shownPlatforms.map((p, index) => (
+            <PlatformCard key={p.name} p={p} index={index} />
           ))}
         </div>
         {config.platforms.length > 4 ? (

@@ -9,6 +9,8 @@ export type ActionPlatform = {
   url: string;
   color: string;
   icon: string;
+  /** Key into TICKER_TO_DOMAIN for logo resolution */
+  ticker?: string;
   region: Region;
   category: string;
 };
@@ -38,52 +40,52 @@ type Context = {
 };
 
 const STOCK_PLATFORMS: ActionPlatform[] = [
-  { name: "Zerodha", description: "India's largest stock broker", bestFor: "Indian investors, active traders", feature: "Zero brokerage on equity delivery", url: "https://zerodha.com", color: "#387ED1", icon: "Z", region: "India", category: "Stocks" },
-  { name: "Groww", description: "Simple investing for beginners", bestFor: "First time investors in India", feature: "Buy stocks and mutual funds in minutes", url: "https://groww.in", color: "#00D09C", icon: "G", region: "India", category: "Stocks" },
-  { name: "Upstox", description: "Fast and low cost trading", bestFor: "Active traders in India", feature: "Advanced charts and instant execution", url: "https://upstox.com", color: "#6C3CE1", icon: "U", region: "India", category: "Stocks" },
-  { name: "Angel One", description: "Full service broker with research", bestFor: "Investors who want guidance", feature: "AI powered stock recommendations", url: "https://angelone.in", color: "#F7842A", icon: "A", region: "India", category: "Stocks" },
-  { name: "INDmoney", description: "Invest in US stocks from India", bestFor: "Indians wanting global exposure", feature: "Buy Apple, Tesla, Google from India", url: "https://indmoney.com", color: "#1A56DB", icon: "I", region: "India", category: "Stocks" },
-  { name: "Robinhood", description: "Commission free US stock trading", bestFor: "US based investors", feature: "No commission on all trades", url: "https://robinhood.com", color: "#00C805", icon: "R", region: "US", category: "Stocks" },
-  { name: "eToro", description: "Social trading and investing", bestFor: "Beginners who want to follow experts", feature: "Copy successful traders automatically", url: "https://etoro.com", color: "#00C176", icon: "E", region: "Global", category: "Stocks" },
+  { name: "Zerodha", ticker: "ZERODHA", description: "India's largest stock broker", bestFor: "Indian investors, active traders", feature: "Zero brokerage on equity delivery", url: "https://zerodha.com", color: "#387ED1", icon: "Z", region: "India", category: "Stocks" },
+  { name: "Groww", ticker: "GROWW", description: "Simple investing for beginners", bestFor: "First time investors in India", feature: "Buy stocks and mutual funds in minutes", url: "https://groww.in", color: "#00D09C", icon: "G", region: "India", category: "Stocks" },
+  { name: "Upstox", ticker: "UPSTOX", description: "Fast and low cost trading", bestFor: "Active traders in India", feature: "Advanced charts and instant execution", url: "https://upstox.com", color: "#6C3CE1", icon: "U", region: "India", category: "Stocks" },
+  { name: "Angel One", ticker: "ANGELONE", description: "Full service broker with research", bestFor: "Investors who want guidance", feature: "AI powered stock recommendations", url: "https://angelone.in", color: "#F7842A", icon: "A", region: "India", category: "Stocks" },
+  { name: "INDmoney", ticker: "INDMONEY", description: "Invest in US stocks from India", bestFor: "Indians wanting global exposure", feature: "Buy Apple, Tesla, Google from India", url: "https://indmoney.com", color: "#1A56DB", icon: "I", region: "India", category: "Stocks" },
+  { name: "Robinhood", ticker: "ROBINHOOD", description: "Commission free US stock trading", bestFor: "US based investors", feature: "No commission on all trades", url: "https://robinhood.com", color: "#00C805", icon: "R", region: "US", category: "Stocks" },
+  { name: "eToro", ticker: "ETORO", description: "Social trading and investing", bestFor: "Beginners who want to follow experts", feature: "Copy successful traders automatically", url: "https://etoro.com", color: "#00C176", icon: "E", region: "Global", category: "Stocks" },
 ];
 
 const JOB_PLATFORMS: ActionPlatform[] = [
-  { name: "LinkedIn Jobs", description: "World's largest professional job network", bestFor: "Professional and corporate roles", feature: "Apply with one click using your profile", url: "https://linkedin.com/jobs", color: "#0A66C2", icon: "in", region: "Global", category: "Jobs" },
-  { name: "Naukri.com", description: "India's #1 job portal", bestFor: "All job levels in India", feature: "10 million+ active job listings", url: "https://naukri.com", color: "#E53935", icon: "N", region: "India", category: "Jobs" },
-  { name: "Indeed", description: "Search millions of jobs worldwide", bestFor: "All industries, global reach", feature: "Salary comparison and company reviews", url: "https://indeed.com", color: "#2557A7", icon: "I", region: "Global", category: "Jobs" },
-  { name: "Internshala", description: "Internships and fresher jobs", bestFor: "Students and fresh graduates", feature: "Training programs with job guarantee", url: "https://internshala.com", color: "#16A34A", icon: "I", region: "India", category: "Jobs" },
-  { name: "Wellfound", description: "Jobs at startups and tech companies", bestFor: "Tech professionals and startup seekers", feature: "See salary and equity upfront", url: "https://wellfound.com", color: "#111827", icon: "A", region: "Global", category: "Jobs" },
-  { name: "Upwork", description: "Find freelance work online", bestFor: "Anyone with a digital skill", feature: "Work from anywhere, set your own rates", url: "https://upwork.com", color: "#14A800", icon: "U", region: "Global", category: "Jobs" },
+  { name: "LinkedIn Jobs", ticker: "LINKEDIN", description: "World's largest professional job network", bestFor: "Professional and corporate roles", feature: "Apply with one click using your profile", url: "https://linkedin.com/jobs", color: "#0A66C2", icon: "in", region: "Global", category: "Jobs" },
+  { name: "Naukri.com", ticker: "NAUKRI", description: "India's #1 job portal", bestFor: "All job levels in India", feature: "10 million+ active job listings", url: "https://naukri.com", color: "#E53935", icon: "N", region: "India", category: "Jobs" },
+  { name: "Indeed", ticker: "INDEED", description: "Search millions of jobs worldwide", bestFor: "All industries, global reach", feature: "Salary comparison and company reviews", url: "https://indeed.com", color: "#2557A7", icon: "I", region: "Global", category: "Jobs" },
+  { name: "Internshala", ticker: "INTERNSHALA", description: "Internships and fresher jobs", bestFor: "Students and fresh graduates", feature: "Training programs with job guarantee", url: "https://internshala.com", color: "#16A34A", icon: "I", region: "India", category: "Jobs" },
+  { name: "Wellfound", ticker: "WELLFOUND", description: "Jobs at startups and tech companies", bestFor: "Tech professionals and startup seekers", feature: "See salary and equity upfront", url: "https://wellfound.com", color: "#111827", icon: "A", region: "Global", category: "Jobs" },
+  { name: "Upwork", ticker: "UPWORK", description: "Find freelance work online", bestFor: "Anyone with a digital skill", feature: "Work from anywhere, set your own rates", url: "https://upwork.com", color: "#14A800", icon: "U", region: "Global", category: "Jobs" },
 ];
 
 const GOLD_PLATFORMS: ActionPlatform[] = [
-  { name: "Zerodha Gold", description: "Buy 24K pure gold, stored in secure vault", bestFor: "Beginners in digital gold", feature: "Start small, sell anytime", url: "https://zerodha.com/gold", color: "#387ED1", icon: "Z", region: "India", category: "Gold" },
-  { name: "PhonePe Gold", description: "Buy gold directly from PhonePe app", bestFor: "Mobile-first users", feature: "Simple digital checkout flow", url: "https://phonepe.com/gold", color: "#5F259F", icon: "P", region: "India", category: "Gold" },
-  { name: "Paytm Gold", description: "Start from ₹1, sell anytime instantly", bestFor: "Small periodic purchases", feature: "Micro-saving friendly", url: "https://paytm.com/gold", color: "#00BAF2", icon: "P", region: "India", category: "Gold" },
-  { name: "RBI Retail Direct", description: "Buy Sovereign Gold Bonds directly", bestFor: "Long-term SGB investors", feature: "2.5% annual interest + gold exposure", url: "https://rbiretaildirect.org.in", color: "#1D4ED8", icon: "R", region: "India", category: "Gold" },
-  { name: "MMTC-PAMP", description: "Certified 24K physical gold", bestFor: "Physical gold buyers", feature: "Trusted purity and packaging", url: "https://mmtcpamp.com", color: "#F59E0B", icon: "M", region: "India", category: "Gold" },
+  { name: "Zerodha Gold", ticker: "ZERODHA_GOLD", description: "Buy 24K pure gold, stored in secure vault", bestFor: "Beginners in digital gold", feature: "Start small, sell anytime", url: "https://zerodha.com/gold", color: "#387ED1", icon: "Z", region: "India", category: "Gold" },
+  { name: "PhonePe Gold", ticker: "PHONEPE", description: "Buy gold directly from PhonePe app", bestFor: "Mobile-first users", feature: "Simple digital checkout flow", url: "https://phonepe.com/gold", color: "#5F259F", icon: "P", region: "India", category: "Gold" },
+  { name: "Paytm Gold", ticker: "PAYTM", description: "Start from ₹1, sell anytime instantly", bestFor: "Small periodic purchases", feature: "Micro-saving friendly", url: "https://paytm.com/gold", color: "#00BAF2", icon: "P", region: "India", category: "Gold" },
+  { name: "RBI Retail Direct", ticker: "RBIDIRECT", description: "Buy Sovereign Gold Bonds directly", bestFor: "Long-term SGB investors", feature: "2.5% annual interest + gold exposure", url: "https://rbiretaildirect.org.in", color: "#1D4ED8", icon: "R", region: "India", category: "Gold" },
+  { name: "MMTC-PAMP", ticker: "MMTCPAMP", description: "Certified 24K physical gold", bestFor: "Physical gold buyers", feature: "Trusted purity and packaging", url: "https://mmtcpamp.com", color: "#F59E0B", icon: "M", region: "India", category: "Gold" },
 ];
 
 const INFLATION_PLATFORMS: ActionPlatform[] = [
-  { name: "BankBazaar FD", description: "Compare highest FD rates across banks", bestFor: "Safer yield seekers", feature: "Fast bank-to-bank rate comparison", url: "https://bankbazaar.com/fixed-deposit.html", color: "#2563EB", icon: "B", region: "India", category: "Inflation" },
-  { name: "Groww", description: "Explore liquid funds and inflation-aware options", bestFor: "Retail investors", feature: "Simple app experience", url: "https://groww.in", color: "#00D09C", icon: "G", region: "India", category: "Inflation" },
-  { name: "TreasuryDirect", description: "US inflation-protected bond access", bestFor: "US savers", feature: "Buy I-Bonds directly", url: "https://treasurydirect.gov", color: "#1E40AF", icon: "T", region: "US", category: "Inflation" },
-  { name: "CRED", description: "Card payments with rewards and score tools", bestFor: "Credit-active users", feature: "Rewards + spend tracking", url: "https://cred.club", color: "#111827", icon: "C", region: "India", category: "Inflation" },
-  { name: "CashKaro", description: "Cashback deals for everyday purchases", bestFor: "Price-conscious buyers", feature: "Cashback reduces inflation impact", url: "https://cashkaro.com", color: "#F97316", icon: "K", region: "India", category: "Inflation" },
+  { name: "BankBazaar FD", ticker: "BANKBAZAAR", description: "Compare highest FD rates across banks", bestFor: "Safer yield seekers", feature: "Fast bank-to-bank rate comparison", url: "https://bankbazaar.com/fixed-deposit.html", color: "#2563EB", icon: "B", region: "India", category: "Inflation" },
+  { name: "Groww", ticker: "GROWW", description: "Explore liquid funds and inflation-aware options", bestFor: "Retail investors", feature: "Simple app experience", url: "https://groww.in", color: "#00D09C", icon: "G", region: "India", category: "Inflation" },
+  { name: "TreasuryDirect", ticker: "TREASURYDIRECT", description: "US inflation-protected bond access", bestFor: "US savers", feature: "Buy I-Bonds directly", url: "https://treasurydirect.gov", color: "#1E40AF", icon: "T", region: "US", category: "Inflation" },
+  { name: "CRED", ticker: "CRED", description: "Card payments with rewards and score tools", bestFor: "Credit-active users", feature: "Rewards + spend tracking", url: "https://cred.club", color: "#111827", icon: "C", region: "India", category: "Inflation" },
+  { name: "CashKaro", ticker: "CASHKARO", description: "Cashback deals for everyday purchases", bestFor: "Price-conscious buyers", feature: "Cashback reduces inflation impact", url: "https://cashkaro.com", color: "#F97316", icon: "K", region: "India", category: "Inflation" },
 ];
 
 const RATES_PLATFORMS: ActionPlatform[] = [
-  { name: "BankBazaar", description: "Compare FD rates, loans, and credit cards", bestFor: "Rate shoppers", feature: "Multi-bank comparison in one place", url: "https://bankbazaar.com", color: "#2563EB", icon: "B", region: "India", category: "Rates" },
-  { name: "PaisaBazaar", description: "Personal and home loan comparisons", bestFor: "Borrowers refinancing debt", feature: "Loan + score discovery tools", url: "https://paisabazaar.com", color: "#7C3AED", icon: "P", region: "India", category: "Rates" },
-  { name: "CRED", description: "Credit card management + score visibility", bestFor: "Card users", feature: "Track debt and score progress", url: "https://cred.club", color: "#111827", icon: "C", region: "India", category: "Rates" },
+  { name: "BankBazaar", ticker: "BANKBAZAAR", description: "Compare FD rates, loans, and credit cards", bestFor: "Rate shoppers", feature: "Multi-bank comparison in one place", url: "https://bankbazaar.com", color: "#2563EB", icon: "B", region: "India", category: "Rates" },
+  { name: "PaisaBazaar", ticker: "PAISABAZAAR", description: "Personal and home loan comparisons", bestFor: "Borrowers refinancing debt", feature: "Loan + score discovery tools", url: "https://paisabazaar.com", color: "#7C3AED", icon: "P", region: "India", category: "Rates" },
+  { name: "CRED", ticker: "CRED", description: "Credit card management + score visibility", bestFor: "Card users", feature: "Track debt and score progress", url: "https://cred.club", color: "#111827", icon: "C", region: "India", category: "Rates" },
 ];
 
 const HOUSING_PLATFORMS: ActionPlatform[] = [
-  { name: "MagicBricks", description: "India's trusted property portal", bestFor: "Primary buyers in India", feature: "Large listing inventory", url: "https://magicbricks.com", color: "#E11D48", icon: "M", region: "India", category: "Housing" },
-  { name: "99acres", description: "Buy, rent, or sell property across India", bestFor: "All buyer/renter types", feature: "Strong filtering and locality data", url: "https://99acres.com", color: "#1D4ED8", icon: "9", region: "India", category: "Housing" },
-  { name: "Housing.com", description: "Smart search for homes in India", bestFor: "Urban home seekers", feature: "Map-first discovery experience", url: "https://housing.com", color: "#0EA5E9", icon: "H", region: "India", category: "Housing" },
-  { name: "NoBroker", description: "Zero brokerage property search", bestFor: "Cost-sensitive users", feature: "Avoid brokerage charges", url: "https://nobroker.in", color: "#16A34A", icon: "N", region: "India", category: "Housing" },
-  { name: "Zillow", description: "US home search and price estimates", bestFor: "US housing market users", feature: "Detailed local price comps", url: "https://zillow.com", color: "#1D4ED8", icon: "Z", region: "US", category: "Housing" },
+  { name: "MagicBricks", ticker: "MAGICBRICKS", description: "India's trusted property portal", bestFor: "Primary buyers in India", feature: "Large listing inventory", url: "https://magicbricks.com", color: "#E11D48", icon: "M", region: "India", category: "Housing" },
+  { name: "99acres", ticker: "ACRES99", description: "Buy, rent, or sell property across India", bestFor: "All buyer/renter types", feature: "Strong filtering and locality data", url: "https://99acres.com", color: "#1D4ED8", icon: "9", region: "India", category: "Housing" },
+  { name: "Housing.com", ticker: "HOUSING", description: "Smart search for homes in India", bestFor: "Urban home seekers", feature: "Map-first discovery experience", url: "https://housing.com", color: "#0EA5E9", icon: "H", region: "India", category: "Housing" },
+  { name: "NoBroker", ticker: "NOBROKER", description: "Zero brokerage property search", bestFor: "Cost-sensitive users", feature: "Avoid brokerage charges", url: "https://nobroker.in", color: "#16A34A", icon: "N", region: "India", category: "Housing" },
+  { name: "Zillow", ticker: "ZILLOW", description: "US home search and price estimates", bestFor: "US housing market users", feature: "Detailed local price comps", url: "https://zillow.com", color: "#1D4ED8", icon: "Z", region: "US", category: "Housing" },
 ];
 
 export function getActionPanelConfig(

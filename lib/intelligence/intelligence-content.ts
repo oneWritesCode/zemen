@@ -58,9 +58,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Lower rates support borrowing, very high rates slow demand.",
     rangeZones: [
       { label: "Very low", color: "#ef4444", min: 0, max: 1 },
-      { label: "Low", color: "#f59e0b", min: 1, max: 2.5 },
+      { label: "Low", color: "#ffffff", min: 1, max: 2.5 },
       { label: "Balanced", color: "#22c55e", min: 2.5, max: 4 },
-      { label: "Tight", color: "#f59e0b", min: 4, max: 5.5 },
+      { label: "Tight", color: "#ffffff", min: 4, max: 5.5 },
       { label: "Restrictive", color: "#ef4444", min: 5.5, max: 8 },
     ],
     currentSummaryTemplate:
@@ -179,9 +179,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Very high inflation hurts buying power, very low inflation can signal weak demand.",
     rangeZones: [
       { label: "Too low", color: "#ef4444", min: -1, max: 1 },
-      { label: "Cool", color: "#f59e0b", min: 1, max: 2 },
+      { label: "Cool", color: "#ffffff", min: 1, max: 2 },
       { label: "Healthy", color: "#22c55e", min: 2, max: 3 },
-      { label: "Warm", color: "#f59e0b", min: 3, max: 4.5 },
+      { label: "Warm", color: "#ffffff", min: 3, max: 4.5 },
       { label: "Hot", color: "#ef4444", min: 4.5, max: 10 },
     ],
     currentSummaryTemplate:
@@ -299,9 +299,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Lower is usually better, but extremely low levels can raise wage pressure.",
     rangeZones: [
       { label: "Very tight", color: "#ef4444", min: 2, max: 3.2 },
-      { label: "Tight", color: "#f59e0b", min: 3.2, max: 3.8 },
+      { label: "Tight", color: "#ffffff", min: 3.2, max: 3.8 },
       { label: "Healthy", color: "#22c55e", min: 3.8, max: 4.8 },
-      { label: "Soft", color: "#f59e0b", min: 4.8, max: 6 },
+      { label: "Soft", color: "#ffffff", min: 4.8, max: 6 },
       { label: "Weak", color: "#ef4444", min: 6, max: 12 },
     ],
     currentSummaryTemplate:
@@ -419,9 +419,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Moderate positive growth is usually healthiest for stability.",
     rangeZones: [
       { label: "Contraction", color: "#ef4444", min: -6, max: 0 },
-      { label: "Weak", color: "#f59e0b", min: 0, max: 1 },
+      { label: "Weak", color: "#ffffff", min: 0, max: 1 },
       { label: "Healthy", color: "#22c55e", min: 1, max: 3 },
-      { label: "Hot", color: "#f59e0b", min: 3, max: 5 },
+      { label: "Hot", color: "#ffffff", min: 3, max: 5 },
       { label: "Unsustainable", color: "#ef4444", min: 5, max: 9 },
     ],
     currentSummaryTemplate:
@@ -539,9 +539,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Balanced housing demand avoids both collapse and overheating.",
     rangeZones: [
       { label: "Stress", color: "#ef4444", min: 1, max: 3.5 },
-      { label: "Soft", color: "#f59e0b", min: 3.5, max: 5 },
+      { label: "Soft", color: "#ffffff", min: 3.5, max: 5 },
       { label: "Balanced", color: "#22c55e", min: 5, max: 6.5 },
-      { label: "Tight", color: "#f59e0b", min: 6.5, max: 7.5 },
+      { label: "Tight", color: "#ffffff", min: 6.5, max: 7.5 },
       { label: "Strained", color: "#ef4444", min: 7.5, max: 10 },
     ],
     currentSummaryTemplate:
@@ -659,9 +659,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Lower spreads signal calm credit markets; high spreads signal stress.",
     rangeZones: [
       { label: "Crisis", color: "#ef4444", min: 8, max: 25 },
-      { label: "Risky", color: "#f59e0b", min: 5, max: 8 },
+      { label: "Risky", color: "#ffffff", min: 5, max: 8 },
       { label: "Normal", color: "#22c55e", min: 3, max: 5 },
-      { label: "Tight", color: "#f59e0b", min: 2, max: 3 },
+      { label: "Tight", color: "#ffffff", min: 2, max: 3 },
       { label: "Overconfident", color: "#ef4444", min: 0, max: 2 },
     ],
     currentSummaryTemplate:
@@ -779,9 +779,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Gold often rises when fear or inflation concerns rise.",
     rangeZones: [
       { label: "Depressed", color: "#ef4444", min: 700, max: 1200 },
-      { label: "Soft", color: "#f59e0b", min: 1200, max: 1600 },
+      { label: "Soft", color: "#ffffff", min: 1200, max: 1600 },
       { label: "Balanced", color: "#22c55e", min: 1600, max: 2200 },
-      { label: "Elevated", color: "#f59e0b", min: 2200, max: 2600 },
+      { label: "Elevated", color: "#ffffff", min: 2200, max: 2600 },
       { label: "Stressed", color: "#ef4444", min: 2600, max: 3500 },
     ],
     currentSummaryTemplate:
@@ -899,9 +899,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Steady markets usually have moderate VIX and trend-supportive equity prices.",
     rangeZones: [
       { label: "Panic", color: "#ef4444", min: 35, max: 90 },
-      { label: "Risky", color: "#f59e0b", min: 25, max: 35 },
+      { label: "Risky", color: "#ffffff", min: 25, max: 35 },
       { label: "Normal", color: "#22c55e", min: 15, max: 25 },
-      { label: "Calm", color: "#f59e0b", min: 10, max: 15 },
+      { label: "Calm", color: "#ffffff", min: 10, max: 15 },
       { label: "Complacent", color: "#ef4444", min: 0, max: 10 },
     ],
     currentSummaryTemplate:
@@ -1019,9 +1019,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Balanced trade and a stable dollar usually reduce macro stress.",
     rangeZones: [
       { label: "Weak dollar", color: "#ef4444", min: 85, max: 100 },
-      { label: "Soft", color: "#f59e0b", min: 100, max: 110 },
+      { label: "Soft", color: "#ffffff", min: 100, max: 110 },
       { label: "Balanced", color: "#22c55e", min: 110, max: 120 },
-      { label: "Strong", color: "#f59e0b", min: 120, max: 130 },
+      { label: "Strong", color: "#ffffff", min: 120, max: 130 },
       { label: "Very strong", color: "#ef4444", min: 130, max: 150 },
     ],
     currentSummaryTemplate:
@@ -1139,9 +1139,9 @@ export const INTELLIGENCE_CONTENT: Record<string, IndicatorIntelligence> = {
     rangeTitle: "Middle-to-high confidence usually supports steady spending.",
     rangeZones: [
       { label: "Very weak", color: "#ef4444", min: 45, max: 60 },
-      { label: "Weak", color: "#f59e0b", min: 60, max: 75 },
+      { label: "Weak", color: "#ffffff", min: 60, max: 75 },
       { label: "Healthy", color: "#22c55e", min: 75, max: 90 },
-      { label: "Strong", color: "#f59e0b", min: 90, max: 105 },
+      { label: "Strong", color: "#ffffff", min: 90, max: 105 },
       { label: "Overheated", color: "#ef4444", min: 105, max: 120 },
     ],
     currentSummaryTemplate:

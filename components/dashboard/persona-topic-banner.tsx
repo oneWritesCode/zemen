@@ -9,7 +9,7 @@ export function PersonaTopicBanner({ topicSlug }: { topicSlug: string }) {
   if (!persona) return null;
 
   return (
-    <div className="mt-4 rounded-xl border border-[#FFD000]/30 bg-[#FFD000]/10 px-4 py-3 text-sm leading-6 text-zinc-100">
+    <div className="mt-4 rounded-xl border border-[#FFFFFF]/30 bg-[#FFFFFF]/10 px-4 py-3 text-sm leading-6 text-zinc-100">
       {getPersonaTopicCopy(topicSlug, persona)}
     </div>
   );

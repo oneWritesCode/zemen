@@ -11,7 +11,7 @@ export default function ReadmePage() {
         </header>
 
         <section className="section-reveal mt-12 space-y-6">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">What is Zemen?</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">What is Zemen?</h2>
           <p className="text-lg leading-relaxed text-zinc-300">
             Zemen is a macro intelligence app that watches economic indicators and translates them into one
             simple story. Instead of asking you to interpret raw charts, it tells you the current economic
@@ -20,7 +20,7 @@ export default function ReadmePage() {
         </section>
 
         <section className="section-reveal mt-12 space-y-6">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">The Problem</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">The Problem</h2>
           <p className="text-lg leading-relaxed text-zinc-300">
             Existing tools are often fragmented or too technical. You usually need many tabs, financial
             jargon, and lots of time to connect inflation, jobs, growth, and rates into one clear picture.
@@ -29,7 +29,7 @@ export default function ReadmePage() {
         </section>
 
         <section className="section-reveal mt-12 space-y-6">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">How It Works</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">How It Works</h2>
           <p className="text-lg leading-relaxed text-zinc-300">
             Zemen runs a pipeline that fetches macro data, cleans it, and builds comparable monthly
             snapshots. It then applies clustering (a machine learning method that groups similar patterns)
@@ -39,7 +39,7 @@ export default function ReadmePage() {
         </section>
 
         <section className="section-reveal mt-12 space-y-6">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">Data Sources</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">Data Sources</h2>
           <div className="overflow-hidden rounded-xl border border-white/10">
             <table className="w-full text-left text-sm">
               <thead className="bg-white/5 text-zinc-200">
@@ -71,7 +71,7 @@ export default function ReadmePage() {
         </section>
 
         <section className="section-reveal mt-12 space-y-4">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">Tech Stack</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">Tech Stack</h2>
           <ul className="list-disc space-y-1 pl-6 text-zinc-300">
             <li>Platform: Zerve AI</li>
             <li>Language: Python</li>
@@ -83,7 +83,7 @@ export default function ReadmePage() {
         </section>
 
         <section className="section-reveal mt-12 space-y-6">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">The 5 Regimes</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">The 5 Regimes</h2>
           <div className="overflow-hidden rounded-xl border border-white/10">
             <table className="w-full text-left text-sm">
               <thead className="bg-white/5 text-zinc-200">
@@ -125,7 +125,7 @@ export default function ReadmePage() {
         </section>
 
         <section className="section-reveal mt-12 space-y-4">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">Features</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">Features</h2>
           <ul className="list-disc space-y-1 pl-6 text-zinc-300">
             <li>Live macro dashboard with topic-level visualizations</li>
             <li>Regime detection with confidence score</li>
@@ -136,22 +136,22 @@ export default function ReadmePage() {
         </section>
 
         <section className="section-reveal mt-12 space-y-4">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">Live App</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">Live App</h2>
           <Link
             href="/dashboard"
-            className="inline-flex rounded-full bg-[#FFD000] px-6 py-3 font-semibold text-black"
+            className="inline-flex rounded-full bg-[#FFFFFF] px-6 py-3 font-semibold text-black"
           >
             Open Zemen App
           </Link>
         </section>
 
         <section className="section-reveal mt-12 space-y-3 text-zinc-300">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">Built at</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">Built at</h2>
           <p>Zerve AI Hackathon 2025</p>
         </section>
 
         <section className="section-reveal mt-12 space-y-3 pb-8 text-zinc-300">
-          <h2 className="text-3xl font-semibold text-[#FFD000]">Author</h2>
+          <h2 className="text-3xl font-semibold text-[#FFFFFF]">Author</h2>
           <p>[Your Name]</p>
           <p>Portfolio: your-portfolio-link</p>
           <p>X: your-x-link</p>

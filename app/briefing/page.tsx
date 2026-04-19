@@ -7,6 +7,10 @@ import { getFreshnessLabel } from "@/lib/freshness";
 import { getRegimeAnalysis } from "@/lib/regime/get-analysis";
 import { REGIME_BY_ID } from "@/lib/regime/types";
 import { fetchYahooDailyCloseSeries } from "@/lib/market/yahoo";
+import { StreakBanner } from "@/components/global/streak-banner";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { SidebarShell } from "@/components/site/sidebar-shell";
+import { PageWrapper } from "@/components/ui/animations";
 
 export const dynamic = "force-dynamic";
 
@@ -253,19 +257,30 @@ export default async function BriefingPage() {
         : "Transition risk is rising";
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-zinc-100 sm:px-6">
-      <article className="mx-auto max-w-5xl space-y-8">
-        <header>
-          <h1 className="text-4xl font-bold sm:text-5xl">
-            Zemen Weekly Briefing - Week of {weekOf}
-          </h1>
-          <p className="mt-3 text-lg text-zinc-300">
-            What happened, what it means, what to watch.
-          </p>
+    <SidebarShell>
+      <PageWrapper>
+        <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-zinc-100 sm:px-6">
+        <article className="mx-auto max-w-5xl space-y-8">
+          <Breadcrumb 
+            items={[
+              { label: 'Dashboard', href: '/dashboard' },
+              { label: 'Weekly Briefing', href: null }
+            ]} 
+          />
+          <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <div>
+            <h1 className="text-4xl font-bold sm:text-5xl">
+              Zemen Weekly Briefing - Week of {weekOf}
+            </h1>
+            <p className="mt-3 text-lg text-zinc-300">
+              What happened, what it means, what to watch.
+            </p>
+          </div>
+          <StreakBanner />
         </header>
 
         <section className="rounded-2xl border border-white/10 bg-[#111111] p-6">
-          <h2 className="text-xl font-semibold text-[#FFD000]">This week in numbers</h2>
+          <h2 className="text-xl font-semibold text-[#FFFFFF]">This week in numbers</h2>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="text-zinc-400">
@@ -297,7 +312,7 @@ export default async function BriefingPage() {
         </section>
 
         <section className="rounded-2xl border border-white/10 bg-[#111111] p-6">
-          <h2 className="text-xl font-semibold text-[#FFD000]">The big story this week</h2>
+          <h2 className="text-xl font-semibold text-white">The big story this week</h2>
           <div className="mt-4 space-y-4 text-zinc-300">
             <p>
               The main macro story is the tug-of-war between inflation progress and policy caution. Price pressure is much lower than the 2022 peak, but the final stretch back to target is slower and more uneven than markets hoped.
@@ -312,7 +327,7 @@ export default async function BriefingPage() {
         </section>
 
         <section className="rounded-2xl border border-white/10 bg-[#111111] p-6">
-          <h2 className="text-xl font-semibold text-[#FFD000]">What Zemen is watching</h2>
+          <h2 className="text-xl font-semibold text-white">What Zemen is watching</h2>
           <ul className="mt-4 space-y-3 text-zinc-300">
             <li>1. CPI and wage growth: this tells us whether inflation cooling is durable.</li>
             <li>2. Unemployment trend: a fast rise would raise recession risk and policy urgency.</li>
@@ -321,7 +336,7 @@ export default async function BriefingPage() {
         </section>
 
         <section className="rounded-2xl border border-white/10 bg-[#111111] p-6">
-          <h2 className="text-xl font-semibold text-[#FFD000]">Regime status</h2>
+          <h2 className="text-xl font-semibold text-white">Regime status</h2>
           <p className="mt-3 text-lg">
             <span style={{ color: meta.color }} className="font-semibold">
               {meta.label}
@@ -331,12 +346,14 @@ export default async function BriefingPage() {
           <p className="mt-2 text-zinc-400">
             Confidence: {analysis.current.confidencePct.toFixed(1)}%. Last updated on {analysis.current.period}.
           </p>
-          <Link href="/regime-detector" className="mt-4 inline-block text-sm text-[#FFD000] hover:underline">
+          <Link href="/regime" className="mt-4 inline-block text-sm text-white hover:underline">
             Open full regime explanation
           </Link>
         </section>
       </article>
     </div>
+    </PageWrapper>
+  </SidebarShell>
   );
 }
 

@@ -1,5 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { 
+  Monitor, 
+  HeartPulse, 
+  Landmark, 
+  Zap, 
+  ShoppingCart, 
+  ShoppingBag, 
+  Factory, 
+  Home, 
+  Lightbulb, 
+  Mountain, 
+  Rocket,
+  Activity
+} from "lucide-react";
 
 import { getRegimeAnalysis } from "@/lib/regime/get-analysis";
 import { REGIME_BY_ID } from "@/lib/regime/types";
@@ -7,8 +21,26 @@ import { SECTOR_BY_ID, type SectorId } from "@/lib/sectors/sector-config";
 import { getSectorFit } from "@/lib/sectors/regime-sector";
 import { getSectorDetailData } from "@/lib/sectors/yahoo-etf";
 import { SectorPerformanceChart } from "@/components/sectors/sector-performance-chart";
+import { CompanyLogo } from "@/components/CompanyLogo";
+
+import { BackButton } from "@/components/ui/back-button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
+
+const SECTOR_ICONS: Record<string, React.ElementType> = {
+  technology: Monitor,
+  healthcare: HeartPulse,
+  financials: Landmark,
+  energy: Zap,
+  "consumer-staples": ShoppingCart,
+  "consumer-discretionary": ShoppingBag,
+  industrials: Factory,
+  "real-estate": Home,
+  utilities: Lightbulb,
+  materials: Mountain,
+  "emerging-tech": Rocket,
+};
 
 function formatSignedPct(p: number | null) {
   if (p == null || !Number.isFinite(p)) return "Awaiting data";
@@ -38,22 +70,34 @@ export default async function SectorDetailPage({
   const fit = getSectorFit(regime, sector.id);
   const detail = await getSectorDetailData(sector.id);
 
+  const Icon = SECTOR_ICONS[sector.id] ?? Activity;
   const whyNow = sector.whyNowByRegime[regime] ?? "Sector conditions are evolving with the macro cycle.";
 
   const topBadgeClass =
     fit === "HOT"
       ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
       : fit === "NEUTRAL"
-        ? "bg-[#FFD000]/15 border-[#FFD000]/30 text-[#FFD000]"
+        ? "bg-[#FFFFFF]/15 border-[#FFFFFF]/30 text-[#FFFFFF]"
         : "bg-zinc-700/30 border-zinc-600/50 text-white";
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 pb-28">
       <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
+        <Breadcrumb 
+          items={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Sectors', href: '/sectors' },
+            { label: sector.name, href: null }
+          ]} 
+        />
+        <BackButton href="/sectors" label="All Sectors" />
+
         <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-7 sm:p-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
-              <div className="text-3xl">{sector.emoji}</div>
+              <div className="text-3xl">
+                <Icon className="w-10 h-10" style={{ color: sector.color }} />
+              </div>
               <h1 className="mt-2 text-4xl font-bold sm:text-5xl">{sector.name}</h1>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className={["inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", topBadgeClass].join(" ")}>
@@ -76,7 +120,7 @@ export default async function SectorDetailPage({
 
             <div className="md:text-right">
               <div className="text-sm text-zinc-400">Explore more</div>
-              <Link href="/sectors" className="mt-2 inline-flex items-center rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm font-semibold text-zinc-200 hover:border-[#FFD000]/30 transition">
+              <Link href="/sectors" className="mt-2 inline-flex items-center rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm font-semibold text-zinc-200 hover:border-[#FFFFFF]/30 transition">
                 ← Back to sectors
               </Link>
             </div>
@@ -112,7 +156,7 @@ export default async function SectorDetailPage({
         </div>
 
         {!detail.success ? (
-          <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-950/30 p-3 text-sm text-amber-100">
+          <div className="mt-4 rounded-xl border border-white/30 bg-amber-950/30 p-3 text-sm text-amber-100">
             Live price feed is temporarily unavailable for {sector.ticker}. Showing educational structure with safe fallbacks.
           </div>
         ) : null}
@@ -121,7 +165,7 @@ export default async function SectorDetailPage({
           <SectorPerformanceChart
             sectorMonthly={detail.sectorMonthly}
             spMonthly={detail.spMonthly}
-            sectorName={`${sector.emoji} ${sector.name}`}
+            sectorName={sector.name}
           />
         </div>
 
@@ -154,15 +198,18 @@ export default async function SectorDetailPage({
 
         {/* Placeholder sections to be expanded next iteration */}
         <div className="mt-8 rounded-2xl border border-white/[0.08] bg-[#111111] p-7 sm:p-10">
-          <h2 className="text-2xl font-bold">Companies you can trust in this sector</h2>
+          <h2 className="text-2xl font-bold">Notable companies in this sector</h2>
           <p className="mt-2 text-zinc-400">
-            This section will be filled with yfinance-backed company cards (logos + valuation + dividend + risk analysis).
+            A sample of major companies operating in this space.
           </p>
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-5 flex flex-wrap gap-3">
             {sector.companies.map((c) => (
-              <span key={c.ticker} className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-zinc-300">
-                {c.ticker}
-              </span>
+              <div key={c.ticker} className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] pl-1 pr-4 py-1 transition-colors hover:bg-white/[0.04]">
+                <CompanyLogo ticker={c.ticker} name={c.ticker} size={28} />
+                <span className="text-sm font-medium text-zinc-200">
+                  {c.ticker}
+                </span>
+              </div>
             ))}
           </div>
         </div>

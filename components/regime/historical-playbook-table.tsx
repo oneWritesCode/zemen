@@ -1,5 +1,6 @@
 import { BookOpen } from "lucide-react";
 import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
+import { motion } from "framer-motion";
 
 import type { HistoricalPlaybook } from "@/lib/regime/playbook";
 import type { RegimeMeta } from "@/lib/regime/types";
@@ -58,7 +59,7 @@ export function HistoricalPlaybookTable({
         {playbook.loadError ? (
           <div
             role="alert"
-            className="mb-6 rounded-xl border border-amber-500/20 bg-amber-950/30 px-4 py-3 text-sm text-amber-300/80"
+            className="mb-6 rounded-xl border border-white/20 bg-amber-950/30 px-4 py-3 text-sm text-amber-300/80"
           >
             <strong className="font-medium">Could not load full playbook.</strong>{" "}
             {playbook.loadError}
@@ -84,9 +85,13 @@ export function HistoricalPlaybookTable({
               </tr>
             </thead>
             <tbody>
-              {playbook.rows.map((row) => (
-                <tr
+              {playbook.rows.map((row, index) => (
+                <motion.tr
                   key={row.key}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
                   className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition"
                 >
                   <td className="px-4 py-3.5 text-zinc-300 text-sm">{row.label}</td>
@@ -96,7 +101,7 @@ export function HistoricalPlaybookTable({
                   <td className="px-4 py-3.5">
                     <ReturnCell value={row.return180} n={row.return180N} />
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>

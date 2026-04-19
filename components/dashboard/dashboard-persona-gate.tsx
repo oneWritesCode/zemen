@@ -25,9 +25,9 @@ export function DashboardPersonaGate({
                   key={option.id}
                   type="button"
                   onClick={() => setPersona(option.id)}
-                  className="rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 text-left transition hover:border-[#FFD000]/60 hover:bg-[#1f1f1f]"
+                  className="rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 text-left transition hover:border-[#FFFFFF]/60 hover:bg-[#1f1f1f]"
                 >
-                  <p className="text-xl font-semibold text-[#FFD000]">{option.title}</p>
+                  <p className="text-xl font-semibold text-[#FFFFFF]">{option.title}</p>
                   <p className="mt-2 text-sm leading-6 text-zinc-300">
                     {option.description}
                   </p>

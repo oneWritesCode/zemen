@@ -17,7 +17,7 @@ export default async function SharePage({
       <div className="mx-auto max-w-3xl">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">Shared Ask Zemen response</h1>
-          <Link href="/" className="text-sm text-[#FFD000] hover:underline">
+          <Link href="/" className="text-sm text-[#FFFFFF] hover:underline">
             Back to Zemen
           </Link>
         </div>

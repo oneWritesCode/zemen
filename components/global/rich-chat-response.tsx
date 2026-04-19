@@ -27,7 +27,7 @@ function BulletList({ items }: { items: Array<{ text: string; depth: number }> }
     <div className="space-y-2">
       {items.map((it, idx) => (
         <div key={idx} className="flex items-start gap-2" style={{ marginLeft: it.depth * 14 }}>
-          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#FFD000]" />
+          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/60" />
           <div className="min-w-0 text-sm leading-relaxed text-zinc-200">{it.text}</div>
         </div>
       ))}
@@ -60,7 +60,7 @@ function MetricCards({ data }: { data: MetricData }) {
         const tone =
           m.good === true ? "border-emerald-500/30" : m.good === false ? "border-red-500/30" : "border-white/10";
         const deltaTone =
-          m.good === true ? "text-emerald-300" : m.good === false ? "text-red-300" : "text-[#FFD000]";
+          m.good === true ? "text-emerald-300" : m.good === false ? "text-red-300" : "text-white";
         return (
           <div key={`${m.label}-${m.value}`} className={`rounded-xl border ${tone} bg-white/[0.03] px-3 py-2`}>
             <div className="text-[11px] uppercase tracking-[0.12em] text-zinc-500">{m.label}</div>
@@ -82,10 +82,10 @@ function ChatTable({ table }: { table: TableData }) {
   const rows = Array.isArray(table?.rows) ? table.rows : [];
   if (headers.length === 0 || rows.length === 0) return null;
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-[#1a1a1a]">
+    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-[#0a0a0a]">
       <div className="max-h-[300px] overflow-auto">
         <table className="w-full min-w-[520px] text-left text-xs">
-          <thead className="sticky top-0 bg-[#FFD000] text-black">
+          <thead className="sticky top-0 bg-white text-black font-bold">
             <tr>
               {headers.map((h) => (
                 <th key={h} className="px-3 py-2 font-semibold">
@@ -96,7 +96,7 @@ function ChatTable({ table }: { table: TableData }) {
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} className={i % 2 === 0 ? "bg-[#111]" : "bg-[#1a1a1a]"}>
+              <tr key={i} className={i % 2 === 0 ? "bg-[#111111]" : "bg-[#161616]"}>
                 {r.map((c, j) => (
                   <td key={j} className="px-3 py-2 text-zinc-200">
                     {c == null ? "" : String(c)}
@@ -112,7 +112,7 @@ function ChatTable({ table }: { table: TableData }) {
 }
 
 function Chart({ chart }: { chart: ChartData }) {
-  const color = ("color" in chart && chart.color) || "#FFD000";
+  const color = ("color" in chart && chart.color) || "#FFFFFF";
   const title = ("title" in chart && chart.title) || "";
 
   if (chart.type === "gauge") {

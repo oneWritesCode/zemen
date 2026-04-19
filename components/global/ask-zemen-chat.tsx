@@ -268,7 +268,7 @@ export function AskZemenChat() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed right-5 bottom-5 z-[85] inline-flex items-center gap-2 rounded-full bg-[#FFD000] px-4 py-3 font-semibold text-black shadow-lg transition hover:bg-[#ffdf52]"
+          className="fixed right-5 bottom-5 z-[85] inline-flex items-center gap-2 rounded-full bg-[#FFFFFF] px-4 py-3 font-semibold text-black shadow-lg transition hover:bg-[#ffdf52]"
         >
           <MessageCircle className="h-4 w-4" />
           Ask Zemen
@@ -279,7 +279,7 @@ export function AskZemenChat() {
         <div className="fixed right-5 bottom-5 z-[85] w-[280px] overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b0d]/95 shadow-2xl backdrop-blur-md">
           <div className="flex items-start justify-between gap-3 p-3">
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#FFD000]">Ask Zemen</p>
+              <p className="text-xs font-semibold text-[#FFFFFF]">Ask Zemen</p>
               <p className="mt-0.5 text-[11px] text-zinc-500">
                 Mode: {MODE_OPTIONS.find((m) => m.id === mode)?.label}
               </p>
@@ -304,7 +304,7 @@ export function AskZemenChat() {
                 setOpen(true);
                 setFullscreen(false);
               }}
-              className="inline-flex items-center gap-2 rounded-full bg-[#FFD000] px-3 py-1.5 text-xs font-semibold text-black hover:bg-[#ffdf52] transition"
+              className="inline-flex items-center gap-2 rounded-full bg-[#FFFFFF] px-3 py-1.5 text-xs font-semibold text-black hover:bg-[#ffdf52] transition"
             >
               <MessageCircle className="h-4 w-4" />
               Show chat
@@ -335,7 +335,7 @@ export function AskZemenChat() {
         <div className="relative z-10 shrink-0 border-b border-white/[0.06]">
           {/* Top row: title + action icons */}
           <div className="flex items-center justify-between gap-3 px-4 pt-4 pb-2">
-            <p className="font-medium text-[#FFD000] flex items-center gap-2 text-sm">
+            <p className="font-medium text-[#FFFFFF] flex items-center gap-2 text-sm">
               <Search className="w-4 h-4 shrink-0" />
               Ask Zemen
             </p>
@@ -395,7 +395,7 @@ export function AskZemenChat() {
                   className={[
                     "px-2.5 py-1 text-[11px] font-semibold rounded-full transition",
                     mode === opt.id
-                      ? "bg-[#FFD000] text-black"
+                      ? "bg-[#FFFFFF] text-black"
                       : "text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.06]",
                   ].join(" ")}
                   aria-pressed={mode === opt.id}
@@ -448,7 +448,7 @@ export function AskZemenChat() {
                     onClick={() => void send(input)}
                     disabled={!canSend}
                     type="button"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FFD000] text-black transition hover:bg-[#ffdf52] disabled:opacity-40"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FFFFFF] text-black transition hover:bg-[#ffdf52] disabled:opacity-40"
                     aria-label="Send message"
                   >
                     <Send className="w-4 h-4" />
@@ -465,7 +465,7 @@ export function AskZemenChat() {
                   onClick={() => void send(q)}
                   className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition rounded-2xl text-xs sm:text-sm text-zinc-300 whitespace-nowrap shadow-sm group"
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#FFD000]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#FFFFFF]" />
                   {q}
                 </button>
               ))}
@@ -563,8 +563,8 @@ export function AskZemenChat() {
                           onClick={() => void send(opt.text)}
                           className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 border border-white/[0.05] hover:bg-white/10 hover:border-white/[0.08] transition text-sm text-zinc-300 w-full group shadow-sm text-left"
                         >
-                          <div className="bg-white/5 p-2 rounded-lg group-hover:bg-[#FFD000]/10 transition-colors">
-                            <opt.icon className="w-4 h-4 text-zinc-400 group-hover:text-[#FFD000] transition-colors" />
+                          <div className="bg-white/5 p-2 rounded-lg group-hover:bg-white/10 transition-colors">
+                            <opt.icon className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
                           </div>
                           <span className="flex-1 font-medium group-hover:text-white transition-colors">{opt.text}</span>
                         </button>
@@ -641,7 +641,7 @@ export function AskZemenChat() {
 
                 {loading ? (
                   <div className="flex justify-start">
-                    <div className="bg-[#FFD000]/5 border border-[#FFD000]/10 px-4 py-3 rounded-2xl rounded-bl-sm">
+                    <div className="bg-white/5 border border-white/10 px-4 py-3 rounded-2xl rounded-bl-sm">
                       <TypingDots />
                     </div>
                   </div>
@@ -674,7 +674,7 @@ export function AskZemenChat() {
                   <button
                     type="submit"
                     disabled={!canSend}
-                    className="m-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FFD000] text-black transition disabled:opacity-40 hover:bg-[#ffdf52] shadow-sm mb-1 sm:mb-0.5"
+                    className="m-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-black transition disabled:opacity-40 hover:bg-[#e5e5e5] shadow-[0_4px_20px_rgba(255,255,255,0.15)] mb-1 sm:mb-0.5 font-semibold"
                     aria-label="Send message"
                   >
                     <Send className="h-4 w-4" />
