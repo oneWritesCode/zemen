@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
-import { SidebarShell } from "@/components/site/sidebar-shell";
+
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BackButton } from "@/components/ui/back-button";
 import { useToast } from "@/lib/hooks/use-toast";
@@ -196,7 +196,7 @@ export default function QuizPage() {
   };
 
   return (
-    <SidebarShell>
+    <>
       <div className="min-h-screen bg-[#080809] text-zinc-100 py-12 px-4 sm:px-6">
           <div className="max-w-3xl mx-auto">
             <Breadcrumb 
@@ -367,6 +367,6 @@ export default function QuizPage() {
 
           </div>
         </div>
-    </SidebarShell>
+    </>
   );
 }

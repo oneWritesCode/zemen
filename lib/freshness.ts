@@ -8,8 +8,8 @@ export function getFreshnessLabel(updatedAtIso: string | null): {
   const ms = Date.parse(`${updatedAtIso}T00:00:00Z`);
   if (!Number.isFinite(ms)) return { text: "Date unknown", tone: "gray" };
   const daysAgo = Math.max(0, Math.floor((Date.now() - ms) / (1000 * 60 * 60 * 24)));
-  if (daysAgo <= 7) return { text: `Updated ${daysAgo}d ago`, tone: "green" };
-  if (daysAgo <= 35) return { text: `Updated ${daysAgo}d ago`, tone: "yellow" };
-  return { text: `Updated ${daysAgo}d ago`, tone: "red" };
+  if (daysAgo <= 7) return { text: `${daysAgo}d ago`, tone: "green" };
+  if (daysAgo <= 35) return { text: `${daysAgo}d ago`, tone: "yellow" };
+  return { text: `${daysAgo}d ago`, tone: "red" };
 }
 

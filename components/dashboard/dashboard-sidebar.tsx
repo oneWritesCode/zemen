@@ -52,10 +52,10 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
 
   const linkClass = (active: boolean) =>
     [
-      "nav-link-hover group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all",
+      "group relative flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200",
       active
-        ? "sidebar-active"
-        : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200",
+        ? "bg-white/[0.06] text-white"
+        : "text-[#bbb] hover:bg-white/[0.04] hover:text-white",
     ].join(" ");
 
   const iconWrapClass = (active: boolean) =>
@@ -64,10 +64,10 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
     }`;
 
   const iconClass = (active: boolean) =>
-    `h-3.5 w-3.5 ${active ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"}`;
+    `h-3.5 w-3.5 ${active ? "text-white" : "text-[#888] group-hover:text-zinc-300"}`;
 
   return (
-    <aside className="sticky top-0 z-30 flex w-full shrink-0 flex-col border-b border-white/[0.05] bg-[#08080a] lg:h-screen lg:w-[264px] lg:border-b-0 lg:border-r">
+    <aside className="sticky top-0 z-30 flex w-full shrink-0 flex-col border-b border-[#0f0f0f] bg-[#050505] lg:h-screen lg:w-[264px] lg:border-b-0 lg:border-r">
       {/* Brand */}
       <div className="px-5 py-5 lg:px-6">
         <Link href="/" className="flex items-center gap-3">
@@ -78,7 +78,7 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
             <p className="text-[14px] font-bold tracking-widest text-white">
               ZEMEN
             </p>
-            <p className="text-[9px] font-medium uppercase tracking-[0.22em] text-zinc-600">
+            <p className="text-[9px] font-medium uppercase tracking-[0.22em] text-[#888]">
               Macro Intelligence
             </p>
           </div>
@@ -89,7 +89,7 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
       <div className="px-4 pb-3 lg:px-5">
         <div className="relative">
           <Search
-            className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-600"
+            className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#888]"
             aria-hidden
           />
           <input
@@ -97,7 +97,7 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
             placeholder="Search indicators..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-white/[0.05] bg-white/[0.03] py-2 pl-9 pr-3 text-[12px] text-zinc-300 placeholder-zinc-600 outline-none transition focus:border-white/[0.12] focus:bg-white/[0.05]"
+            className="w-full rounded-xl border border-white/[0.05] bg-white/[0.03] py-2 pl-9 pr-3 text-[12px] text-[#bbb] placeholder-[#888] outline-none transition focus:border-white/[0.12] focus:bg-white/[0.05]"
           />
         </div>
       </div>
@@ -175,103 +175,64 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
           </motion.div>
         </div>
 
-        <div className="separator-gold mx-2 my-2" />
 
-        {/* LEARN HUB */}
+
+
+        {/* TOPICS */}
         <div className="mb-1 px-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-zinc-600 mb-2">
-            Learn Hub
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#999] mb-2">
+            Economic Indicators
           </p>
           <div className="space-y-0.5">
-            <motion.div whileHover={{ x: 4 }} transition={{ duration: 0.15 }}>
-              <Link href="/learn" className={linkClass(pathname === "/learn")}>
-                <div className={iconWrapClass(pathname === "/learn")}>
-                  <BookOpen className={iconClass(pathname === "/learn")} />
-                </div>
-                <span className="flex-1 truncate">Learn Hub</span>
-              </Link>
-            </motion.div>
-            <motion.div whileHover={{ x: 4 }} transition={{ duration: 0.15 }}>
-              <Link href="/learn/quiz" className={linkClass(pathname === "/learn/quiz")}>
-                <div className={iconWrapClass(pathname === "/learn/quiz")}>
-                  <Brain className={iconClass(pathname === "/learn/quiz")} />
-                </div>
-                <span className="flex-1 truncate">Macro IQ Quiz</span>
-              </Link>
-            </motion.div>
+            {filteredTopics.map((topic) => (
+              <motion.div key={topic.slug} whileHover={{ x: 4 }} transition={{ duration: 0.15 }}>
+                <Link
+                  href={`/indicators/${topic.slug}`}
+                  className={linkClass(pathname === `/indicators/${topic.slug}`)}
+                >
+                  <div className={iconWrapClass(pathname === `/indicators/${topic.slug}`)}>
+                    <TopicIcon
+                      id={topic.icon}
+                      className={iconClass(pathname === `/indicators/${topic.slug}`)}
+                    />
+                  </div>
+                  <span className="flex-1 truncate">{topic.label}</span>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
-
-        <div className="separator-gold mx-2 my-2" />
-
-        {/* Categories header */}
-        <div className="mb-1 flex items-center justify-between px-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-zinc-600">
-            Indicators
-          </p>
-          <span className="flex h-4 min-w-[18px] items-center justify-center rounded-md bg-white/[0.05] px-1.5 text-[9px] font-bold text-zinc-500">
-            {filteredTopics.length}
-          </span>
-        </div>
-
-        {/* Topic links */}
-        {filteredTopics.map((t) => {
-          const href = `/dashboard/${t.slug}`;
-          const active = pathname === href;
-          return (
-            <motion.div key={t.slug} whileHover={{ x: 4 }} transition={{ duration: 0.15 }}>
-              <Link href={href} className={linkClass(active)}>
-                <div className={iconWrapClass(active)}>
-                  <TopicIcon id={t.icon} className={iconClass(active)} />
-                </div>
-                <span className="flex-1 truncate">{t.label}</span>
-                <ChevronRight
-                  className={`h-3 w-3 transition-all ${
-                    active
-                      ? "text-white/40"
-                      : "text-transparent group-hover:text-zinc-600"
-                  }`}
-                  aria-hidden
-                />
-              </Link>
-            </motion.div>
-          );
-        })}
       </nav>
 
-      {/* Footer / User Stats */}
-      <div className="border-t border-white/[0.05] p-4 lg:p-5">
-        <div className="bg-white/[0.03] border border-white/[0.05] rounded-2xl p-4">
-          <div className="flex items-center justify-between mb-3">
+      {/* User Progress */}
+      <div className="mt-auto p-4 lg:p-5">
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+          <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
-                <Brain className="w-4 h-4 text-white" />
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#ffcc00]/10 border border-[#ffcc00]/20">
+                <Brain className="h-3 w-3 text-[#ffcc00]" />
               </div>
-              <div>
-                <p className="text-[11px] font-bold text-white leading-tight">Your Macro IQ</p>
-                <p className="text-[9px] text-zinc-500 font-medium">{getLevel(userScore)}</p>
-              </div>
+              <span className="text-[11px] font-bold text-white uppercase tracking-wider">Macro IQ</span>
             </div>
-            <div className="text-right">
-              <p className="text-[12px] font-mono font-bold text-white">{userScore}<span className="text-[10px] text-zinc-600">/100</span></p>
-            </div>
+            <span className="text-[14px] font-black text-[#ffcc00]">{userScore}</span>
           </div>
           
-          <div className="h-1.5 w-full bg-white/15 rounded-full overflow-hidden mb-3">
-            <div className="h-full bg-white" style={{ width: `${userScore}%` }} />
+          <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${userScore}%` }}
+              className="h-full bg-[#ffcc00] shadow-[0_0_10px_rgba(255,204,0,0.3)]"
+            />
           </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-white/[0.03]">
+          
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <Flame className={`w-3 h-3 ${userStreak > 0 ? 'text-white' : 'text-zinc-600'}`} />
-              <span className="text-[10px] font-bold text-zinc-400">{userStreak} day streak</span>
+              <Flame className="h-3 w-3 text-orange-500" />
+              <span className="text-[11px] font-bold text-[#888]">{userStreak} DAY STREAK</span>
             </div>
-            {userScore >= 80 && (
-              <div className="flex items-center gap-1">
-                <Trophy className="w-3 h-3 text-emerald-500" />
-                <span className="text-[10px] font-bold text-emerald-500">Expert</span>
-              </div>
-            )}
+            <div className="rounded-md bg-white/[0.06] px-1.5 py-0.5">
+              <span className="text-[9px] font-bold text-white uppercase">{getLevel(userScore)}</span>
+            </div>
           </div>
         </div>
       </div>

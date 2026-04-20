@@ -7,11 +7,13 @@ import type { TopicChartSpec } from "@/lib/fred/topics-config";
 import type { ChartRow } from "@/lib/fred/get-topic-dataset";
 import { IntelligencePanel } from "@/components/dashboard/intelligence-panel";
 import { motion } from "framer-motion";
+import { ExpandButton } from "@/components/ExpandButton";
+import { GraphModal } from "@/components/GraphModal";
 import {
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
+  Area,
+  AreaChart,
   ReferenceArea,
   ResponsiveContainer,
   Tooltip,
@@ -19,14 +21,26 @@ import {
   YAxis,
 } from "recharts";
 
-const AXIS = { stroke: "#52525b", fontSize: 11 };
-const GRID = { stroke: "#27272a", strokeDasharray: "3 6" };
+const AXIS = { stroke: "#666", fontSize: 10 };
+const GRID = { stroke: "rgba(255,255,255,0.03)", strokeDasharray: "0" };
 const TOOLTIP_STYLE = {
-  backgroundColor: "#12121a",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 12,
-  color: "#fafafa",
+  backgroundColor: "#0d0d0d",
+  border: "1px solid #333",
+  borderRadius: 8,
+  color: "#fff",
+  padding: "8px 12px",
 };
+
+function getIndicatorColor(topicSlug: string, key: string): string {
+  const slug = topicSlug.toLowerCase();
+  if (slug.includes("rate") || slug.includes("yield") || slug.includes("money") || slug.includes("treasury")) return "#4d9fff";
+  if (slug.includes("inflation") || slug.includes("cpi") || slug.includes("pce") || slug.includes("risk")) return "#ff6b6b";
+  if (slug.includes("unemployment") || slug.includes("job")) return "#f97316";
+  if (slug.includes("gdp") || slug.includes("growth") || slug.includes("stock") || slug.includes("market")) return "#00ff88";
+  if (slug.includes("housing") || slug.includes("home") || slug.includes("sentiment") || slug.includes("consumer")) return "#00d4ff";
+  if (slug.includes("credit") || slug.includes("spread") || slug.includes("gold") || slug.includes("debt")) return "#f0a500";
+  return "rgba(255,255,255,0.7)";
+}
 
 /** Shaded comparison windows (month-end dates aligned to typical FRED monthly rows). */
 const COMPARE_2008 = {
@@ -97,6 +111,7 @@ function ChartBlock({
   onToggleHidden: () => void;
   hidden: boolean;
 }) {
+  const [modalOpen, setModalOpen] = useState(false);
   const right = new Set(spec.useRightAxis ?? []);
   const leftKeys = spec.seriesKeys.filter((k) => !right.has(k));
   const rightKeys = spec.seriesKeys.filter((k) => right.has(k));
@@ -115,21 +130,181 @@ function ChartBlock({
     data.length > 0 &&
     rangesOverlapMs(tMin, tMax, T_2020[0]!, T_2020[1]!);
 
-  return (
-    <div className="relative min-w-0 rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 pb-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] sm:p-5">
-      <button
-        type="button"
-        onClick={onToggleHidden}
-        className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-400 transition hover:border-white/20 hover:text-zinc-100"
-        aria-label={hidden ? "Expand chart" : "Collapse chart"}
-        title={hidden ? "Expand chart" : "Collapse chart"}
-      >
-        {hidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-      </button>
+  const renderChart = (height: number = 280) => {
+    const primaryColor = getIndicatorColor(topicSlug, leftKeys[0] || "");
+    
+    return (
+      <div style={{ position: 'relative' }}>
+        {/* Subtle top glow matching line color */}
+        <div style={{
+          position: 'absolute',
+          top: -20,
+          left: 0,
+          right: 0,
+          height: '1px',
+          background: `linear-gradient(to right, transparent, ${primaryColor}33, transparent)`,
+          zIndex: 1
+        }}/>
+        
+        <ResponsiveContainer width="100%" height={height}>
+          <AreaChart data={data} margin={{ top: 20, right: 16, left: 0, bottom: 0 }}>
+            <defs>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={primaryColor} stopOpacity={0.3}/>
+                <stop offset="95%" stopColor={primaryColor} stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid {...GRID} vertical={false} horizontal={false} />
+            <XAxis
+              dataKey="t"
+              type="number"
+              domain={["dataMin", "dataMax"]}
+              scale="time"
+              tick={AXIS}
+              tickLine={false}
+              axisLine={{ stroke: "rgba(255,255,255,0.04)" }}
+              tickFormatter={tickTime}
+              minTickGap={28}
+            />
+            <YAxis
+              yAxisId="left"
+              tick={AXIS}
+              tickLine={false}
+              axisLine={false}
+              width={48}
+              domain={["auto", "auto"]}
+            />
+            {rightKeys.length > 0 ? (
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tick={AXIS}
+                tickLine={false}
+                axisLine={false}
+                width={52}
+                domain={["auto", "auto"]}
+              />
+            ) : null}
+            {show2008 ? (
+              <ReferenceArea
+                yAxisId="left"
+                x1={T_2008[0]}
+                x2={T_2008[1]}
+                fill="#ffcc00"
+                fillOpacity={0.06}
+                strokeOpacity={0}
+              />
+            ) : null}
+            {show2020 ? (
+              <ReferenceArea
+                yAxisId="left"
+                x1={T_2020[0]}
+                x2={T_2020[1]}
+                fill="#60a5fa"
+                fillOpacity={0.08}
+                strokeOpacity={0}
+              />
+            ) : null}
+            <Tooltip
+              contentStyle={TOOLTIP_STYLE}
+              labelFormatter={(_label, payload) => {
+                const row = payload?.[0]?.payload as RowTime | undefined;
+                return row?.label ?? "";
+              }}
+            />
+            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 16, color: "#999" }} />
+            {leftKeys.map((key, idx) => {
+              const st = seriesStyles[key];
+              if (!st) return null;
+              const color = idx === 0 ? getIndicatorColor(topicSlug, key) : `${getIndicatorColor(topicSlug, key)}80`;
+              return (
+                <Area
+                  key={key}
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey={key}
+                  name={st.label}
+                  stroke={color}
+                  fill={idx === 0 ? "url(#colorGradient)" : "transparent"}
+                  strokeWidth={3}
+                  dot={false}
+                  connectNulls
+                  filter="url(#glow)"
+                  animationDuration={1000}
+                />
+              );
+            })}
+            {rightKeys.map((key, idx) => {
+              const st = seriesStyles[key];
+              if (!st) return null;
+              const color = idx === 0 ? getIndicatorColor(topicSlug, key) : `${getIndicatorColor(topicSlug, key)}80`;
+              return (
+                <Area
+                  key={key}
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey={key}
+                  name={st.label}
+                  stroke={color}
+                  fill="transparent"
+                  strokeWidth={3}
+                  dot={false}
+                  connectNulls
+                  filter="url(#glow)"
+                  animationDuration={1000}
+                />
+              );
+            })}
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  };
 
-      <h3 className="mb-4 pr-10 font-serif text-lg font-semibold tracking-tight text-white">
-        {spec.title}
-      </h3>
+  return (
+    <div className="relative min-w-0 rounded-2xl border border-[#111] bg-[#080808] p-5 pb-3 shadow-lg">
+      <div className="absolute right-3 top-3 z-20">
+        <ExpandButton onClick={() => setModalOpen(true)} />
+      </div>
+
+      <GraphModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={spec.title}
+        subtitle={`${topicSlug.split('-').map(w => w[0]?.toUpperCase() + w.slice(1)).join(' ')} Intelligence View`}
+        chart={renderChart(400)}
+        topicSlug={topicSlug}
+        chartRows={rows}
+        intelligenceData={{
+          whatYouSee: `This chart visualizes ${spec.seriesKeys.map(k => seriesStyles[k]?.label).join(' and ')} over the selected period. It helps identify structural trends and cyclical shifts in the ${topicSlug.replace('-', ' ')} environment.`,
+          unit: "Varies by series",
+          normalRange: "Historical average",
+          currentReading: "See latest observation",
+          whenHigh: ["Increased market volatility", "Potential regime shift", "Policy reassessment required"],
+          whenLow: ["Stable economic environment", "Trend persistence", "Low immediate risk"],
+          keyFactors: spec.seriesKeys.map(k => ({
+            name: seriesStyles[k]?.label ?? k,
+            direction: "UP/DOWN",
+            explanation: `The movement of ${seriesStyles[k]?.label ?? k} is a primary driver of this indicator.`
+          })),
+          historicalEvents: [
+            { year: "2008", event: "Global Financial Crisis", impact: "Significant deleveraging and policy intervention." },
+            { year: "2020", event: "COVID-19 Shock", impact: "Unprecedented liquidity injection and rapid recovery." },
+            { year: "2022", event: "Inflation Surge", impact: "Aggressive rate hiking cycle and market repricing." }
+          ]
+        }}
+      />
+
+      <div className="mb-4 pl-1">
+        <h3 className="text-xs font-medium uppercase tracking-[2px] text-[#999]">
+          {spec.title}
+        </h3>
+      </div>
+      
       <div
         className={[
           "grid overflow-hidden transition-all duration-300 ease-out",
@@ -141,112 +316,17 @@ function ChartBlock({
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="h-[280px] min-h-[280px] w-full min-w-0"
+            className="h-[280px] min-h-[280px] w-full min-w-0 cursor-pointer transition-opacity hover:opacity-95"
+            onClick={() => setModalOpen(true)}
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid {...GRID} />
-                <XAxis
-                  dataKey="t"
-                  type="number"
-                  domain={["dataMin", "dataMax"]}
-                  scale="time"
-                  tick={AXIS}
-                  tickLine={false}
-                  axisLine={{ stroke: "#3f3f46" }}
-                  tickFormatter={tickTime}
-                  minTickGap={28}
-                />
-                <YAxis
-                  yAxisId="left"
-                  tick={AXIS}
-                  tickLine={false}
-                  axisLine={{ stroke: "#3f3f46" }}
-                  width={48}
-                  domain={["auto", "auto"]}
-                />
-                {rightKeys.length > 0 ? (
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    tick={AXIS}
-                    tickLine={false}
-                    axisLine={{ stroke: "#3f3f46" }}
-                    width={52}
-                    domain={["auto", "auto"]}
-                  />
-                ) : null}
-                {show2008 ? (
-                  <ReferenceArea
-                    yAxisId="left"
-                    x1={T_2008[0]}
-                    x2={T_2008[1]}
-                    fill="#ffcc00"
-                    fillOpacity={0.12}
-                    strokeOpacity={0}
-                  />
-                ) : null}
-                {show2020 ? (
-                  <ReferenceArea
-                    yAxisId="left"
-                    x1={T_2020[0]}
-                    x2={T_2020[1]}
-                    fill="#60a5fa"
-                    fillOpacity={0.15}
-                    strokeOpacity={0}
-                  />
-                ) : null}
-                <Tooltip
-                  contentStyle={TOOLTIP_STYLE}
-                  labelFormatter={(_label, payload) => {
-                    const row = payload?.[0]?.payload as RowTime | undefined;
-                    return row?.label ?? "";
-                  }}
-                />
-                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12, color: "#a1a1aa" }} />
-                {leftKeys.map((key) => {
-                  const st = seriesStyles[key];
-                  if (!st) return null;
-                  return (
-                    <Line
-                      key={key}
-                      yAxisId="left"
-                      type="monotone"
-                      dataKey={key}
-                      name={st.label}
-                      stroke={st.color}
-                      strokeWidth={2}
-                      dot={false}
-                      connectNulls
-                    />
-                  );
-                })}
-                {rightKeys.map((key) => {
-                  const st = seriesStyles[key];
-                  if (!st) return null;
-                  return (
-                    <Line
-                      key={key}
-                      yAxisId="right"
-                      type="monotone"
-                      dataKey={key}
-                      name={st.label}
-                      stroke={st.color}
-                      strokeWidth={2}
-                      dot={false}
-                      connectNulls
-                    />
-                  );
-                })}
-              </LineChart>
-            </ResponsiveContainer>
+            {renderChart()}
           </motion.div>
-          <IntelligencePanel topicSlug={topicSlug} chartTitle={spec.title} rows={rows} />
         </div>
       </div>
     </div>
   );
 }
+
 
 function sortedRows(rows: ChartRow[]): ChartRow[] {
   return [...rows].sort((a, b) => a.isoEnd.localeCompare(b.isoEnd));
@@ -317,103 +397,93 @@ function ChartRangeToolbar({
   const endLabel = sorted[endIdx]?.label ?? "";
 
   return (
-    <div className="mb-6 rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 sm:p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+    <div className="mb-8 rounded-2xl border border-[#111] bg-[#080808] p-6 shadow-xl">
+      <p className="text-[10px] font-bold uppercase tracking-[2px] text-[#999]">
         Chart range & comparisons
       </p>
-      <p className="mt-1 text-sm text-zinc-400">
+      <p className="mt-2 text-[12px] leading-relaxed text-[#bbb]">
         Drag the sliders to zoom the charts. Use presets for common episodes.
         Comparison bands show when the selected range overlaps those periods.
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        {RANGE_PRESETS.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => applyPreset(p)}
-            className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-[#ffcc00]/40 hover:text-white"
-          >
-            {p.label}
-          </button>
-        ))}
+      <div className="mt-6 flex flex-wrap gap-3">
+        {RANGE_PRESETS.map((p) => {
+          const isActive = (p.id === 'full' && startIdx === 0 && endIdx === maxI);
+          return (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => applyPreset(p)}
+              className={[
+                "rounded-full border px-4 py-1.5 text-[12px] font-semibold transition-all duration-200",
+                isActive 
+                  ? "bg-white border-white text-black" 
+                  : "bg-transparent border-[#1e1e1e] text-[#999] hover:border-white/20 hover:text-[#eee]"
+              ].join(" ")}
+            >
+              {p.label}
+            </button>
+          );
+        })}
       </div>
 
-      {hiddenTitles.length > 0 ? (
-        <div className="mt-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-            Collapsed charts
-          </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {hiddenTitles.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => onShowHidden(t)}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-[#ffcc00]/40 hover:text-white"
-              >
-                <Eye className="h-3.5 w-3.5 text-zinc-400" />
-                Expand {t}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+      <div className="mt-8 grid gap-6 sm:grid-cols-2">
+        <div className="space-y-3">
+          <label className="block text-[10px] font-bold uppercase tracking-[1px] text-[#999]">
             Start — {startLabel}
           </label>
-          <input
-            type="range"
-            min={0}
-            max={maxI}
-            value={startIdx}
-            aria-label="Chart range start"
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              onStartIdx(Math.min(v, endIdx));
-            }}
-            className="h-2 w-full cursor-pointer accent-[#ffcc00]"
-          />
+          <div className="relative h-6 flex items-center">
+            <input
+              type="range"
+              min={0}
+              max={maxI}
+              value={startIdx}
+              aria-label="Chart range start"
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                onStartIdx(Math.min(v, endIdx));
+              }}
+              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[#111] accent-white"
+            />
+          </div>
         </div>
-        <div>
-          <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+        <div className="space-y-3">
+          <label className="block text-[10px] font-bold uppercase tracking-[1px] text-[#999]">
             End — {endLabel}
           </label>
-          <input
-            type="range"
-            min={0}
-            max={maxI}
-            value={endIdx}
-            aria-label="Chart range end"
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              onEndIdx(Math.max(v, startIdx));
-            }}
-            className="h-2 w-full cursor-pointer accent-[#ffcc00]"
-          />
+          <div className="relative h-6 flex items-center">
+            <input
+              type="range"
+              min={0}
+              max={maxI}
+              value={endIdx}
+              aria-label="Chart range end"
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                onEndIdx(Math.max(v, startIdx));
+              }}
+              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[#111] accent-white"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-3 border-t border-white/[0.06] pt-4">
+      <div className="mt-8 flex flex-wrap gap-4 border-t border-[#111] pt-6">
         <button
           type="button"
           role="switch"
           aria-checked={compare2008}
           onClick={() => onCompare2008(!compare2008)}
           className={[
-            "rounded-xl border px-4 py-2.5 text-left text-sm font-medium transition",
+            "flex-1 min-w-[200px] rounded-xl border px-5 py-4 text-left transition-all duration-200",
             compare2008
-              ? "border-[#ffcc00]/50 bg-[#ffcc00]/15 text-[#ffcc00]"
-              : "border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-zinc-200",
+              ? "border-white/20 bg-white/5 text-white"
+              : "border-[#161616] bg-[#0d0d0d] text-[#bbb] hover:border-white/10 hover:text-[#eee]",
           ].join(" ")}
         >
-          <span className="block">Compare to 2008</span>
-          <span className="mt-0.5 block text-xs font-normal text-zinc-500">
-            Shade Great Recession ({COMPARE_2008.x1.slice(0, 7)} –{" "}
-            {COMPARE_2008.x2.slice(0, 7)})
+          <span className="block text-[13px] font-bold">Compare to 2008</span>
+          <span className="mt-1 block text-[11px] font-medium opacity-80">
+            Shade Great Recession ({COMPARE_2008.x1.slice(0, 7)} – {COMPARE_2008.x2.slice(0, 7)})
           </span>
         </button>
         <button
@@ -422,16 +492,15 @@ function ChartRangeToolbar({
           aria-checked={compare2020}
           onClick={() => onCompare2020(!compare2020)}
           className={[
-            "rounded-xl border px-4 py-2.5 text-left text-sm font-medium transition",
+            "flex-1 min-w-[200px] rounded-xl border px-5 py-4 text-left transition-all duration-200",
             compare2020
-              ? "border-sky-400/50 bg-sky-500/15 text-sky-300"
-              : "border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-zinc-200",
+              ? "border-white/20 bg-white/5 text-white"
+              : "border-[#161616] bg-[#0d0d0d] text-[#bbb] hover:border-white/10 hover:text-[#eee]",
           ].join(" ")}
         >
-          <span className="block">Compare to 2020</span>
-          <span className="mt-0.5 block text-xs font-normal text-zinc-500">
-            Shade COVID crash window ({COMPARE_2020.x1.slice(0, 7)} –{" "}
-            {COMPARE_2020.x2.slice(0, 7)})
+          <span className="block text-[13px] font-bold">Compare to 2020</span>
+          <span className="mt-1 block text-[11px] font-medium opacity-80">
+            Shade COVID crash window ({COMPARE_2020.x1.slice(0, 7)} – {COMPARE_2020.x2.slice(0, 7)})
           </span>
         </button>
       </div>

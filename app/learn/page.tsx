@@ -1,109 +1,164 @@
 "use client";
 
 import Link from "next/link";
-import { Brain, Gamepad2, BookOpen, ArrowRight } from "lucide-react";
-import { SidebarShell } from "@/components/site/sidebar-shell";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Brain, Gamepad2, BookOpen, GraduationCap, ArrowRight, Sparkles, Trophy, Target } from "lucide-react";
 import { motion } from "framer-motion";
+
+const LEARN_CARDS = [
+  {
+    href: "/learn/quiz",
+    title: "Macro IQ Quiz",
+    description: "Test your economic knowledge with 20+ questions across interest rates, inflation, GDP, and more. Earn points and level up.",
+    icon: Brain,
+    color: "#4C72F6",
+    cta: "Start Quiz",
+    stats: "20+ questions",
+  },
+  {
+    href: "/learn/challenge",
+    title: "Portfolio Challenge",
+    description: "Simulate investing ₹10L across different historical regimes. See how your allocation strategy performs under pressure.",
+    icon: Gamepad2,
+    color: "#22c55e",
+    cta: "Try Challenge",
+    stats: "5 regimes",
+  },
+  {
+    href: "/learn/guide",
+    title: "Beginner's Guide",
+    description: "New to economics? Start here with our plain-English guide to interest rates, inflation, GDP, and how they connect.",
+    icon: GraduationCap,
+    color: "#f59e0b",
+    cta: "Read Guide",
+    stats: "10 min read",
+  },
+];
+
+const CONCEPTS = [
+  { title: "Interest Rates", desc: "The price of borrowing money, set by the Federal Reserve.", icon: "📊" },
+  { title: "Inflation", desc: "How fast prices rise — measured by CPI and PCE.", icon: "📈" },
+  { title: "GDP Growth", desc: "The total output of the economy, measured quarterly.", icon: "🏭" },
+  { title: "Unemployment", desc: "The percentage of people looking for work who can't find it.", icon: "👷" },
+  { title: "Yield Curve", desc: "The shape of bond yields — a powerful recession predictor.", icon: "📉" },
+  { title: "Credit Spreads", desc: "The risk premium investors demand for holding corporate bonds.", icon: "💳" },
+];
 
 export default function LearnHubPage() {
   return (
-    <SidebarShell>
-      <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
-        <Breadcrumb 
-          items={[
-            { label: 'Dashboard', href: '/dashboard' },
-            { label: 'Learn Hub', href: null }
-          ]} 
-        />
-        
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            Learn Hub
-          </h1>
-          <p className="mt-3 max-w-2xl text-zinc-400 text-base leading-relaxed">
-            Master the fundamentals of macroeconomics and test your knowledge through interactive challenges.
-          </p>
-        </div>
+    <div className="min-h-screen bg-black pb-20">
+      <div className="mx-auto max-w-5xl px-4 pt-10 sm:px-6">
+        {/* Hero */}
+        <section className="relative mb-14">
+          <div className="absolute inset-0 opacity-20 rounded-3xl" style={{
+            background: "radial-gradient(ellipse 60% 50% at 30% 30%, #4C72F620, transparent 60%)"
+          }} />
+          <div className="relative z-10 py-12 sm:py-16">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-[#4C72F6]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#4C72F6]">Learn Hub</span>
+            </div>
+            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-[1.1]">
+              Master the<br />
+              <span className="text-[#666]">macro economy.</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-[15px] text-[#888] leading-relaxed">
+              Interactive quizzes, portfolio simulations, and plain-English guides to help you
+              understand how the economy actually works.
+            </p>
+          </div>
+        </section>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              href: "/learn/quiz",
-              title: "Macro IQ Quiz",
-              description: "Test your economic knowledge with our interactive quiz. Earn points and level up your expertise.",
-              icon: Brain,
-              cta: "Start Quiz",
-              color: "text-white",
-            },
-            {
-              href: "/learn/challenge",
-              title: "Portfolio Challenge",
-              description: "Simulate investing ₹10L across different historical regimes. See how your strategy performs.",
-              icon: Gamepad2,
-              cta: "Try Challenge",
-              color: "text-blue-500",
-            },
-            {
-              href: "/learn/guide",
-              title: "Beginner's Guide",
-              description: "New to economics? Start here with our plain-English guide to interest rates, inflation, and more.",
-              icon: BookOpen,
-              cta: "Read Guide",
-              color: "text-emerald-500",
-            },
-          ].map((card, index) => (
+        {/* Main Cards */}
+        <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-16">
+          {LEARN_CARDS.map((card, i) => (
             <motion.div
               key={card.href}
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
             >
-              <LearnCard {...card} />
+              <Link href={card.href} className="h-full block group">
+                <div className="relative h-full rounded-2xl bg-[#0a0a0a] p-6 sm:p-7 transition-all duration-300 hover:translate-y-[-4px]">
+                  {/* Top accent */}
+                  <div className="absolute top-0 left-5 right-5 h-[2px] rounded-full opacity-50"
+                    style={{ background: card.color }}
+                  />
+
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl mb-5"
+                    style={{ background: `${card.color}12` }}
+                  >
+                    <card.icon className="w-6 h-6" style={{ color: card.color }} />
+                  </div>
+
+                  <h3 className="text-xl font-bold text-white mb-2">{card.title}</h3>
+                  <p className="text-[13px] text-[#666] leading-relaxed mb-6 flex-1">
+                    {card.description}
+                  </p>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-[#444] uppercase tracking-wider">
+                      {card.stats}
+                    </span>
+                    <div className="flex items-center gap-1.5 text-[13px] font-bold text-white group-hover:gap-2.5 transition-all">
+                      {card.cta}
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+              </Link>
             </motion.div>
           ))}
-        </div>
-      </div>
-    </SidebarShell>
-  );
-}
+        </section>
 
-function LearnCard({ 
-  href, 
-  title, 
-  description, 
-  icon: Icon, 
-  cta,
-  color 
-}: { 
-  href: string; 
-  title: string; 
-  description: string; 
-  icon: React.ElementType;
-  cta: string;
-  color: string;
-}) {
-  return (
-    <Link href={href} className="h-full block">
-      <motion.div 
-        whileHover={{ scale: 1.02 }} 
-        whileTap={{ scale: 0.98 }} 
-        transition={{ duration: 0.15 }}
-        className="group flex flex-col h-full bg-[#0e0e10] border border-white/[0.08] p-8 rounded-3xl transition-all hover:bg-zinc-900/50 hover:border-white/20 will-change-transform"
-      >
-        <div className={`w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-          <Icon className={`w-7 h-7 ${color}`} />
-        </div>
-        <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
-        <p className="text-zinc-500 leading-relaxed mb-8 flex-1">
-          {description}
-        </p>
-        <div className="flex items-center gap-2 text-sm font-bold text-white group-hover:gap-3 transition-all uppercase tracking-widest">
-          {cta}
-          <ArrowRight className="w-4 h-4" />
-        </div>
-      </motion.div>
-    </Link>
+        {/* Key Concepts */}
+        <section className="mb-16">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-white">Key Concepts</h2>
+            <p className="mt-1 text-[13px] text-[#555]">
+              The building blocks of macroeconomics — simplified.
+            </p>
+          </div>
+          <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
+            {CONCEPTS.map((c) => (
+              <div
+                key={c.title}
+                className="rounded-2xl bg-[#0a0a0a] p-5 transition-all duration-200 hover:translate-y-[-2px]"
+              >
+                <div className="text-2xl mb-3">{c.icon}</div>
+                <h3 className="text-[14px] font-bold text-white mb-1">{c.title}</h3>
+                <p className="text-[12px] text-[#666] leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Milestones */}
+        <section className="rounded-2xl bg-[#0a0a0a] p-7 sm:p-10">
+          <h2 className="text-2xl font-bold text-white mb-2">Your Learning Journey</h2>
+          <p className="text-[13px] text-[#555] mb-8">Complete activities to unlock new levels and earn achievements.</p>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              { icon: Target, title: "Complete Quiz", desc: "Score 70%+ on the Macro IQ Quiz", color: "#4C72F6" },
+              { icon: Trophy, title: "Portfolio Pro", desc: "Beat S&P 500 in the Challenge", color: "#22c55e" },
+              { icon: BookOpen, title: "Read the Guide", desc: "Finish all sections of the guide", color: "#f59e0b" },
+            ].map((m) => (
+              <div key={m.title} className="flex items-start gap-4 rounded-xl p-4 bg-white/[0.02]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                  style={{ background: `${m.color}12` }}
+                >
+                  <m.icon className="w-5 h-5" style={{ color: m.color }} />
+                </div>
+                <div>
+                  <h3 className="text-[13px] font-bold text-white">{m.title}</h3>
+                  <p className="text-[11px] text-[#555] mt-0.5">{m.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
   );
 }

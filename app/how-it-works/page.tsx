@@ -40,8 +40,8 @@ export default function HowItWorksPage() {
   return (
     <PresentationShell>
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <h1 className="section-reveal text-5xl font-black text-zinc-100 sm:text-7xl tracking-tight">How It Works</h1>
-        <p className="section-reveal mt-6 max-w-3xl text-xl text-zinc-400 leading-relaxed">
+        <h1 className="section-reveal text-5xl font-black text-[#eee] sm:text-7xl tracking-tight">How It Works</h1>
+        <p className="section-reveal mt-6 max-w-3xl text-xl text-[#bbb] leading-relaxed">
           Zemen turns noisy economic data into <span className="text-white font-semibold">one simple answer</span> by following a four-step automated process.
         </p>
 
@@ -54,8 +54,8 @@ export default function HowItWorksPage() {
                   {step.icon}
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-3xl font-bold text-zinc-100 group-hover:text-white transition-colors">{step.title}</h2>
-                  <p className="mt-5 max-w-4xl text-lg leading-relaxed text-zinc-400">{step.body}</p>
+                  <h2 className="text-3xl font-bold text-[#eee] group-hover:text-white transition-colors">{step.title}</h2>
+                  <p className="mt-5 max-w-4xl text-lg leading-relaxed text-[#bbb]">{step.body}</p>
                   
                   <div className="mt-10 grid gap-4 overflow-hidden sm:grid-cols-5">
                     {step.visual.map((block, index) => (
@@ -66,7 +66,7 @@ export default function HowItWorksPage() {
                         <div className="mb-3 flex justify-center">
                           <CheckCircle2 className="h-4 w-4 text-white/40" />
                         </div>
-                        <span className="text-xs font-bold uppercase tracking-widest text-zinc-300">{block}</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-[#aaa]">{block}</span>
                         {index < step.visual.length - 1 && (
                           <div className="absolute -right-2 top-1/2 hidden h-px w-4 -translate-y-1/2 bg-white/10 sm:block" />
                         )}

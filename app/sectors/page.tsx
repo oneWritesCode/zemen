@@ -67,7 +67,7 @@ export default async function SectorsOverviewPage() {
 
   return (
     <div className="min-h-screen bg-[#080809] text-zinc-100 pb-28">
-      <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
+      <div className="mx-auto max-w-[1400px] px-10 py-8 pt-10">
         <Breadcrumb 
           items={[
             { label: 'Dashboard', href: '/dashboard' },
@@ -76,7 +76,7 @@ export default async function SectorsOverviewPage() {
         />
 
         {/* Page header */}
-        <div className="mb-10">
+        <div className="mb-8 max-w-[800px]">
           <div className="flex items-center gap-2 mb-3">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
               <Signal className="h-2.5 w-2.5" />

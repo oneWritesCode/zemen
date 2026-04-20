@@ -52,9 +52,9 @@ export function SidebarShell({ children }: { children: React.ReactNode }) {
   // To avoid hydration mismatch if localStorage differs from default
   if (!isMounted) {
     return (
-      <div className="flex min-h-screen flex-col bg-[#0a0a0b] text-zinc-100 lg:flex-row">
+      <div className="flex min-h-screen flex-col bg-[#050505] text-zinc-100 lg:flex-row">
         <DashboardSidebar topics={DASHBOARD_TOPICS} />
-        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#080808]">
           {children}
         </main>
       </div>
@@ -67,7 +67,7 @@ export function SidebarShell({ children }: { children: React.ReactNode }) {
         display: "flex",
         height: "100vh",
         overflow: "hidden",
-        background: "#000",
+        background: "#050505",
       }}
     >
       {/* Sidebar */}
@@ -77,8 +77,8 @@ export function SidebarShell({ children }: { children: React.ReactNode }) {
           minWidth: sidebarOpen ? "264px" : "0px",
           overflow: "hidden",
           transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
-          borderRight: sidebarOpen ? "1px solid #1e1e1e" : "none",
-          background: "#0a0a0a",
+          borderRight: sidebarOpen ? "1px solid #0f0f0f" : "none",
+          background: "#050505",
           display: "flex",
           flexDirection: "column",
           position: "relative",
@@ -94,6 +94,7 @@ export function SidebarShell({ children }: { children: React.ReactNode }) {
           overflow: "auto",
           position: "relative",
           transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
+          background: "#080808",
         }}
       >
         {/* Toggle button */}
@@ -107,26 +108,26 @@ export function SidebarShell({ children }: { children: React.ReactNode }) {
             zIndex: 100,
             width: "24px",
             height: "48px",
-            background: "#111",
-            border: "1px solid #1e1e1e",
+            background: "#0d0d0d",
+            border: "1px solid #141414",
             borderRadius: "0 6px 6px 0",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#666",
+            color: "#444",
             fontSize: "20px",
             transition: "left 0.3s cubic-bezier(0.4,0,0.2,1)",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#1a1a1a";
+            e.currentTarget.style.background = "#111";
             e.currentTarget.style.color = "#fff";
-            e.currentTarget.style.borderColor = "#333";
+            e.currentTarget.style.borderColor = "#1e1e1e";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#111";
-            e.currentTarget.style.color = "#666";
-            e.currentTarget.style.borderColor = "#1e1e1e";
+            e.currentTarget.style.background = "#0d0d0d";
+            e.currentTarget.style.color = "#444";
+            e.currentTarget.style.borderColor = "#141414";
           }}
           title={
             sidebarOpen ? "Hide sidebar  [  " : "Show sidebar  [  "

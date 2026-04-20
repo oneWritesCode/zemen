@@ -12,8 +12,8 @@ export default async function IndicatorsOverviewPage() {
   // In a real implementation, we'd fetch current values for all.
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6">
-      <div className="mb-10">
+    <div className="mx-auto max-w-[1400px] px-10 py-8">
+      <div className="mb-8 max-w-[800px]">
         <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
           Economic Indicators
         </h1>

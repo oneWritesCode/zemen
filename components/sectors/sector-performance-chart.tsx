@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import {
   CartesianGrid,
-  Line,
-  LineChart,
+  Area,
+  AreaChart,
   ReferenceArea,
   ResponsiveContainer,
   XAxis,
@@ -46,10 +46,10 @@ export function SectorPerformanceChart({
 
   if (combined.length < 2) {
     return (
-      <div className="rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 sm:p-5">
+      <div className="rounded-2xl bg-[#0a0a0a] shadow-[0_4px_20px_rgba(0,0,0,0.3)] p-4 sm:p-5">
         <div className="text-sm font-semibold text-zinc-200">{sectorName} price performance</div>
-        <div className="mt-4 flex h-[320px] items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.02] text-sm text-zinc-500">
-          Chart data temporarily unavailable. Please try again later.
+        <div className="mt-4 flex h-[320px] items-center justify-center rounded-xl bg-white/[0.02] text-sm text-[#555]">
+          Loading chart data…
         </div>
       </div>
     );
@@ -66,11 +66,11 @@ export function SectorPerformanceChart({
   const crashBand = findBand("2022-05-31", "2022-10-31");
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#12121a] p-4 sm:p-5">
+    <div className="rounded-2xl border-none bg-transparent shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-semibold text-zinc-200">{sectorName} price performance</h3>
-          <p className="text-xs text-zinc-500">Sector (yellow) vs S&P 500 (gray dashed)</p>
+          <p className="text-xs text-zinc-500">Sector (solid) vs S&P 500 (gray dashed)</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -102,13 +102,23 @@ export function SectorPerformanceChart({
 
       <div className="mt-4 h-[360px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={combined} margin={{ left: 0, right: 10, top: 10, bottom: 0 }}>
-            <CartesianGrid stroke="rgba(255,255,255,0.08)" strokeDasharray="3 6" />
+          <AreaChart data={combined} margin={{ left: 0, right: 10, top: 10, bottom: 0 }}>
+            <defs>
+              <filter id="glowSector" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+              <linearGradient id="sectorGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#4C72F6" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#4C72F6" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid stroke="rgba(255,255,255,0.02)" vertical={false} horizontal={false} />
             <XAxis
               dataKey="dateIso"
               tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "#3f3f46" }}
+              axisLine={{ stroke: "rgba(255,255,255,0.04)" }}
               interval={Math.max(0, Math.floor(combined.length / 6))}
             />
             <YAxis
@@ -122,18 +132,27 @@ export function SectorPerformanceChart({
             {crashBand ? (
               <ReferenceArea x1={crashBand.x1} x2={crashBand.x2} fill="rgba(96,165,250,0.06)" strokeOpacity={0} />
             ) : null}
-            <Line type="monotone" dataKey="sector" stroke="#e4e4e7" strokeWidth={2} dot={false} />
+            <Area 
+              type="monotone" 
+              dataKey="sector" 
+              stroke="#4C72F6" 
+              fill="url(#sectorGradient)"
+              strokeWidth={3} 
+              dot={false}
+              filter="url(#glowSector)" 
+            />
             {compare ? (
-              <Line
+              <Area
                 type="monotone"
                 dataKey="sp"
                 stroke="#9ca3af"
+                fill="transparent"
                 strokeWidth={2}
                 dot={false}
                 strokeDasharray="6 6"
               />
             ) : null}
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>

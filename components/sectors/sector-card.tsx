@@ -76,18 +76,18 @@ export function SectorCard({ sector, regime, index = 0 }: SectorCardProps) {
   const getFitBadge = (fit: string) => {
     if (fit === "HOT") {
       return (
-        <div className="badge-hot">
+        <div className="flex items-center gap-1 rounded-[20px] border border-[#166534] bg-[#052e16] px-2.5 py-1 text-[10px] font-bold tracking-[1px] text-[#22c55e]">
           <motion.div
             animate={{ opacity: [1, 0.5, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', display: 'inline-block', marginRight: 5 }}
+            className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#22c55e]"
           />
           HOT
         </div>
       );
     }
-    if (fit === "COLD") return <div className="badge-cold">COLD</div>;
-    return <div className="badge-neutral">NEUTRAL</div>;
+    if (fit === "COLD") return <div className="rounded-[20px] border border-[#333333] bg-[#111111] px-2.5 py-1 text-[10px] font-bold tracking-[1px] text-[#666666]">COLD</div>;
+    return <div className="rounded-[20px] border border-[#333333] bg-[#1a1a1a] px-2.5 py-1 text-[10px] font-bold tracking-[1px] text-[#888888]">NEUTRAL</div>;
   };
 
   return (
@@ -100,12 +100,22 @@ export function SectorCard({ sector, regime, index = 0 }: SectorCardProps) {
         delay: index * 0.08, 
         ease: 'easeOut' 
       }} 
-      className="sector-card group will-change-transform" 
-      style={{ "--sector-color": sector.color, "--sector-color-dim": `${sector.color}15`, "--sector-color-border": `${sector.color}30` } as React.CSSProperties}
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-transparent bg-[#0a0a0a] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.15)] transition-all duration-300 will-change-transform hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]" 
+      style={{ borderColor: "transparent" } as React.CSSProperties}
+      onMouseEnter={(e) => e.currentTarget.style.borderColor = sector.color}
+      onMouseLeave={(e) => e.currentTarget.style.borderColor = "transparent"}
     >
+      {/* Top border highlight on hover */}
+      <div 
+        className="absolute left-0 right-0 top-0 h-[3px] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{ background: sector.color }}
+      />
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="sector-icon text-white">
+          <div 
+            className="flex h-12 w-12 items-center justify-center rounded-xl text-[22px] text-white"
+            style={{ background: `${sector.color}15` }}
+          >
             <Icon className="w-6 h-6" style={{ color: sector.color }} />
           </div>
           <div>
@@ -121,16 +131,8 @@ export function SectorCard({ sector, regime, index = 0 }: SectorCardProps) {
       </p>
 
       {/* Sparkline */}
-      <div style={{ 
-        background: '#0d0d0d', 
-        borderRadius: '8px', 
-        padding: '8px', 
-        margin: '12px 0',
-        height: '96px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      {/* Sparkline */}
+      <div className="my-3 flex h-24 items-center justify-center rounded-lg bg-[#0d0d0d] p-2">
         {loading ? (
           <Skeleton height="80px" width="260px" />
         ) : (
@@ -146,15 +148,12 @@ export function SectorCard({ sector, regime, index = 0 }: SectorCardProps) {
       {/* YTD & Risk */}
       <div className="flex justify-between items-end mb-6">
         <div>
-          <div style={{ fontSize: '10px', color: '#666', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>YTD Performance</div>
-          <div style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            fontFamily: 'monospace',
-            color: ytd === null ? '#444' 
-              : ytd >= 0 ? '#22c55e' 
-              : '#ef4444' 
-          }}>
+          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.05em] text-[#666]">YTD Performance</div>
+          <div className={`flex items-center gap-1 font-mono text-2xl font-bold ${
+            ytd === null ? 'text-[#444]' 
+              : ytd >= 0 ? 'text-[#22c55e]' 
+              : 'text-[#ef4444]'
+          }`}>
             {ytd === null ? <Skeleton height="24px" width="60px" /> : (
               <>
                 {ytd >= 0 ? '+' : ''}
@@ -165,7 +164,7 @@ export function SectorCard({ sector, regime, index = 0 }: SectorCardProps) {
         </div>
         
         <div className="text-right">
-          <div style={{ fontSize: '10px', color: '#666', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Risk Level</div>
+          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.05em] text-[#666]">Risk Level</div>
           <div className={`text-xs font-bold px-2 py-1 rounded-md border ${
             risk === 'Low' ? 'bg-green-500/10 border-green-500/20 text-green-500' :
             risk === 'Medium' ? 'bg-white/10 border-white/20 text-white' :
@@ -178,7 +177,7 @@ export function SectorCard({ sector, regime, index = 0 }: SectorCardProps) {
 
       <Link href={`/sectors/${sector.id}`}>
         <motion.div
-          className="explore-btn"
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[#2a2a2a] bg-transparent p-2.5 text-[13px] text-[#888] transition-all duration-200 hover:border-white hover:bg-white hover:font-semibold hover:text-black"
           whileHover={{ scale: 1.02 }} 
           whileTap={{ scale: 0.98 }} 
           transition={{ duration: 0.15 }}

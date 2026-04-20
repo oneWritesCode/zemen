@@ -58,9 +58,9 @@ function GuideBox({ guide }: { guide: ActionGuide }) {
     <div className="rounded-r-lg border border-[#1e1e1e] border-l-[3px] border-l-white/60 bg-[#111111] px-5 py-4">
       <div className="flex items-center gap-2">
         <span className={`h-2 w-2 rounded-full ${urgencyDot(guide.urgency)}`} />
-        <span className="text-[11px] uppercase tracking-[2px] text-white/50 font-semibold">{guide.title}</span>
+        <span className="text-[11px] uppercase tracking-[2px] text-[#999] font-bold">{guide.title}</span>
       </div>
-      <p className="mt-2 text-sm leading-relaxed text-zinc-200">{guide.body}</p>
+      <p className="mt-2 text-sm leading-relaxed text-[#ddd]">{guide.body}</p>
     </div>
   );
 }
@@ -89,7 +89,7 @@ function PlatformCard({ p, index = 0 }: { p: ActionPlatform, index?: number }) {
             fallbackColor={p.color}
           />
           <div>
-            <p className="font-semibold text-zinc-100">{p.name}</p>
+            <p className="font-semibold text-[#eee]">{p.name}</p>
             <span className={`inline-flex rounded px-1.5 py-0.5 text-[10px] ${regionBadge(p.region)}`}>
               {p.region}
             </span>
@@ -101,9 +101,9 @@ function PlatformCard({ p, index = 0 }: { p: ActionPlatform, index?: number }) {
           </span>
         ) : null}
       </div>
-      <p className="mt-3 text-sm text-zinc-300">{p.description}</p>
-      <p className="mt-2 text-xs text-zinc-500">
-        Best for: <span className="text-zinc-300">{p.bestFor}</span>
+      <p className="mt-3 text-sm text-[#bbb]">{p.description}</p>
+      <p className="mt-2 text-xs text-[#888]">
+        Best for: <span className="text-[#bbb]">{p.bestFor}</span>
       </p>
       <p className="mt-2 text-xs text-white">{p.feature}</p>
 
@@ -150,17 +150,17 @@ function BeginnerStocks() {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between text-left"
       >
-        <span className="text-sm font-semibold text-zinc-200">New to stocks? Start here</span>
-        <span className="text-xs text-zinc-500">{open ? "Hide" : "Show"}</span>
+        <span className="text-sm font-semibold text-[#ddd]">New to stocks? Start here</span>
+        <span className="text-xs text-[#888]">{open ? "Hide" : "Show"}</span>
       </button>
       {open ? (
         <ol className="mt-3 space-y-2">
           {steps.map((s, i) => (
             <li key={s.t} className="rounded-lg border border-white/[0.06] bg-[#0f0f0f] p-3">
-              <p className="text-sm font-semibold text-zinc-100">
+              <p className="text-sm font-semibold text-[#eee]">
                 Step {i + 1}: {s.t}
               </p>
-              <p className="mt-1 text-xs text-zinc-400 leading-relaxed">{s.b}</p>
+              <p className="mt-1 text-xs text-[#aaa] leading-relaxed">{s.b}</p>
             </li>
           ))}
         </ol>
@@ -178,19 +178,19 @@ function SkillCards() {
   ];
   return (
     <div className="mt-6">
-      <h4 className="mb-3 text-sm font-semibold text-zinc-200">Recession proof your career</h4>
+      <h4 className="mb-3 text-sm font-semibold text-[#ddd]">Recession proof your career</h4>
       <div className="grid gap-3 md:grid-cols-2">
         {cards.map((c) => (
           <div key={c.title} className="rounded-xl border border-white/[0.06] bg-[#111] p-4">
-            <p className="font-semibold text-zinc-100">{c.title}</p>
-            <p className="mt-1 text-xs text-zinc-400">{c.body}</p>
+            <p className="font-semibold text-[#eee]">{c.title}</p>
+            <p className="mt-1 text-xs text-[#aaa]">{c.body}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {c.links.map((lnk) => (
                 <ExternalLink
                   key={lnk.u}
                   platformName={lnk.l}
                   url={lnk.u}
-                  className="rounded border border-white/10 px-2 py-1 text-[11px] text-zinc-300 hover:border-white/40"
+                  className="rounded border border-white/10 px-2 py-1 text-[11px] text-[#bbb] hover:border-white/40"
                 >
                   {lnk.l}
                 </ExternalLink>

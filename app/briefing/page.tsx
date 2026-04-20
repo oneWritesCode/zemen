@@ -95,7 +95,7 @@ export default async function BriefingPage() {
       delta,
       direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
       economyImpact: getDirection(label, current, previous),
-      updatedText: getFreshnessLabel(last?.date ?? null).text,
+      updatedText: `Updated ${getFreshnessLabel(last?.date ?? null).text}`,
     };
   };
 
@@ -114,7 +114,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("Interest Rates", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
     (() => {
@@ -131,7 +131,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("Inflation", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
     (() => {
@@ -148,7 +148,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("Unemployment", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
     (() => {
@@ -165,7 +165,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("GDP Growth", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
     (() => {
@@ -182,7 +182,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("Housing Market", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
     (() => {
@@ -199,7 +199,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("Credit & Spreads", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
   ];
@@ -226,7 +226,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("Trade & Dollar", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
     (() => {
@@ -243,7 +243,7 @@ export default async function BriefingPage() {
         delta,
         direction: delta == null ? "flat" : delta > 0 ? "up" : delta < 0 ? "down" : "flat",
         economyImpact: getDirection("Consumer Sentiment", cur, pr),
-        updatedText: getFreshnessLabel(kpi?.updatedAt ?? null).text,
+        updatedText: `Updated ${getFreshnessLabel(kpi?.updatedAt ?? null).text}`,
       };
     })(),
   );
@@ -259,15 +259,15 @@ export default async function BriefingPage() {
   return (
     <SidebarShell>
       <PageWrapper>
-        <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-zinc-100 sm:px-6">
-        <article className="mx-auto max-w-5xl space-y-8">
+        <div className="mx-auto max-w-[1400px] px-10 py-8 pt-10">
+        <article className="mx-auto space-y-8">
           <Breadcrumb 
             items={[
               { label: 'Dashboard', href: '/dashboard' },
               { label: 'Weekly Briefing', href: null }
             ]} 
           />
-          <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <header className="mb-8 max-w-[800px] flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div>
             <h1 className="text-4xl font-bold sm:text-5xl">
               Zemen Weekly Briefing - Week of {weekOf}
@@ -279,25 +279,25 @@ export default async function BriefingPage() {
           <StreakBanner />
         </header>
 
-        <section className="rounded-2xl border border-white/10 bg-[#111111] p-6">
-          <h2 className="text-xl font-semibold text-[#FFFFFF]">This week in numbers</h2>
+        <section className="rounded-2xl border border-[#111] bg-[#0d0d0d] p-6">
+          <h2 className="text-xl font-semibold text-white">This week in numbers</h2>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="text-zinc-400">
+              <thead className="text-[#444]">
                 <tr>
-                  <th className="pb-3">Indicator</th>
-                  <th className="pb-3">Current value</th>
-                  <th className="pb-3">Freshness</th>
-                  <th className="pb-3">Change from last update</th>
-                  <th className="pb-3">Direction for economy</th>
+                  <th className="pb-3 uppercase tracking-wider text-[10px]">Indicator</th>
+                  <th className="pb-3 uppercase tracking-wider text-[10px]">Current value</th>
+                  <th className="pb-3 uppercase tracking-wider text-[10px]">Freshness</th>
+                  <th className="pb-3 uppercase tracking-wider text-[10px]">Change</th>
+                  <th className="pb-3 uppercase tracking-wider text-[10px]">Impact</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.label} className="border-t border-white/10">
-                    <td className="py-3">{row.label}</td>
-                    <td className="py-3">{row.current}</td>
-                    <td className="py-3 text-zinc-400">{row.updatedText}</td>
+                  <tr key={row.label} className="border-t border-[#151515]">
+                    <td className="py-4 font-medium text-[#ddd]">{row.label}</td>
+                    <td className="py-4 text-white font-bold">{row.current}</td>
+                    <td className="py-4 text-[#444] text-xs">{row.updatedText}</td>
                     <td className="py-3">
                       {row.delta == null
                         ? "Awaiting data"

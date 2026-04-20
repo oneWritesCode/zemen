@@ -1,22 +1,81 @@
 @import "tailwindcss";
 
 :root {
+  --bg-root: #000000;
+  --bg-primary: #000000;
+  --bg-secondary: #050505;
+  --bg-card: #0a0a0a;
+  --bg-card-hover: #111111;
+  --bg-input: #050505;
+  --border-default: transparent;
+  --border-hover: transparent;
+  --border-focus: rgba(255,255,255,0.2);
   --background: #000000;
   --foreground: #FFFFFF;
-  --accent: #FFFFFF;
-  --accent-dim: rgba(255, 255, 255, 0.08);
-  --accent-subtle: rgba(255, 255, 255, 0.05);
-  --accent-border: rgba(255, 255, 255, 0.15);
-  --accent-hover: rgba(255, 255, 255, 0.9);
+  --accent: #4C72F6;
+  --accent-dim: rgba(76, 114, 246, 0.1);
+  --accent-subtle: rgba(76, 114, 246, 0.05);
+  --accent-border: transparent;
+  --accent-hover: rgba(76, 114, 246, 0.9);
   --surface: #0a0a0a;
   --surface-raised: #111111;
-  --surface-card: #111111;
-  --surface-hover: #161616;
-  --border: #1e1e1e;
-  --border-hover: #333333;
+  --surface-card: #0a0a0a;
+  --surface-hover: #111111;
+  --border: transparent;
+  --border-hover: transparent;
   --glow-white: rgba(255, 255, 255, 0.04);
   --regime-banner-offset: 0px;
 }
+
+* { 
+  box-sizing: border-box; 
+} 
+ 
+html, body, #__next, main { 
+  background: var(--bg-root) !important; 
+  min-height: 100vh; 
+  color: #ffffff;
+} 
+ 
+/* Kill any gray backgrounds */ 
+[class*="bg-gray"], 
+[class*="bg-zinc"], 
+[class*="bg-slate"], 
+[class*="bg-neutral"] { 
+  background-color: var(--bg-card) !important; 
+} 
+
+/* Upgrade explicit dark backgrounds to the new card color */
+.bg-\[\#0d0d0d\], .bg-\[\#111\], .bg-black, .bg-\[\#080808\], .bg-\[\#12121a\], .bg-\[\#050505\] {
+  background-color: var(--bg-card) !important;
+}
+
+.hover\:bg-\[\#111\]:hover, .hover\:bg-\[\#080808\]:hover {
+  background-color: var(--bg-card-hover) !important;
+}
+ 
+/* Kill any gray borders */
+[class*="border-gray"],
+[class*="border-zinc"],
+[class*="border-slate"],
+[class*="border-neutral"],
+[class*="border-[#"],
+.border {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Specific text opacity mappings - enforced for readability */
+.text-white\/5 { color: #1e1e1e !important; } /* Only for very subtle borders */
+.text-white\/10 { color: #222 !important; }
+.text-white\/20 { color: #333 !important; }
+.text-white\/30 { color: #444 !important; }
+.text-white\/40 { color: #999 !important; } /* Bumped up from #555 */
+.text-white\/50 { color: #999 !important; } /* Bumped up from #666 */
+.text-white\/60 { color: #999 !important; } /* Bumped up from #888 */
+.text-white\/70 { color: #aaa !important; } /* Bumped up from #999 */
+.text-white\/80 { color: #bbb !important; }
+.text-white\/90 { color: #ddd !important; }
 
 /* Replace all yellow focus rings */ 
 *:focus { 
@@ -92,150 +151,7 @@ html {
   }
 }
 
-/* Subtle gradient glow for hero */
-.hero-glow {
-  background: radial-gradient(
-    ellipse 70% 50% at 50% 0%,
-    rgba(255, 255, 255, 0.04) 0%,
-    transparent 70%
-  );
-}
 
-/* Card hover lift */
-.card-hover {
-  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
-}
-.card-hover:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-hover);
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
-}
-
-/* --- SECTOR CARD REDESIGN --- */
-
-.sector-card {
-  background: linear-gradient(
-    145deg,
-    #141414 0%,
-    #0f0f0f 100%
-  );
-  border: 1px solid #1e1e1e;
-  border-radius: 16px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(
-    0.4, 0, 0.2, 1
-  );
-  position: relative;
-  overflow: hidden;
-}
-
-/* Colored top border matching sector */
-.sector-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--sector-color);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.sector-card:hover {
-  border-color: var(--sector-color);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-
-.sector-card:hover::before {
-  opacity: 1;
-}
-
-/* Sector icon */
-.sector-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  background: var(--sector-color-dim);
-  border: 1px solid var(--sector-color-border);
-}
-
-/* HOT/NEUTRAL/COLD badges */
-.badge-hot {
-  background: #052e16;
-  color: #22c55e;
-  border: 1px solid #166534;
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.badge-hot::before {
-  content: '●';
-  color: #22c55e;
-  animation: pulse 1.5s infinite;
-}
-
-.badge-neutral {
-  background: #1a1a1a;
-  color: #888888;
-  border: 1px solid #333333;
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.badge-cold {
-  background: #111;
-  color: #666;
-  border: 1px solid #333;
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* Explore button */
-.explore-btn {
-  width: 100%;
-  padding: 10px;
-  background: transparent;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  color: #888;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.explore-btn:hover {
-  background: #FFFFFF;
-  border-color: #FFFFFF;
-  color: #000;
-  font-weight: 600;
-}
 
 /* --- GAMIFICATION STYLES --- */
 
@@ -288,80 +204,30 @@ html {
 
 /* Dashboard-specific styles */
 
-/* Glassmorphism card */
-.glass-card {
-  background: linear-gradient(135deg, rgba(17, 17, 20, 0.92) 0%, rgba(12, 12, 14, 0.96) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
-    0 4px 24px rgba(0, 0, 0, 0.5);
-  transition: border-color 300ms ease, box-shadow 300ms ease, transform 200ms ease;
-}
-.glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.10);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    0 8px 40px rgba(0, 0, 0, 0.6);
-}
 
-/* KPI Card */
-.kpi-card {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(145deg, #111114 0%, #0d0d10 100%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-.kpi-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-  opacity: 0.8;
-  transition: opacity 300ms ease;
-}
-.kpi-card:hover {
-  border-color: rgba(255, 255, 255, 0.10);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-}
-.kpi-card:hover::before {
-  opacity: 1;
-}
-
-/* Dashboard header gradient */
-.dashboard-header-glow {
-  background: radial-gradient(
-    ellipse 60% 100% at 0% 0%,
-    rgba(255, 255, 255, 0.02) 0%,
-    transparent 50%
-  );
-}
-
-.sidebar-active {
-  background: rgba(255, 255, 255, 0.05);
-  border-left: 2px solid #FFFFFF;
-  color: #FFFFFF !important;
-}
-
-.separator-gold {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
 
 /* Shimmer animation for loading states */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
 }
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #111 25%,
+    #1a1a1a 50%,
+    #111 75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 4px;
+  height: 28px;
+  width: 80%;
+}
+
+
+
 .shimmer {
   background: linear-gradient(
     90deg,
@@ -373,22 +239,17 @@ html {
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
-/* Chart container */
+/* Chart container - updated for clean look */
 .chart-container {
   position: relative;
-  background: linear-gradient(180deg, #111114 0%, #0d0d10 100%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--bg-card);
+  border: none;
   border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 .chart-container::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  display: none;
 }
 
 /* Toolbar glassmorphism */
@@ -429,30 +290,8 @@ html {
   animation: count-up 400ms ease-out both;
 }
 
-/* Sidebar hover effect */
-.nav-link-hover {
-  position: relative;
-  transition: all 200ms ease;
-}
-.nav-link-hover::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%) scaleY(0);
-  width: 2px;
-  height: 55%;
-  border-radius: 0 2px 2px 0;
-  background: rgba(255, 255, 255, 0.5);
-  transition: transform 200ms ease;
-}
-.nav-link-hover:hover::before {
-  transform: translateY(-50%) scaleY(1);
-}
-.nav-link-hover.active-link::before {
-  transform: translateY(-50%) scaleY(1);
-  background: white;
-}
+
+
 
 /* Range slider custom styling */
 input[type="range"] {

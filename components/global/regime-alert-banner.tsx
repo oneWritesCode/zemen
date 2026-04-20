@@ -62,7 +62,7 @@ export function RegimeAlertBanner({ variant = "sticky" }: RegimeAlertBannerProps
 
   if (isSticky) {
     return (
-      <div className="fixed top-0 z-[90] w-full border-b border-white/[0.06] bg-[#111113]/90 backdrop-blur-md">
+      <div className="z-[90] backdrop-blur-md">
         <div className="mx-auto flex h-10 max-w-7xl items-center gap-2 px-3">
           <Link href="/regime-detector" className="min-w-0 flex-1 truncate text-center text-xs text-zinc-400 hover:text-zinc-200 transition">
             {text}
@@ -81,10 +81,10 @@ export function RegimeAlertBanner({ variant = "sticky" }: RegimeAlertBannerProps
   }
 
   return (
-    <div className="mt-8 flex w-full justify-center px-4">
-      <div className="w-full max-w-2xl overflow-hidden rounded-xl border border-white/[0.06] bg-[#111113]">
+    <div className="mt-8 flex justify-center items-center">
+      <div className="overflow-hidden rounded-xl bg-black/70">
         <div className="flex h-10 items-center gap-2 px-4">
-          <Link href="/regime-detector" className="min-w-0 flex-1 truncate text-center text-xs text-zinc-400 hover:text-zinc-200 transition">
+          <Link href="/regime-detector" className="min-w-0 flex-1 truncate text-center text-xs text-zinc-100 hover:text-zinc-50 hover:underline underline-offset-2 transition capitalize font-medium">
             {text}
           </Link>
           <button
@@ -93,7 +93,6 @@ export function RegimeAlertBanner({ variant = "sticky" }: RegimeAlertBannerProps
             className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-zinc-500 hover:text-zinc-300 transition"
             aria-label="Hide regime alert banner"
           >
-            <X className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>

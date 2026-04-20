@@ -27,6 +27,8 @@ const TOPIC_ICONS: Record<TopicIconId, LucideIcon> = {
   sentiment: HeartPulse,
 };
 
+const FallbackIcon = LineChart;
+
 export function TopicIcon({
   id,
   className,
@@ -36,6 +38,6 @@ export function TopicIcon({
   className?: string;
   "aria-hidden"?: boolean;
 }) {
-  const Icon = TOPIC_ICONS[id];
+  const Icon = TOPIC_ICONS[id] || FallbackIcon;
   return <Icon className={className} aria-hidden={ariaHidden} />;
 }

@@ -1,11 +1,11 @@
-import { SidebarShell } from "@/components/site/sidebar-shell";
+
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BackButton } from "@/components/ui/back-button";
 import { HelpCircle, ArrowRight } from "lucide-react";
 
 export default function BeginnerGuidePage() {
   return (
-    <SidebarShell>
+    <>
       <div className="max-w-4xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
         <Breadcrumb 
           items={[
@@ -57,7 +57,7 @@ export default function BeginnerGuidePage() {
           </a>
         </div>
       </div>
-    </SidebarShell>
+    </>
   );
 }
 

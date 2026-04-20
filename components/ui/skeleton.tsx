@@ -9,14 +9,8 @@ interface SkeletonProps {
 
 export function Skeleton({ className = "", style, height, width }: SkeletonProps) {
   return (
-    <motion.div
-      animate={{ opacity: [0.5, 1, 0.5] }} 
-      transition={{ 
-        duration: 1.5, 
-        repeat: Infinity, 
-        ease: 'easeInOut' 
-      }}
-      className={`rounded-md bg-zinc-800/80 ${className}`}
+    <div
+      className={`skeleton ${className}`}
       style={{ height, width, ...style }}
     />
   );

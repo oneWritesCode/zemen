@@ -17,18 +17,21 @@ export function PresentationNavbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed w-full top-0 z-50 border-b border-white/[0.06] bg-[#09090b]/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-base font-bold tracking-[0.12em] text-zinc-100">
+    <header className="fixed w-full top-0 z-50 border-b border-white/[0.06] bg-black/20 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 w-full max-w-4xl items-center justify-between px-4 sm:px-6">
+        <Link
+          href="/"
+          className="text-base font-bold tracking-[0.12em] text-zinc-100"
+        >
           ZEMEN
         </Link>
 
-        <nav className="hidden items-center gap-8 text-[13px] text-zinc-400 md:flex">
+        <nav className="hidden items-center gap-4 text-[13px] text-zinc-200 font-medium md:flex">
           {links.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="transition hover:text-zinc-100"
+              className="transition hover:text-zinc-100 px-2 py-0.5 rounded hover:bg-white/10"
             >
               {item.label}
             </Link>
@@ -37,8 +40,14 @@ export function PresentationNavbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <Link
+            href="/learn"
+            className="rounded-lg border-1 border-white/20 px-4 py-1.5 text-[14px] font-medium text-zinc-100 transition hover:border-white/20"
+          >
+            Learn
+          </Link>
+          <Link
             href={APP_URL}
-            className="rounded-lg bg-white/[0.08] border border-white/[0.08] px-4 py-1.5 text-[13px] font-medium text-zinc-100 transition hover:bg-white/[0.12] hover:border-white/[0.12]"
+            className="rounded-lg bg-white/[0.08] border border-white/[0.08] px-4 py-1.5 text-[14px] font-medium text-zinc-100 transition hover:bg-white/[0.12] hover:border-white/[0.12]"
           >
             Dashboard
           </Link>
@@ -68,6 +77,13 @@ export function PresentationNavbar() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/learn"
+              className="mt-3 inline-flex justify-center rounded-lg bg-white/[0.03] border border-white/[0.08] px-4 py-2.5 text-sm font-medium text-zinc-100"
+              onClick={() => setOpen(false)}
+            >
+              Learn
+            </Link>
             <Link
               href={APP_URL}
               className="mt-3 inline-flex justify-center rounded-lg bg-white/[0.08] border border-white/[0.08] px-4 py-2.5 text-sm font-medium text-zinc-100"

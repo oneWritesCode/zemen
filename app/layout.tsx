@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AskZemenChat } from "@/components/global/ask-zemen-chat";
 import { PersonaProvider } from "@/components/global/persona-provider";
 import { ToastProvider } from "@/lib/hooks/use-toast";
+import { ClientLayout } from "@/components/ClientLayout";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body className="min-h-full bg-[#09090b] text-zinc-100 antialiased">
         <ToastProvider>
           <PersonaProvider>
-            {children}
+            <ClientLayout>
+              {children}
+            </ClientLayout>
             <AskZemenChat />
           </PersonaProvider>
         </ToastProvider>

@@ -10,7 +10,7 @@ export default async function RegimeDetectorPage() {
 
   return (
     <SidebarShell>
-      <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1400px] px-10 py-8 pt-10">
         <Breadcrumb 
           items={[
             { label: 'Dashboard', href: '/dashboard' },

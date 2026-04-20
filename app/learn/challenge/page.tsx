@@ -20,7 +20,7 @@ import {
   XAxis, 
   YAxis 
 } from "recharts";
-import { SidebarShell } from "@/components/site/sidebar-shell";
+
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BackButton } from "@/components/ui/back-button";
 
@@ -122,7 +122,7 @@ export default function ChallengePage() {
   };
 
   return (
-    <SidebarShell>
+    <>
       <div className="min-h-screen bg-[#080809] text-zinc-100 py-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <Breadcrumb 
@@ -384,6 +384,6 @@ export default function ChallengePage() {
           </AnimatePresence>
         </div>
       </div>
-    </SidebarShell>
+    </>
   );
 }

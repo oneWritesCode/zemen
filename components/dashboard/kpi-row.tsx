@@ -4,62 +4,107 @@ import { getFreshnessLabel } from "@/lib/freshness";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { motion } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/animations";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { SeriesUnit } from "@/lib/fred/topics-config";
+
+interface MetricCardProps {
+  label: string;
+  value?: number | null;
+  unit?: SeriesUnit;
+  delta1y?: number | null;
+  updatedAt?: string | null;
+  borderColor?: string;
+  isAwaiting?: boolean;
+  index: number;
+}
+
+function MetricCard({
+  label,
+  value,
+  unit = "percent",
+  delta1y,
+  updatedAt,
+  borderColor = "#FFFFFF99",
+  isAwaiting = false,
+  index,
+}: MetricCardProps) {
+  const { text, positive } = formatKpiDelta(value ?? null, delta1y ?? null, unit);
+  const deltaColor =
+    positive === null
+      ? "text-[#888]"
+      : positive
+        ? "text-[#22c55e]"
+        : "text-[#ef4444]";
+  const DeltaIcon =
+    positive === null ? Minus : positive ? TrendingUp : TrendingDown;
+  const freshness = getFreshnessLabel(updatedAt ?? null);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.08,
+        ease: "easeOut",
+      }}
+      className="relative flex min-h-[120px] flex-col gap-2 overflow-hidden rounded-[12px] border border-[#111] bg-[#0a0a0a] px-6 py-5 transition hover:border-white/[0.12] will-change-transform"
+    >
+      {/* Subtle top highlight */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
+      <div className="text-[10px] font-semibold uppercase tracking-[2px] text-[#999]">
+        {label}
+      </div>
+
+      <div
+        className={`text-[28px] font-bold tracking-[-0.5px] leading-tight ${isAwaiting ? "text-[#666]" : "text-white"}`}
+      >
+        {isAwaiting ? (
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-7 w-4/5" />
+            <span className="text-xs font-normal text-[#666]">No data</span>
+          </div>
+        ) : (
+          <AnimatedNumber
+            value={value ?? 0}
+            suffix={unit === "percent" ? "%" : unit === "usd" ? "$" : ""}
+          />
+        )}
+      </div>
+
+      {!isAwaiting && (
+        <div className={`flex items-center gap-1 text-[12px] font-medium ${deltaColor}`}>
+          <span className="text-sm">{positive === null ? "" : positive ? "↗" : "↘"}</span>
+          <span>{text}</span>
+        </div>
+      )}
+
+      <div className="mt-auto text-[10px] text-[#888] font-medium">
+        Updated {freshness.text}
+      </div>
+    </motion.div>
+  );
+}
 
 export function KpiRow({ kpis }: { kpis: KpiMetric[] }) {
   if (kpis.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {kpis.map((k, index) => {
-        const { text, positive } = formatKpiDelta(k.value, k.delta1y, k.unit);
-        const deltaColor =
-          positive === null
-            ? "text-zinc-500"
-            : positive
-              ? "text-emerald-400"
-              : "text-red-400";
-        const DeltaIcon =
-          positive === null ? Minus : positive ? TrendingUp : TrendingDown;
-        const freshness = getFreshnessLabel(k.updatedAt);
-        const freshnessClass =
-          freshness.tone === "green"
-            ? "text-emerald-400/70"
-            : freshness.tone === "yellow"
-              ? "text-white/70"
-              : freshness.tone === "red"
-                ? "text-red-400/70"
-                : "text-zinc-600";
-        return (
-          <motion.div
-            key={k.key}
-            initial={{ opacity: 0, y: 20 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: '-50px' }} 
-            transition={{ 
-              duration: 0.4, 
-              delay: index * 0.08, 
-              ease: 'easeOut' 
-            }}
-            className="relative rounded-2xl border border-white/[0.07] bg-[#0e0e10] px-5 py-4 overflow-hidden transition hover:border-white/[0.12] will-change-transform"
-            style={{ borderLeftColor: '#FFFFFF99', borderLeftWidth: 3 }}
-          >
-            {/* Subtle top highlight */}
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500 mb-2">
-              {k.label}
-            </p>
-            <p className="font-mono text-2xl font-bold tabular-nums text-white mb-1">
-              <AnimatedNumber value={k.value} suffix={k.unit === 'percent' ? '%' : k.unit === 'usd' ? '$' : ''} />
-            </p>
-            <div className={`flex items-center gap-1 text-sm ${deltaColor}`}>
-              <DeltaIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span>{text}</span>
-            </div>
-            <p className={`mt-1.5 text-[11px] ${freshnessClass}`}>{freshness.text}</p>
-          </motion.div>
-        );
-      })}
+    <div className="metrics-grid">
+      {kpis.map((k, index) => (
+        <MetricCard
+          key={k.key}
+          label={k.label}
+          value={k.value}
+          unit={k.unit}
+          delta1y={k.delta1y}
+          updatedAt={k.updatedAt}
+          index={index}
+          isAwaiting={k.value === null || k.value === undefined}
+        />
+      ))}
     </div>
   );
 }
