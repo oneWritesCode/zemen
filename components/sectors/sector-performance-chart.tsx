@@ -48,7 +48,7 @@ export function SectorPerformanceChart({
     return (
       <div className="rounded-2xl bg-[#0a0a0a] shadow-[0_4px_20px_rgba(0,0,0,0.3)] p-4 sm:p-5">
         <div className="text-sm font-semibold text-zinc-200">{sectorName} price performance</div>
-        <div className="mt-4 flex h-[320px] items-center justify-center rounded-xl bg-white/[0.02] text-sm text-[#555]">
+        <div className="mt-4 flex h-[320px] items-center justify-center rounded-xl bg-white/[0.02] text-sm text-[#838383]">
           Loading chart data…
         </div>
       </div>

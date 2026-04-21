@@ -201,7 +201,7 @@ export default async function SectorDetailPage({
                 className="absolute top-0 left-4 right-4 h-[2px] rounded-full opacity-40"
                 style={{ background: sector.color }}
               />
-              <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#555] mb-3">
+              <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#838383] mb-3">
                 {kpi.label}
               </div>
               <div className="flex items-end gap-2">
@@ -227,7 +227,7 @@ export default async function SectorDetailPage({
                 )}
               </div>
               {kpi.sub && (
-                <div className="mt-2 text-[11px] text-[#555]">{kpi.sub}</div>
+                <div className="mt-2 text-[11px] text-[#838383]">{kpi.sub}</div>
               )}
             </div>
           ))}
@@ -248,7 +248,7 @@ export default async function SectorDetailPage({
               <TrendingUp className="w-4 h-4" style={{ color: sector.color }} />
               <h2 className="text-lg font-bold">Price Performance</h2>
             </div>
-            <p className="text-[12px] text-[#555] mb-6">Sector ETF vs S&P 500 benchmark</p>
+            <p className="text-[12px] text-[#838383] mb-6">Sector ETF vs S&P 500 benchmark</p>
             <SectorPerformanceChart
               sectorMonthly={detail.sectorMonthly}
               spMonthly={detail.spMonthly}
@@ -261,7 +261,7 @@ export default async function SectorDetailPage({
         <section className="mb-10">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Key Drivers</h2>
-            <p className="mt-1 text-[13px] text-[#555]">
+            <p className="mt-1 text-[13px] text-[#838383]">
               What makes {sector.name} go up or down in the current environment.
             </p>
           </div>
@@ -299,7 +299,7 @@ export default async function SectorDetailPage({
         <section className="mb-10">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Notable Companies</h2>
-            <p className="mt-1 text-[13px] text-[#555]">
+            <p className="mt-1 text-[13px] text-[#838383]">
               Major companies operating in the {sector.name.toLowerCase()} space.
             </p>
           </div>
@@ -313,7 +313,7 @@ export default async function SectorDetailPage({
                 <CompanyLogo ticker={c.ticker} name={c.ticker} size={36} />
                 <div>
                   <span className="text-sm font-bold text-white">{c.ticker}</span>
-                  {c.name && <p className="text-[11px] text-[#555] mt-0.5">{c.name}</p>}
+                  {c.name && <p className="text-[11px] text-[#838383] mt-0.5">{c.name}</p>}
                 </div>
               </div>
             ))}
@@ -325,7 +325,7 @@ export default async function SectorDetailPage({
           <section className="mb-10">
             <div className="mb-6">
               <h2 className="text-2xl font-bold">Emerging Trends</h2>
-              <p className="mt-1 text-[13px] text-[#555]">
+              <p className="mt-1 text-[13px] text-[#838383]">
                 Secular shifts worth watching in {sector.name.toLowerCase()}.
               </p>
             </div>
@@ -349,7 +349,7 @@ export default async function SectorDetailPage({
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-[#555]">
+                  <div className="flex items-center justify-between text-[11px] text-[#838383]">
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{t.timeline}</span>
                     <span
                       className="font-semibold"
@@ -369,7 +369,7 @@ export default async function SectorDetailPage({
 
       {/* Fixed disclaimer banner */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-sm">
-        <div className="mx-auto max-w-6xl px-4 py-3 text-[10px] text-[#333] leading-relaxed">
+        <div className="mx-auto max-w-6xl px-4 py-3 text-[10px] text-[#838383] leading-relaxed">
           Zemen Sectors is for educational and informational purposes only. Nothing on this page constitutes financial advice, investment recommendations, or an offer to buy or sell securities. Always do your own research and consult a qualified financial advisor before investing. Past performance does not guarantee future results.
         </div>
       </div>

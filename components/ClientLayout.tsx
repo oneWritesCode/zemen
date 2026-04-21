@@ -10,7 +10,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const seen = sessionStorage.getItem("zemen_loaded");
     if (seen) {
-      setLoaded(true);
+      setTimeout(() => setLoaded(true), 0);
     } else {
       sessionStorage.setItem("zemen_loaded", "1");
     }

@@ -56,7 +56,7 @@ export default async function DashboardPage() {
               <p className="text-xl text-[#ddd] font-medium max-w-2xl">
                 {meta.description.split('.')[0]}.
               </p>
-              <p className="text-sm text-[#555]">
+              <p className="text-sm text-[#838383]">
                 Confidence: <span className="text-[#bbb] font-bold">
                   <AnimatedNumber value={current.confidencePct} suffix="%" />
                 </span>
@@ -141,7 +141,7 @@ function QuickLinkCard({
           {title}
           <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#444]" />
         </h3>
-        <p className="text-sm text-[#555] leading-relaxed">
+        <p className="text-sm text-[#838383] leading-relaxed">
           {description}
         </p>
       </MotionDiv>

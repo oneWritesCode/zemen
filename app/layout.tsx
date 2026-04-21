@@ -3,6 +3,7 @@ import { AskZemenChat } from "@/components/global/ask-zemen-chat";
 import { PersonaProvider } from "@/components/global/persona-provider";
 import { ToastProvider } from "@/lib/hooks/use-toast";
 import { ClientLayout } from "@/components/ClientLayout";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,15 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
-      <body className="min-h-full bg-[#09090b] text-zinc-100 antialiased">
+    <html lang="en" className="h-full" suppressHydrationWarning>
+      <body className="min-h-full bg-[#09090b] text-zinc-100 antialiased" suppressHydrationWarning>
         <ToastProvider>
-          <PersonaProvider>
-            <ClientLayout>
-              {children}
-            </ClientLayout>
-            <AskZemenChat />
-          </PersonaProvider>
+          <AuthProvider>
+            <PersonaProvider>
+              <ClientLayout>
+                {children}
+              </ClientLayout>
+              <AskZemenChat />
+            </PersonaProvider>
+          </AuthProvider>
         </ToastProvider>
       </body>
     </html>

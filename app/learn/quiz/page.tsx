@@ -10,7 +10,10 @@ import {
   Share2, 
   Brain, 
   Trophy,
-  ChevronRight
+  ChevronRight,
+  Sprout,
+  Book,
+  BarChart2
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
@@ -189,10 +192,10 @@ export default function QuizPage() {
   const progress = ((currentIdx + 1) / questions.length) * 100;
 
   const getRating = (s: number) => {
-    if (s <= 30) return "Macro Beginner 🌱";
-    if (s <= 60) return "Macro Student 📚";
-    if (s <= 80) return "Macro Analyst 📊";
-    return "Macro Expert 🏆";
+    if (s <= 30) return <div className="flex items-center gap-2 justify-center"><span>Macro Beginner</span> <Sprout className="w-5 h-5 text-green-500" /></div>;
+    if (s <= 60) return <div className="flex items-center gap-2 justify-center"><span>Macro Student</span> <Book className="w-5 h-5 text-blue-500" /></div>;
+    if (s <= 80) return <div className="flex items-center gap-2 justify-center"><span>Macro Analyst</span> <BarChart2 className="w-5 h-5 text-orange-500" /></div>;
+    return <div className="flex items-center gap-2 justify-center"><span>Macro Expert</span> <Trophy className="w-5 h-5 text-yellow-500" /></div>;
   };
 
   return (

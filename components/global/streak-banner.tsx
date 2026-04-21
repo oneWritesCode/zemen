@@ -14,16 +14,16 @@ export function StreakBanner() {
   useEffect(() => {
     function checkMilestones(s: number) {
       if (s === 3) {
-        setMilestoneText("Nice! You're building a habit 📈");
+        setMilestoneText("Nice! You're building a habit");
         setShowMilestone(true);
       } else if (s === 7) {
-        setMilestoneText("One week streak! You're serious 🔥");
+        setMilestoneText("One week streak! You're serious");
         setShowMilestone(true);
       } else if (s === 14) {
-        setMilestoneText("Two weeks! Macro is your thing 🧠");
+        setMilestoneText("Two weeks! Macro is your thing");
         setShowMilestone(true);
       } else if (s === 30) {
-        setMilestoneText("30 days! You are a Macro Master 🏆");
+        setMilestoneText("30 days! You are a Macro Master");
         setShowMilestone(true);
       }
     }
@@ -57,7 +57,7 @@ export function StreakBanner() {
     if (streakUpdated) {
       localStorage.setItem('zemen_last_visit', today);
       localStorage.setItem('zemen_streak', currentStreak.toString());
-      showToast(`Streak: ${currentStreak} days 🔥`, 'success');
+      showToast(`Streak: ${currentStreak} days`, 'success');
     }
     queueMicrotask(() => setStreak(currentStreak));
   }, [showToast]);

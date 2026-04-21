@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Brain, Gamepad2, BookOpen, GraduationCap, ArrowRight, Sparkles, Trophy, Target } from "lucide-react";
+import { Brain, Gamepad2, BookOpen, GraduationCap, ArrowRight, Sparkles, Trophy, Target, LineChart, TrendingUp, Factory, Briefcase, TrendingDown, CreditCard } from "lucide-react";
 import { motion } from "framer-motion";
 
 const LEARN_CARDS = [
@@ -35,12 +35,12 @@ const LEARN_CARDS = [
 ];
 
 const CONCEPTS = [
-  { title: "Interest Rates", desc: "The price of borrowing money, set by the Federal Reserve.", icon: "📊" },
-  { title: "Inflation", desc: "How fast prices rise — measured by CPI and PCE.", icon: "📈" },
-  { title: "GDP Growth", desc: "The total output of the economy, measured quarterly.", icon: "🏭" },
-  { title: "Unemployment", desc: "The percentage of people looking for work who can't find it.", icon: "👷" },
-  { title: "Yield Curve", desc: "The shape of bond yields — a powerful recession predictor.", icon: "📉" },
-  { title: "Credit Spreads", desc: "The risk premium investors demand for holding corporate bonds.", icon: "💳" },
+  { title: "Interest Rates", desc: "The price of borrowing money, set by the Federal Reserve.", icon: <LineChart className="w-6 h-6 text-[#4C72F6]" /> },
+  { title: "Inflation", desc: "How fast prices rise — measured by CPI and PCE.", icon: <TrendingUp className="w-6 h-6 text-red-500" /> },
+  { title: "GDP Growth", desc: "The total output of the economy, measured quarterly.", icon: <Factory className="w-6 h-6 text-zinc-400" /> },
+  { title: "Unemployment", desc: "The percentage of people looking for work who can't find it.", icon: <Briefcase className="w-6 h-6 text-[#f59e0b]" /> },
+  { title: "Yield Curve", desc: "The shape of bond yields — a powerful recession predictor.", icon: <TrendingDown className="w-6 h-6 text-[#22c55e]" /> },
+  { title: "Credit Spreads", desc: "The risk premium investors demand for holding corporate bonds.", icon: <CreditCard className="w-6 h-6 text-yellow-500" /> },
 ];
 
 export default function LearnHubPage() {
@@ -115,7 +115,7 @@ export default function LearnHubPage() {
         <section className="mb-16">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-white">Key Concepts</h2>
-            <p className="mt-1 text-[13px] text-[#555]">
+            <p className="mt-1 text-[13px] text-[#838383]">
               The building blocks of macroeconomics — simplified.
             </p>
           </div>
@@ -136,7 +136,7 @@ export default function LearnHubPage() {
         {/* Milestones */}
         <section className="rounded-2xl bg-[#0a0a0a] p-7 sm:p-10">
           <h2 className="text-2xl font-bold text-white mb-2">Your Learning Journey</h2>
-          <p className="text-[13px] text-[#555] mb-8">Complete activities to unlock new levels and earn achievements.</p>
+          <p className="text-[13px] text-[#838383] mb-8">Complete activities to unlock new levels and earn achievements.</p>
 
           <div className="grid gap-4 sm:grid-cols-3">
             {[
@@ -152,7 +152,7 @@ export default function LearnHubPage() {
                 </div>
                 <div>
                   <h3 className="text-[13px] font-bold text-white">{m.title}</h3>
-                  <p className="text-[11px] text-[#555] mt-0.5">{m.desc}</p>
+                  <p className="text-[11px] text-[#838383] mt-0.5">{m.desc}</p>
                 </div>
               </div>
             ))}

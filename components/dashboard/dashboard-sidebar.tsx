@@ -6,6 +6,7 @@ import {
   FlaskConical,
   Gauge,
   Search,
+  Target,
   ChevronRight,
   LayoutDashboard,
   Zap,
@@ -141,6 +142,18 @@ export function DashboardSidebar({ topics }: { topics: TopicDefinition[] }) {
                 />
               </div>
               <span className="flex-1 truncate">Sectors</span>
+            </Link>
+          </motion.div>
+
+          <motion.div whileHover={{ x: 4 }} transition={{ duration: 0.15 }}>
+            <Link href="/stock-scout" className={linkClass(pathname.startsWith("/stock-scout"))}>
+              <div className={iconWrapClass(pathname.startsWith("/stock-scout"))}>
+                <Target
+                  className={iconClass(pathname.startsWith("/stock-scout"))}
+                  aria-hidden
+                />
+              </div>
+              <span className="flex-1 truncate">Stock Scout</span>
             </Link>
           </motion.div>
 

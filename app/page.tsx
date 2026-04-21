@@ -23,6 +23,8 @@ import {
   Eye,
   Gamepad2,
   BookOpen,
+  Check,
+  Target,
 } from "lucide-react";
 
 import { getRegimeAnalysis } from "@/lib/regime/get-analysis";
@@ -460,7 +462,7 @@ export default async function HomePage() {
       </section>
 
       {/* ═══════════ THE 5 REGIMES ═══════════ */}
-      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-6">
         <div className="text-center mb-12">
           <p className="text-xs font-medium uppercase tracking-widest text-zinc-500 mb-3">
             Economic Phases
@@ -488,6 +490,50 @@ export default async function HomePage() {
               </p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ═══════════ STOCK SCOUT SHOWCASE ═══════════ */}
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
+        <div className="rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden border border-white/[0.06] bg-[#050505]">
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,rgba(255,208,0,0.04),transparent_60%)]" />
+          <div className="relative z-10">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFD000]/10 border border-[#FFD000]/20">
+              <Target className="h-8 w-8 text-[#FFD000]" />
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white uppercase">
+              Zemen Stock Scout
+            </h2>
+            <p className="mt-6 text-lg text-[#888] max-w-2xl mx-auto leading-relaxed">
+              Get personalized stock and ETF recommendations based on the current macro regime and your risk profile. 
+              Stop endless research and start investing with macro intelligence.
+            </p>
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-3 text-left max-w-3xl mx-auto">
+              {[
+                "Regime-aligned asset selection",
+                "Risk-matched portfolio building",
+                "Live performance tracking"
+              ].map((benefit) => (
+                <div key={benefit} className="flex items-center gap-3 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FFD000]/20">
+                    <Check className="h-3 w-3 text-[#FFD000]" />
+                  </div>
+                  <span className="text-sm font-medium text-[#bbb] leading-tight">{benefit}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-12">
+              <Link
+                href="/stock-scout"
+                className="inline-flex items-center gap-3 bg-[#FFD000] text-black font-black px-10 py-4 rounded-xl text-sm tracking-widest hover:shadow-[0_0_30px_rgba(255,208,0,0.2)] hover:-translate-y-0.5 transition-all uppercase"
+              >
+                Launch Stock Scout
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
