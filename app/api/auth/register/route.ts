@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import prisma from '@/lib/prisma'
+import prisma, { withCircuitBreaker } from '@/lib/prisma'
 import { signToken } from '@/lib/jwt'
 
 const RegisterSchema = z.object({
@@ -37,10 +37,13 @@ export async function POST(req: NextRequest) {
     const { username, password, profession } = 
       parsed.data
 
-    // Check username taken
-    const existing = await prisma.user.findUnique({
-      where: { username }
-    })
+    // Check username taken with circuit breaker
+    const existing = await withCircuitBreaker(
+      () => prisma.user.findUnique({
+        where: { username }
+      }),
+      'check-username-exists'
+    )
 
     if (existing) {
       return NextResponse.json({
@@ -54,36 +57,46 @@ export async function POST(req: NextRequest) {
       password, 12
     )
 
-    // Create user + profile + streak in transaction
-    const user = await prisma.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
-        data: {
-          username,
-          password: hashedPassword,
-          profession,
-          profile: {
-            create: {
-              macroIqScore: 0,
-              level: 'Beginner',
-              totalXp: 0,
-              quizzesPlayed: 0,
-              bestScore: 0
+    // Create user + profile + streak in transaction with circuit breaker
+    const user = await withCircuitBreaker(
+      () => prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            username,
+            password: hashedPassword,
+            profession,
+            profile: {
+              create: {
+                macroIqScore: 0,
+                level: 'Beginner',
+                totalXp: 0,
+                quizzesPlayed: 0,
+                bestScore: 0
+              }
+            },
+            streak: {
+              create: {
+                currentStreak: 0,
+                longestStreak: 0
+              }
             }
           },
-          streak: {
-            create: {
-              currentStreak: 0,
-              longestStreak: 0
-            }
+          include: {
+            profile: true,
+            streak: true
           }
-        },
-        include: {
-          profile: true,
-          streak: true
-        }
-      })
-      return newUser
-    })
+        })
+        return newUser
+      }),
+      'create-user-transaction'
+    )
+
+    if (!user) {
+      return NextResponse.json({
+        success: false,
+        error: 'Failed to create user after multiple attempts. Please try again.'
+      }, { status: 500 })
+    }
 
     // Sign JWT
     const token = signToken({
@@ -114,11 +127,28 @@ export async function POST(req: NextRequest) {
 
     return response
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Register error:', error)
+    
+    // Handle circuit breaker errors specifically
+    if (error.message?.includes('circuit breaker')) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database temporarily unavailable. Please try again in a few minutes.'
+      }, { status: 503 })
+    }
+    
+    // Handle timeout errors specifically
+    if (error.code === 'ETIMEDOUT') {
+      return NextResponse.json({
+        success: false,
+        error: 'Connection timeout. Please check your network and try again.'
+      }, { status: 504 })
+    }
+    
     return NextResponse.json({
       success: false,
-      error: 'Something went wrong. Please try again.'
+      error: 'Registration failed. Please try again.'
     }, { status: 500 })
   }
 }

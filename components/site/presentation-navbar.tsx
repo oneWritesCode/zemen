@@ -13,8 +13,6 @@ const links = [
   { href: "/regimes", label: "Regimes" },
 ];
 
-const APP_URL = "/dashboard";
-
 export function PresentationNavbar() {
   const [open, setOpen] = useState(false);
   const { user, logout, loading } = useAuth();

@@ -226,11 +226,7 @@ export async function GET(req: NextRequest) {
       fit = Math.min(98, Math.max(30, fit))
 
       // Generate reason
-      const reason = generateReason(
-        stock,
-        risk,
-        horizon
-      )
+      const reason = generateReason(stock)
 
       return { ...stock, fit, reason }
     })
@@ -258,9 +254,7 @@ export async function GET(req: NextRequest) {
 }
 
 function generateReason(
-  stock: { sector: string },
-  _risk: string,
-  _horizon: string
+  stock: { sector: string }
 ): string {
   const reasons: Record<string, string[]> = {
     'Technology': [

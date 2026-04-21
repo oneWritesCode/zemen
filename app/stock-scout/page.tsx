@@ -266,7 +266,7 @@ export default function StockScoutPage() {
       } else {
         setError(data.error || "Failed to fetch recommendations")
       }
-    } catch (err) {
+    } catch {
       setError("Connection error. Try again.")
     } finally {
       setLoading(false)

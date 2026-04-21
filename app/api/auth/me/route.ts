@@ -39,14 +39,24 @@ export async function GET(req: NextRequest) {
     }
 
     // Never send password
-    const { password: _, ...safeUser } = user
+    const safeUser = {
+      id: user.id,
+      username: user.username,
+      profession: user.profession,
+      createdAt: user.createdAt,
+      profile: user.profile,
+      streak: user.streak,
+      learnProgress: user.learnProgress,
+      watchlist: user.watchlist,
+      quizResults: user.quizResults
+    }
 
     return NextResponse.json({
       success: true,
       user: safeUser
     })
 
-  } catch (error) {
+  } catch {
     return NextResponse.json({
       success: false,
       error: 'Server error'

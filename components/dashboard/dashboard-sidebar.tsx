@@ -7,15 +7,12 @@ import {
   Gauge,
   Search,
   Target,
-  ChevronRight,
   LayoutDashboard,
   Zap,
   BarChart3,
   Brain,
-  Trophy,
   Flame,
   TrendingUp,
-  BookOpen,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";

@@ -6,28 +6,22 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── USER ─────────────────────────────────────
-
 model User {
-  id          String   @id @default(cuid())
-  username    String   @unique
-  password    String
-  profession  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  profile     UserProfile?
-  quizResults QuizResult[]
-  watchlist   WatchlistItem[]
-  learnProgress LearnProgress[]
+  id             String          @id @default(cuid())
+  username       String          @unique
+  password       String
+  profession     String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  learnProgress  LearnProgress[]
   practiceScores PracticeScore[]
-  streak      UserStreak?
+  quizResults    QuizResult[]
+  profile        UserProfile?
+  streak         UserStreak?
+  watchlist      WatchlistItem[]
 
   @@map("users")
 }
-
-// ─── USER PROFILE ─────────────────────────────
 
 model UserProfile {
   id            String   @id @default(cuid())
@@ -39,100 +33,84 @@ model UserProfile {
   bestScore     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_profiles")
 }
 
-// ─── QUIZ RESULTS ─────────────────────────────
-
 model QuizResult {
-  id          String   @id @default(cuid())
-  userId      String
-  score       Int
-  totalQ      Int
-  percentage  Float
-  timeTaken   Int      // seconds
-  category    String   @default("general")
-  answers     Json     // array of { questionId, selected, correct }
-  createdAt   DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  userId     String
+  score      Int
+  totalQ     Int
+  percentage Float
+  timeTaken  Int
+  category   String   @default("general")
+  answers    Json
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("quiz_results")
 }
 
-// ─── LEARN PROGRESS ───────────────────────────
-
 model LearnProgress {
-  id          String   @id @default(cuid())
-  userId      String
-  topicSlug   String   // e.g. "inflation", "gdp", "interest-rates"
-  topicName   String
-  completed   Boolean  @default(false)
-  readAt      DateTime?
-  xpEarned    Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String    @id @default(cuid())
+  userId    String
+  topicSlug String
+  topicName String
+  completed Boolean   @default(false)
+  readAt    DateTime?
+  xpEarned  Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, topicSlug])
   @@map("learn_progress")
 }
 
-// ─── PRACTICE SCORES ──────────────────────────
-
 model PracticeScore {
-  id          String   @id @default(cuid())
-  userId      String
-  exerciseId  String   // e.g. "regime-prediction", "inflation-quiz"
-  score       Int
-  maxScore    Int
-  attempts    Int      @default(1)
-  bestScore   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  userId     String
+  exerciseId String
+  score      Int
+  maxScore   Int
+  attempts   Int      @default(1)
+  bestScore  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, exerciseId])
   @@map("practice_scores")
 }
 
-// ─── WATCHLIST ────────────────────────────────
-
 model WatchlistItem {
-  id          String   @id @default(cuid())
-  userId      String
-  ticker      String
-  name        String
-  sector      String
-  industry    String
-  addedPrice  Float    // price when added
-  currentPrice Float   @default(0)
-  notes       String?
-  addedAt     DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  userId       String
+  ticker       String
+  name         String
+  sector       String
+  industry     String
+  addedPrice   Float
+  currentPrice Float    @default(0)
+  notes        String?
+  addedAt      DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, ticker])
   @@map("watchlist_items")
 }
 
-// ─── USER STREAK ──────────────────────────────
-
 model UserStreak {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  currentStreak Int      @default(0)
-  longestStreak Int      @default(0)
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  currentStreak Int       @default(0)
+  longestStreak Int       @default(0)
   lastVisitDate DateTime?
-  updatedAt     DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_streaks")
 }

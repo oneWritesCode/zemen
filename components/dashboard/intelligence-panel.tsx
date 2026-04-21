@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronDown, BrainCircuit } from "lucide-react";
+import { BrainCircuit } from "lucide-react";
 
 import type { ChartRow } from "@/lib/fred/get-topic-dataset";
 import {

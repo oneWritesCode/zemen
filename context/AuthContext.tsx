@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 
 interface User {
   id: string;
@@ -43,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null);
       }
-    } catch (error) {
+    } catch {
       setUser(null);
     } finally {
       setLoading(false);

@@ -1,11 +1,9 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 
 import type { TopicChartSpec } from "@/lib/fred/topics-config";
 import type { ChartRow } from "@/lib/fred/get-topic-dataset";
-import { IntelligencePanel } from "@/components/dashboard/intelligence-panel";
 import { motion } from "framer-motion";
 import { ExpandButton } from "@/components/ExpandButton";
 import { GraphModal } from "@/components/GraphModal";
@@ -31,7 +29,7 @@ const TOOLTIP_STYLE = {
   padding: "8px 12px",
 };
 
-function getIndicatorColor(topicSlug: string, key: string): string {
+function getIndicatorColor(topicSlug: string): string {
   const slug = topicSlug.toLowerCase();
   if (slug.includes("rate") || slug.includes("yield") || slug.includes("money") || slug.includes("treasury")) return "#4d9fff";
   if (slug.includes("inflation") || slug.includes("cpi") || slug.includes("pce") || slug.includes("risk")) return "#ff6b6b";
@@ -99,7 +97,6 @@ function ChartBlock({
   compare2008,
   compare2020,
   topicSlug,
-  onToggleHidden,
   hidden,
 }: {
   spec: TopicChartSpec;
@@ -108,7 +105,6 @@ function ChartBlock({
   compare2008: boolean;
   compare2020: boolean;
   topicSlug: string;
-  onToggleHidden: () => void;
   hidden: boolean;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -131,7 +127,7 @@ function ChartBlock({
     rangesOverlapMs(tMin, tMax, T_2020[0]!, T_2020[1]!);
 
   const renderChart = (height: number = 280) => {
-    const primaryColor = getIndicatorColor(topicSlug, leftKeys[0] || "");
+    const primaryColor = getIndicatorColor(topicSlug);
     
     return (
       <div style={{ position: 'relative' }}>
@@ -220,7 +216,7 @@ function ChartBlock({
             {leftKeys.map((key, idx) => {
               const st = seriesStyles[key];
               if (!st) return null;
-              const color = idx === 0 ? getIndicatorColor(topicSlug, key) : `${getIndicatorColor(topicSlug, key)}80`;
+              const color = idx === 0 ? getIndicatorColor(topicSlug) : `${getIndicatorColor(topicSlug)}80`;
               return (
                 <Area
                   key={key}
@@ -241,7 +237,7 @@ function ChartBlock({
             {rightKeys.map((key, idx) => {
               const st = seriesStyles[key];
               if (!st) return null;
-              const color = idx === 0 ? getIndicatorColor(topicSlug, key) : `${getIndicatorColor(topicSlug, key)}80`;
+              const color = idx === 0 ? getIndicatorColor(topicSlug) : `${getIndicatorColor(topicSlug)}80`;
               return (
                 <Area
                   key={key}
@@ -351,8 +347,6 @@ function ChartRangeToolbar({
   compare2020,
   onCompare2008,
   onCompare2020,
-  hiddenTitles,
-  onShowHidden,
 }: {
   sorted: ChartRow[];
   startIdx: number;
@@ -363,8 +357,6 @@ function ChartRangeToolbar({
   compare2020: boolean;
   onCompare2008: (v: boolean) => void;
   onCompare2020: (v: boolean) => void;
-  hiddenTitles: string[];
-  onShowHidden: (title: string) => void;
 }) {
   const n = sorted.length;
   const maxI = Math.max(0, n - 1);
@@ -553,14 +545,6 @@ export function TopicCharts({
         compare2020={compare2020}
         onCompare2008={setCompare2008}
         onCompare2020={setCompare2020}
-        hiddenTitles={hiddenTitles}
-        onShowHidden={(title) =>
-          setHidden((prev) => {
-            const next = new Set(prev);
-            next.delete(title);
-            return next;
-          })
-        }
       />
 
       {splitCharts.length > 0 ? (
@@ -578,14 +562,6 @@ export function TopicCharts({
                   compare2020={compare2020}
                   topicSlug={topicSlug}
                   hidden={hidden.has(spec.title)}
-                  onToggleHidden={() =>
-                    setHidden((prev) => {
-                      const next = new Set(prev);
-                      if (next.has(spec.title)) next.delete(spec.title);
-                      else next.add(spec.title);
-                      return next;
-                    })
-                  }
                 />
               </div>
             ))}
@@ -606,14 +582,6 @@ export function TopicCharts({
                 compare2020={compare2020}
                 topicSlug={topicSlug}
                 hidden={hidden.has(spec.title)}
-                onToggleHidden={() =>
-                  setHidden((prev) => {
-                    const next = new Set(prev);
-                    if (next.has(spec.title)) next.delete(spec.title);
-                    else next.add(spec.title);
-                    return next;
-                  })
-                }
               />
             </div>
           ))}

@@ -1,7 +1,6 @@
 import { formatKpiDelta } from "@/lib/format-metric";
 import type { KpiMetric } from "@/lib/fred/get-topic-dataset";
 import { getFreshnessLabel } from "@/lib/freshness";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { motion } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/animations";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,7 +12,6 @@ interface MetricCardProps {
   unit?: SeriesUnit;
   delta1y?: number | null;
   updatedAt?: string | null;
-  borderColor?: string;
   isAwaiting?: boolean;
   index: number;
 }
@@ -24,7 +22,6 @@ function MetricCard({
   unit = "percent",
   delta1y,
   updatedAt,
-  borderColor = "#FFFFFF99",
   isAwaiting = false,
   index,
 }: MetricCardProps) {
@@ -35,8 +32,6 @@ function MetricCard({
       : positive
         ? "text-[#22c55e]"
         : "text-[#ef4444]";
-  const DeltaIcon =
-    positive === null ? Minus : positive ? TrendingUp : TrendingDown;
   const freshness = getFreshnessLabel(updatedAt ?? null);
 
   return (
