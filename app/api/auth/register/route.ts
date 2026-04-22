@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import prisma, { withCircuitBreaker } from '@/lib/prisma'
+import { db, withCircuitBreaker } from '@/lib/prisma'
 import { signToken } from '@/lib/jwt'
 
 const RegisterSchema = z.object({
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     // Check username taken with circuit breaker
     const existing = await withCircuitBreaker(
-      () => prisma.user.findUnique({
+      () => db.user.findUnique({
         where: { username }
       }),
       'check-username-exists'
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     // Create user + profile + streak in transaction with circuit breaker
     const user = await withCircuitBreaker(
-      () => prisma.$transaction(async (tx) => {
+      () => db.$transaction(async (tx: any) => {
         const newUser = await tx.user.create({
           data: {
             username,
@@ -100,20 +100,20 @@ export async function POST(req: NextRequest) {
 
     // Sign JWT
     const token = signToken({
-      userId: user.id,
-      username: user.username,
-      profession: user.profession
+      userId: (user as any).id,
+      username: (user as any).username,
+      profession: (user as any).profession
     })
 
     // Set response with cookie
     const response = NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        username: user.username,
-        profession: user.profession,
-        profile: user.profile,
-        streak: user.streak
+        id: (user as any).id,
+        username: (user as any).username,
+        profession: (user as any).profession,
+        profile: (user as any).profile,
+        streak: (user as any).streak
       },
       token
     }, { status: 201 })

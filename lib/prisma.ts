@@ -32,75 +32,23 @@ if (!globalForPrisma.circuitBreaker) {
   globalForPrisma.circuitBreaker = circuitBreaker
 }
 
-// Multiple connection string strategies for Neon
-const getConnectionStrings = () => {
-  const base = connectionString
-  
-  return [
-    // Try with minimal SSL settings first
-    base.replace('sslmode=verify-full', 'sslmode=disable'),
-    // Try with require SSL
-    base.replace('sslmode=verify-full', 'sslmode=require'),
-    // Try with connection timeout
-    base + '&connect_timeout=5',
-    // Try with application name
-    base + '&application_name=zemen-next',
-    // Original as last resort
-    base
-  ]
-}
-
-// Enhanced Pool configuration for Neon/PostgreSQL 
-const createPool = (connString: string) => new Pool({
-  connectionString: connString,
+// Simple Pool configuration for Neon/PostgreSQL 
+const pool = new Pool({
+  connectionString,
   ssl: {
     rejectUnauthorized: false, // Required for Neon PostgreSQL
   },
-  max: 2, // Minimal connections for stability
-  idleTimeoutMillis: 10000,
-  connectionTimeoutMillis: 5000, // Very aggressive timeout
-  keepAlive: false, // Disable keep alive for testing
+  max: 5, // Reduced connections for stability
+  idleTimeoutMillis: 20000,
+  connectionTimeoutMillis: 10000, // Increased timeout for network issues
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 5000,
   application_name: 'zemen-next',
-})
-
-// Try multiple connection strategies
-let pool: Pool
-let currentConnIndex = 0
-const connectionStrings = getConnectionStrings()
-
-const initializePool = async () => {
-  for (let i = 0; i < connectionStrings.length; i++) {
-    let testPool: Pool | null = null
-    try {
-      console.log(`Trying connection strategy ${i + 1}/${connectionStrings.length}`)
-      testPool = createPool(connectionStrings[i])
-      const client = await testPool.connect()
-      await client.query('SELECT 1')
-      client.release()
-      pool = testPool
-      currentConnIndex = i
-      console.log(`Connection successful with strategy ${i + 1}`)
-      return
-    } catch (error: any) {
-      console.log(`Connection strategy ${i + 1} failed:`, error.message)
-      if (testPool) await testPool.end()
-    }
-  }
-  throw new Error('All connection strategies failed')
-}
-
-// Initialize pool synchronously with fallback
-pool = createPool(connectionStrings[0])
-// Try async initialization in background
-initializePool().then(() => {
-  console.log('Database pool initialized successfully')
-}).catch(error => {
-  console.error('Async pool initialization failed, using fallback:', error)
 })
 
 const adapter = new PrismaPg(pool)
 
-// Health check function with pool recreation
+// Health check function
 const healthCheck = async (): Promise<boolean> => {
   try {
     const client = await pool.connect()
@@ -109,20 +57,7 @@ const healthCheck = async (): Promise<boolean> => {
     return true
   } catch (error) {
     console.error('Database health check failed:', error)
-    // Try to recreate pool with next strategy
-    try {
-      await pool.end()
-      currentConnIndex = (currentConnIndex + 1) % connectionStrings.length
-      console.log(`Switching to connection strategy ${currentConnIndex + 1}`)
-      pool = createPool(connectionStrings[currentConnIndex])
-      const testClient = await pool.connect()
-      await testClient.query('SELECT 1')
-      testClient.release()
-      return true
-    } catch (recreateError) {
-      console.error('Pool recreation failed:', recreateError)
-      return false
-    }
+    return false
   }
 }
 
@@ -131,6 +66,9 @@ export const prisma = globalForPrisma.prisma || new PrismaClient({
   adapter,
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 })
+
+// Export unified client interface
+export const db = prisma
 
 // Wrapper for database operations with circuit breaker
 export const withCircuitBreaker = async <T>(
