@@ -39,12 +39,12 @@ html, body, #__next, main {
 } 
  
 /* Kill any gray backgrounds */ 
-[class*="bg-gray"], 
+/* [class*="bg-gray"], 
 [class*="bg-zinc"], 
 [class*="bg-slate"], 
 [class*="bg-neutral"] { 
   background-color: var(--bg-card) !important; 
-} 
+}  */
 
 /* Upgrade explicit dark backgrounds to the new card color */
 .bg-\[\#0d0d0d\], .bg-\[\#111\], .bg-black, .bg-\[\#080808\], .bg-\[\#12121a\], .bg-\[\#050505\] {
