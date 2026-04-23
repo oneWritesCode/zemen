@@ -494,9 +494,8 @@ export default async function HomePage() {
       </section>
 
       {/* ═══════════ STOCK SCOUT SHOWCASE ═══════════ */}
-      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-24">
-        <div className="rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden border border-white/[0.06] bg-[#050505]">
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,rgba(255,208,0,0.04),transparent_60%)]" />
+      <section className="section-reveal mx-auto max-w-5xl px-4 sm:px-6 pb-12">
+        <div className="rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden border border-white/[0.06] bg-white/2">
           <div className="relative z-10">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFD000]/10 border border-[#FFD000]/20">
               <Target className="h-8 w-8 text-[#FFD000]" />
