@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import { FlaskConical, BookOpen, Calendar } from "lucide-react";
+import { FlaskConical, BookOpen, Calendar, RefreshCw, CheckCircle } from "lucide-react";
 import { MdOutlineTimeline } from "react-icons/md";
+import { useState } from "react";
 
 import type { RegimeAnalysisResult } from "@/lib/regime/get-analysis";
 import { REGIME_BY_ID } from "@/lib/regime/types";
@@ -19,7 +22,10 @@ function FeatureTable({
     row.cpiYoY,
     row.unrate,
     row.rgdpYoY,
-    row.hySpread,
+    row.m2YoY,
+    row.housingYoY,
+    row.yieldCurve,
+    row.consumerSentiment,
   ];
   return (
     <div className="mt-6 overflow-hidden rounded-2xl border border-white/[0.07] bg-black/20">
@@ -57,17 +63,111 @@ function FeatureTable({
   );
 }
 
+function ContributorsList({
+  contributors,
+  isFallback,
+}: {
+  contributors: string[];
+  isFallback?: boolean;
+}) {
+  if (!contributors || contributors.length === 0) return null;
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-2xl border border-white/[0.07] bg-black/20">
+      <div className="border-b border-white/[0.06] bg-white/[0.02] px-4 py-2.5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">
+          Key Contributing Factors
+        </p>
+      </div>
+      <div className="px-4 py-3 space-y-2">
+        {contributors.map((contributor, i) => (
+          <div key={i} className="flex items-center gap-2 text-sm text-zinc-400">
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500/60"></div>
+            <span>{contributor}</span>
+          </div>
+        ))}
+        {isFallback && (
+          <p className="mt-2 text-xs text-zinc-500 italic">
+            Analysis based on rule-based detection due to limited historical data.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) {
   const meta = REGIME_BY_ID[data.current.regime];
+  const [isRerunning, setIsRerunning] = useState(false);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error';
+    message: string;
+    points?: number;
+  } | null>(null);
 
-  if (data.error) {
+  const handleRerun = async () => {
+    setIsRerunning(true);
+    setNotification(null);
+    
+    try {
+      const response = await fetch('/api/regime/rerun', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setNotification({
+          type: 'success',
+          message: result.message,
+          points: result.pointsAwarded,
+        });
+        // Refresh the page after a short delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        setNotification({
+          type: 'error',
+          message: result.error,
+        });
+      }
+    } catch (error) {
+      setNotification({
+        type: 'error',
+        message: 'Failed to re-run regime detection. Please try again.',
+      });
+    } finally {
+      setIsRerunning(false);
+    }
+  };
+
+  if (data.error && !data.current.period) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-        <div
-          role="alert"
-          className="rounded-2xl border border-red-500/20 bg-red-950/30 px-5 py-4 text-sm text-red-300"
-        >
-          {data.error}
+        <div className="rounded-2xl border border-yellow-500/20 bg-yellow-950/10 px-6 py-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+              <FlaskConical className="h-5 w-5 text-yellow-500" />
+            </div>
+            <div>
+              <h3 className="text-white font-semibold">Regime Detection Unavailable</h3>
+              <p className="text-zinc-400 text-sm mt-1">
+                {data.error}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 p-4 rounded-xl bg-black/30 border border-white/[0.05]">
+            <p className="text-zinc-300 text-sm mb-3">
+              <strong>Current Assessment:</strong> Unable to determine regime due to data limitations.
+            </p>
+            <p className="text-zinc-400 text-xs">
+              Please check your FRED API key configuration and try again later.
+            </p>
+          </div>
         </div>
         <p className="mt-6 text-sm text-zinc-500">
           <Link href="/dashboard" className="text-zinc-300 hover:text-white underline underline-offset-2">
@@ -155,11 +255,63 @@ export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) 
           </div>
 
           {data.current.features ? (
-            <FeatureTable
-              row={data.current.features}
-              labels={data.featureLabels}
-            />
+            <>
+              <FeatureTable
+                row={data.current.features}
+                labels={data.featureLabels}
+              />
+              {data.current.contributors && (
+                <ContributorsList
+                  contributors={data.current.contributors}
+                  isFallback={data.current.isFallback}
+                />
+              )}
+            </>
           ) : null}
+
+          {/* Notification */}
+          {notification && (
+            <div className={`mt-4 p-3 rounded-lg border ${
+              notification.type === 'success' 
+                ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                : 'bg-red-500/10 border-red-500/30 text-red-400'
+            }`}>
+              <div className="flex items-center gap-2">
+                {notification.type === 'success' ? (
+                  <CheckCircle className="h-4 w-4" />
+                ) : (
+                  <FlaskConical className="h-4 w-4" />
+                )}
+                <span className="text-sm">{notification.message}</span>
+                {notification.points && (
+                  <span className="ml-auto font-mono text-xs bg-yellow-500/20 px-2 py-1 rounded">
+                    +{notification.points} ZP
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Re-run button */}
+          <div className="mt-6">
+            <button
+              onClick={handleRerun}
+              disabled={isRerunning}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-500 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isRerunning ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  Running Analysis...
+                </>
+              ) : (
+                <>
+                  <FlaskConical className="h-4 w-4" />
+                  Re-run Regime Detection
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -229,8 +381,66 @@ export function RegimeDetectorContent({ data }: { data: RegimeAnalysisResult }) 
 
       <RegimePredictionWidget currentRegimeId={data.current.regime} />
 
+      {/* Learn section */}
+      <section className="mt-12">
+        <details className="group">
+          <summary className="cursor-pointer rounded-2xl border border-white/[0.07] bg-[#0e0e10] p-6 transition-colors hover:bg-white/[0.02]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <BookOpen className="h-5 w-5 text-zinc-400" />
+                <h3 className="font-semibold text-white">Learn how regimes work</h3>
+              </div>
+              <div className="text-zinc-500 group-open:rotate-180 transition-transform">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            <p className="mt-2 text-sm text-zinc-500">
+              Understand how we detect and classify economic regimes
+            </p>
+          </summary>
+          <div className="mt-6 space-y-4 text-sm text-zinc-400">
+            <div>
+              <h4 className="font-semibold text-white mb-2">What are Economic Regimes?</h4>
+              <p>Economic regimes are distinct periods in the business cycle characterized by specific patterns in key macroeconomic indicators. We identify five main regimes:</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 rounded-xl bg-black/30 border border-white/[0.05]">
+                <h5 className="font-medium text-yellow-500 mb-1">Goldilocks</h5>
+                <p className="text-xs">Moderate growth, low inflation, stable employment</p>
+              </div>
+              <div className="p-4 rounded-xl bg-black/30 border border-white/[0.05]">
+                <h5 className="font-medium text-green-500 mb-1">Recovery</h5>
+                <p className="text-xs">Strong growth, improving employment, supportive policy</p>
+              </div>
+              <div className="p-4 rounded-xl bg-black/30 border border-white/[0.05]">
+                <h5 className="font-medium text-orange-500 mb-1">Overheating</h5>
+                <p className="text-xs">High inflation, tight labor market, rising rates</p>
+              </div>
+              <div className="p-4 rounded-xl bg-black/30 border border-white/[0.05]">
+                <h5 className="font-medium text-red-500 mb-1">Stagflation</h5>
+                <p className="text-xs">High inflation + high unemployment + weak growth</p>
+              </div>
+              <div className="p-4 rounded-xl bg-black/30 border border-white/[0.05]">
+                <h5 className="font-medium text-purple-500 mb-1">Recession</h5>
+                <p className="text-xs">Negative growth, high unemployment, falling rates</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <h4 className="font-semibold text-white mb-2">How We Detect Regimes</h4>
+              <p>We use machine learning (k-means clustering) on 8 key macro indicators to identify patterns and classify the current economic environment. When data is limited, we fall back to rule-based detection using economic thresholds.</p>
+            </div>
+          </div>
+        </details>
+      </section>
+
       <p className="mt-10 text-center text-xs text-zinc-700">
-        Model: {data.meta.nObs} monthly observations · Not investment advice.
+        {data.current.isFallback ? (
+          <>Rule-based analysis · Not investment advice.</>
+        ) : (
+          <>Model: {data.meta.nObs} monthly observations · Not investment advice.</>
+        )}
       </p>
     </div>
   );

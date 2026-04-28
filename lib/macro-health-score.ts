@@ -78,7 +78,7 @@ export async function getMacroHealthScore(): Promise<
     const labor = scoreLabor(r.unrate);
     const inflation = scoreInflation(r.cpiYoY);
     const growth = scoreGrowth(r.rgdpYoY);
-    const credit = scoreCredit(r.hySpread);
+    const credit = scoreCredit(r.yieldCurve);
     const policy = scorePolicy(r.fedFunds);
 
     const breakdown: MacroHealthBreakdown[] = [

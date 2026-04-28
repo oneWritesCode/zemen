@@ -157,7 +157,7 @@ export function RegimePredictionWidget({ currentRegimeId }: { currentRegimeId: s
           ))}
         </div>
         <p className="text-[10px] text-zinc-500 font-medium">
-          <span className="text-purple-400 font-bold">1,248+ users</span> have made predictions this month
+          <span className="text-purple-400 font-bold">1,248+ of internet experts</span> have made predictions this month
         </p>
       </div>
     </div>

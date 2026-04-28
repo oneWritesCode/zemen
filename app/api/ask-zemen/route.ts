@@ -84,7 +84,7 @@ export async function POST(req: Request) {
   const cpiYoy = last?.cpiYoY ?? null;
   const unrate = last?.unrate ?? null;
   const gdpYoy = last?.rgdpYoY ?? null;
-  const hy = last?.hySpread ?? null;
+  const yieldCurve = last?.yieldCurve ?? null;
 
   const t10 = latestMonthlyValue(dgs10).value;
   const baa = latestMonthlyValue(baa10y).value;
@@ -118,7 +118,7 @@ CURRENT ECONOMIC DATA (updated live):
 - Unemployment Rate: ${unrate ?? "N/A"}%
 - GDP Growth: ${gdpQoqAnn ?? gdpYoy ?? "N/A"}%
 - 10Y Treasury: ${t10 ?? "N/A"}%
-- Credit Spread (BAA): ${baa ?? hy ?? "N/A"}%
+- Credit Spread (BAA): ${baa ?? yieldCurve ?? "N/A"}%
 - Consumer Sentiment: ${sent ?? "N/A"}
 - S&P 500: ${spx.value ?? "N/A"}
 - USD Index: ${usd ?? "N/A"}

@@ -4,11 +4,11 @@ import {
   type HistoricalPlaybook,
 } from "./playbook";
 import {
-  buildRegimeFeatureRows,
   REGIME_FEATURE_LABELS,
   rowsToMatrix,
   type RegimeFeatureRow,
 } from "./build-panel";
+import { getCachedRegimeFeatures } from "./cache";
 import { yearFromPeriod } from "./dates";
 import {
   columnStats,
@@ -17,6 +17,7 @@ import {
   standardize,
   euclidean,
 } from "./kmeans";
+import { detectRegimeByRules, calculateRuleConfidence, getRegimeContributors } from "./rule-based-detector";
 import type { RegimeId } from "./types";
 
 export type MonthlyRegimePoint = {
@@ -41,6 +42,10 @@ export type RegimeAnalysisResult = {
     features: RegimeFeatureRow | null;
     /** Softmax probability of assigned regime. */
     probability: number;
+    /** Whether rule-based detection was used as fallback */
+    isFallback?: boolean;
+    /** Key contributing factors for the detected regime */
+    contributors?: string[];
   };
   monthly: MonthlyRegimePoint[];
   yearly: YearlyRegimePoint[];
@@ -74,22 +79,53 @@ export async function getRegimeAnalysis(): Promise<RegimeAnalysisResult> {
   const featureLabels = REGIME_FEATURE_LABELS;
 
   try {
-    const rows = await buildRegimeFeatureRows("1995-01-01");
+    const rows = await getCachedRegimeFeatures("2010-01-01");
+    
+    // If insufficient data, use rule-based fallback
     if (rows.length < 60) {
+      console.warn(`Insufficient data for clustering (${rows.length} observations), using rule-based fallback`);
+      
+      if (rows.length === 0) {
+        return {
+          featureLabels,
+          current: {
+            period: "",
+            regime: "goldilocks",
+            confidencePct: 0,
+            features: null,
+            probability: 0,
+            isFallback: true,
+            contributors: [],
+          },
+          monthly: [],
+          yearly: [],
+          meta: { nObs: rows.length, lastPeriod: null, sigma: 1 },
+          historicalPlaybook: null,
+          error: "Insufficient overlapping FRED history to run the regime model right now. Using fallback rules based on latest indicators.",
+        };
+      }
+
+      // Use rule-based detection with latest data
+      const latestRow = rows[rows.length - 1];
+      const regime = detectRegimeByRules(latestRow);
+      const confidence = calculateRuleConfidence(latestRow, regime);
+      const contributors = getRegimeContributors(latestRow, regime);
+
       return {
         featureLabels,
         current: {
-          period: "",
-          regime: "goldilocks",
-          confidencePct: 0,
-          features: null,
-          probability: 0,
+          period: latestRow.period,
+          regime,
+          confidencePct: Math.round(confidence * 1000) / 10,
+          features: latestRow,
+          probability: confidence,
+          isFallback: true,
+          contributors,
         },
         monthly: [],
         yearly: [],
-        meta: { nObs: rows.length, lastPeriod: null, sigma: 1 },
+        meta: { nObs: rows.length, lastPeriod: latestRow.period, sigma: 1 },
         historicalPlaybook: null,
-        error: "Not enough overlapping FRED history to fit the model.",
       };
     }
 
@@ -126,6 +162,9 @@ export async function getRegimeAnalysis(): Promise<RegimeAnalysisResult> {
     const lastRegime = clusterToRegime.get(lastCluster)!;
     const probAssigned = probs[lastCluster] ?? 0;
     const confidencePct = Math.round(probAssigned * 1000) / 10;
+    
+    // Get contributors for ML-based detection
+    const contributors = getRegimeContributors(lastRow, lastRegime);
 
     const byYear = new Map<number, RegimeId[]>();
     for (const m of monthly) {
@@ -154,6 +193,8 @@ export async function getRegimeAnalysis(): Promise<RegimeAnalysisResult> {
         confidencePct,
         features: lastRow,
         probability: probAssigned,
+        isFallback: false,
+        contributors,
       },
       monthly,
       yearly,
@@ -166,6 +207,7 @@ export async function getRegimeAnalysis(): Promise<RegimeAnalysisResult> {
     };
   } catch (e) {
     const message = e instanceof Error ? e.message : "Regime analysis failed.";
+    console.error("Regime analysis error:", e);
     return {
       featureLabels,
       current: {
@@ -174,6 +216,8 @@ export async function getRegimeAnalysis(): Promise<RegimeAnalysisResult> {
         confidencePct: 0,
         features: null,
         probability: 0,
+        isFallback: true,
+        contributors: [],
       },
       monthly: [],
       yearly: [],

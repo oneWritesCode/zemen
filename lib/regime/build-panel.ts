@@ -12,7 +12,10 @@ export const REGIME_FEATURE_LABELS = [
   "CPI YoY (%)",
   "Unemployment (%)",
   "Real GDP YoY (%)",
-  "HY OAS (%)",
+  "Money Supply YoY (%)",
+  "Housing Starts (%)",
+  "Yield Curve (%)",
+  "Consumer Sentiment",
 ] as const;
 
 export type RegimeFeatureRow = {
@@ -21,7 +24,10 @@ export type RegimeFeatureRow = {
   cpiYoY: number;
   unrate: number;
   rgdpYoY: number;
-  hySpread: number;
+  m2YoY: number;
+  housingYoY: number;
+  yieldCurve: number;
+  consumerSentiment: number;
 };
 
 /** Last known real GDP level at or before each calendar month-end. */
@@ -45,9 +51,10 @@ function gdpLevelByMonth(
 }
 
 export async function buildRegimeFeatureRows(
-  observationStart = "1995-01-01",
+  observationStart = "2010-01-01",
 ): Promise<RegimeFeatureRow[]> {
-  const [fed, cpi, un, gdp, hy] = await Promise.all([
+  // Fetch reliable, long-history FRED series
+  const [fed, cpi, un, gdp, m2, housing, yield10y, yield2y, sentiment] = await Promise.all([
     fetchFredObservations({
       seriesId: "FEDFUNDS",
       observationStart,
@@ -65,17 +72,39 @@ export async function buildRegimeFeatureRows(
       observationStart,
     }),
     fetchFredObservations({
-      seriesId: "BAMLH0A0HYM2",
+      seriesId: "M2SL",
+      observationStart,
+    }),
+    fetchFredObservations({
+      seriesId: "HOUST",
+      observationStart,
+    }),
+    fetchFredObservations({
+      seriesId: "DGS10",
+      observationStart,
+    }),
+    fetchFredObservations({
+      seriesId: "DGS2",
+      observationStart,
+    }),
+    fetchFredObservations({
+      seriesId: "UMCSENT",
       observationStart,
     }),
   ]);
 
+  // Convert to monthly frequency
   const mFed = monthlyLastByPeriod(fed);
   const mCpi = monthlyLastByPeriod(cpi);
   const mUn = monthlyLastByPeriod(un);
-  const mHy = monthlyLastByPeriod(hy);
+  const mM2 = monthlyLastByPeriod(m2);
+  const mHousing = monthlyLastByPeriod(housing);
+  const mYield10y = monthlyLastByPeriod(yield10y);
+  const mYield2y = monthlyLastByPeriod(yield2y);
+  const mSentiment = monthlyLastByPeriod(sentiment);
 
-  const periods = sortedUnionPeriods([mFed, mCpi, mUn, mHy]);
+  // Get all periods that have data
+  const periods = sortedUnionPeriods([mFed, mCpi, mUn, mM2, mHousing, mYield10y, mYield2y, mSentiment]);
   const gdpLevels = gdpLevelByMonth(periods, gdp);
 
   const rows: RegimeFeatureRow[] = [];
@@ -85,26 +114,45 @@ export async function buildRegimeFeatureRows(
     const cpiNow = mCpi.get(p);
     const cpiLag = mCpi.get(addMonthsYm(p, -12));
     const unrate = mUn.get(p);
-    const hySpread = mHy.get(p);
     const gNow = gdpLevels.get(p);
     const gLag = gdpLevels.get(addMonthsYm(p, -12));
+    const m2Now = mM2.get(p);
+    const m2Lag = mM2.get(addMonthsYm(p, -12));
+    const housingNow = mHousing.get(p);
+    const housingLag = mHousing.get(addMonthsYm(p, -12));
+    const yield10y = mYield10y.get(p);
+    const yield2y = mYield2y.get(p);
+    const sentiment = mSentiment.get(p);
 
+    // Skip if any critical data is missing
     if (
       fedFunds === undefined ||
       cpiNow === undefined ||
       cpiLag === undefined ||
       cpiLag === 0 ||
       unrate === undefined ||
-      hySpread === undefined ||
       gNow === undefined ||
       gLag === undefined ||
-      gLag === 0
+      gLag === 0 ||
+      m2Now === undefined ||
+      m2Lag === undefined ||
+      m2Lag === 0 ||
+      housingNow === undefined ||
+      housingLag === undefined ||
+      housingLag === 0 ||
+      yield10y === undefined ||
+      yield2y === undefined ||
+      sentiment === undefined
     ) {
       continue;
     }
 
+    // Calculate year-over-year changes
     const cpiYoY = ((cpiNow / cpiLag - 1) * 100);
     const rgdpYoY = ((gNow / gLag - 1) * 100);
+    const m2YoY = ((m2Now / m2Lag - 1) * 100);
+    const housingYoY = ((housingNow / housingLag - 1) * 100);
+    const yieldCurve = yield10y - yield2y;
 
     rows.push({
       period: p,
@@ -112,7 +160,10 @@ export async function buildRegimeFeatureRows(
       cpiYoY,
       unrate,
       rgdpYoY,
-      hySpread,
+      m2YoY,
+      housingYoY,
+      yieldCurve,
+      consumerSentiment: sentiment,
     });
   }
 
@@ -125,6 +176,9 @@ export function rowsToMatrix(rows: RegimeFeatureRow[]): number[][] {
     r.cpiYoY,
     r.unrate,
     r.rgdpYoY,
-    r.hySpread,
+    r.m2YoY,
+    r.housingYoY,
+    r.yieldCurve,
+    r.consumerSentiment,
   ]);
 }
