@@ -286,9 +286,9 @@ export default function StockScoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen text-white">
       {/* ── Nav ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03] bg-[#0a0a0a]/80 backdrop-blur-md">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03] backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <button
             onClick={() => router.back()}
@@ -306,7 +306,7 @@ export default function StockScoutPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 pt-28 pb-20">
+      <main className="mx-auto max-w-6xl px-6 pt-20 pb-20">
         <div className="flex flex-col gap-8">
           
           {/* ── Current Regime Section ── */}
@@ -314,7 +314,7 @@ export default function StockScoutPage() {
             <MotionDiv
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-3xl border border-white/[0.05] bg-white/[0.02] p-8"
+              className="rounded-3xl p-8"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-2">
@@ -348,7 +348,7 @@ export default function StockScoutPage() {
                   <p className="text-xs text-[#555]">Align recommendations with your profile.</p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <SegmentedControl
                     label="Risk Tolerance"
                     icon={Target}
