@@ -59,7 +59,16 @@ export async function POST(req: Request) {
     );
   }
 
-  const body = (await req.json()) as Body;
+  let body: Body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid or empty request body" },
+      { status: 400 }
+    );
+  }
+
   const messages = body.messages?.slice(-10) ?? [];
   const userMessages = messages.filter((m) => m.role === "user");
   const mode = body.mode === "SIMPLE" || body.mode === "RAW" ? body.mode : "DETAILED";

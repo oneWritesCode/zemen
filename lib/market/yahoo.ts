@@ -1,5 +1,19 @@
 import type { ParsedObservation } from "@/lib/fred/types";
 
+// Singleton instance for yahoo-finance2 to avoid instantiation error
+let yahooFinanceInstance: any = null;
+async function getYahooFinance() {
+  if (yahooFinanceInstance) return yahooFinanceInstance;
+  const yf = (await import("yahoo-finance2")) as any;
+  // The package might have YahooFinance as a named export or default export
+  const YahooFinance = yf.YahooFinance || yf.default;
+  if (!YahooFinance) {
+    throw new Error("Could not find YahooFinance constructor in yahoo-finance2");
+  }
+  yahooFinanceInstance = new YahooFinance();
+  return yahooFinanceInstance;
+}
+
 function toIso(d: Date): string {
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
     .toISOString()
@@ -70,7 +84,7 @@ export async function fetchYahooDailyCloseSeries(params: {
 }): Promise<ParsedObservation[]> {
   // Method 1: yahoo-finance2 npm package (server-side, no CORS)
   try {
-    const yahooFinance = (await import("yahoo-finance2")).default;
+    const yahooFinance = await getYahooFinance();
 
     // Suppress internal console noise from the package
     // (validation errors are non-fatal, handled by our try-catch)

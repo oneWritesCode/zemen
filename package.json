@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
+    "//": "Note: If .next/dev is on a network drive, move the project to a local directory for better performance.",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",

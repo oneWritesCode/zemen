@@ -30,6 +30,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RichChatResponse } from "@/components/global/rich-chat-response";
+import { ApiKeyExpiredError } from "@/components/global/api-key-error";
 import type { ChartData, ResponseMode } from "@/lib/chat/rich";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
@@ -178,8 +179,20 @@ export function AskZemenChat() {
       });
       const json = (await res.json()) as { answer?: string; error?: string };
       if (!res.ok) {
-        const msg = json.error ?? "Request failed. Please try again.";
-        setError(msg);
+        let msg = json.error ?? "Request failed. Please try again.";
+        // Check for API key or model expiration errors
+        const lower = msg.toLowerCase();
+        if (
+          lower.includes("api_key") || 
+          lower.includes("api key") || 
+          lower.includes("expired") || 
+          lower.includes("unavailable") ||
+          res.status === 500 ||
+          res.status === 502
+        ) {
+          msg = "__API_KEY_EXPIRED__";
+        }
+        setError(msg === "__API_KEY_EXPIRED__" ? null : msg);
         setMessages((prev) => [...prev.slice(-9), { role: "assistant", content: msg }]);
         return;
       }
@@ -580,14 +593,20 @@ export function AskZemenChat() {
                         "text-sm leading-relaxed max-w-[92%] sm:max-w-[84%] px-4 py-3 rounded-2xl",
                         message.role === "user"
                           ? "bg-white/10 text-white rounded-br-sm"
-                          : "bg-white/[0.03] border border-white/[0.06] text-zinc-200 rounded-bl-sm",
+                          : message.content === "__API_KEY_EXPIRED__"
+                            ? "" // No background for the custom error layout
+                            : "bg-white/[0.03] border border-white/[0.06] text-zinc-200 rounded-bl-sm",
                       ].join(" ")}
                     >
                       {message.role === "assistant" ? (
-                        <RichChatResponse
-                          content={message.content}
-                          onExpandCharts={(charts) => setExpandedCharts(charts)}
-                        />
+                        message.content === "__API_KEY_EXPIRED__" ? (
+                          <ApiKeyExpiredError />
+                        ) : (
+                          <RichChatResponse
+                            content={message.content}
+                            onExpandCharts={(charts) => setExpandedCharts(charts)}
+                          />
+                        )
                       ) : (
                         message.content
                       )}
